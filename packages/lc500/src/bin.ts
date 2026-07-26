@@ -4,6 +4,7 @@
 import { parseArgs } from 'node:util'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { existsSync } from 'node:fs'
 import { VirtualClock } from '@sim/core/time'
 import { SimulatedInstrument } from '@sim/core/instrument'
 import { buildWorldSchema, type WorldContext } from '@sim/core/world-schema'
@@ -49,10 +50,12 @@ if (diffs.length > 0) {
   process.exit(1)
 }
 
+const benchDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'bench', 'dist')
 const server = await createSimServer({
   worldSchema: buildWorldSchema(host),
   twinSchema,
   port: Number(values.port ?? 5290),
+  benchDir: existsSync(join(benchDir, 'index.html')) ? benchDir : undefined,
   title: `${LC500_META.designation} (simulated)`,
 })
 
