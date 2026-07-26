@@ -1,0 +1,21 @@
+{
+  "name": "@sim/lc500",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The simulated ACME LC-500 load-cell family (sim-instruments instrument #1)",
+  "bin": { "sim-lc500": "./src/bin.ts" },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/bin.ts",
+    "bake": "tsx scripts/bake.ts"
+  },
+  "dependencies": {
+    "@sim/core": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0"
+  }
+}

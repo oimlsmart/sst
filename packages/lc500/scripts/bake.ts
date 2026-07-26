@@ -1,0 +1,14 @@
+// scripts/bake.ts — regenerate the bundled twin contract artifact from
+// the real acme-lc500 product package (spec §9: baked at pack time;
+// the standalone boot rides this, primmel-ts never imports at runtime).
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
+import { parseTwinContract } from '@sim/core/twin-contract-prl'
+import { bakeTwinContract } from '@sim/core/twin-bake'
+
+const PKG = process.argv[2] ?? '/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-lc500'
+const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'lc500.twin.json')
+
+const contract = await parseTwinContract(PKG)
+await bakeTwinContract(contract, OUT, PKG)
+console.log(`baked ${contract.serves.length} serves / ${contract.operations.length} operations from ${PKG} → ${OUT}`)

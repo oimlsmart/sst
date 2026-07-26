@@ -1,0 +1,40 @@
+{
+  "format": "sim/baked-twin-contract",
+  "version": 1,
+  "bakedAt": "2026-07-26T07:48:41.780Z",
+  "source": "/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-lc500",
+  "contract": {
+    "instrumentId": "acme-lc500",
+    "serves": [
+      {
+        "target": "indication",
+        "via": "get_indication",
+        "freshWithinS": 5
+      },
+      {
+        "target": "state",
+        "via": "watch_state",
+        "freshWithinS": 1
+      },
+      {
+        "target": "environmental_context",
+        "via": "watch_state",
+        "freshWithinS": 1
+      }
+    ],
+    "operations": [
+      {
+        "id": "get_indication",
+        "kind": "query"
+      },
+      {
+        "id": "watch_state",
+        "kind": "watch"
+      },
+      {
+        "id": "run_self_test",
+        "kind": "command"
+      }
+    ]
+  }
+}
