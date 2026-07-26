@@ -1,0 +1,69 @@
+import { describe, it, expect, afterEach } from 'vitest'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { existsSync } from 'node:fs'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createSimServer } from '@sim/core/server'
+import { buildWorldSchema, type WorldContext } from '@sim/core/world-schema'
+import { generateTwinSchema } from '@sim/core/twin-schema'
+import { LC500_CONTRACT } from '@sim/core/twin-contract'
+import { VirtualClock } from '@sim/core/time'
+import { SimulatedInstrument } from '@sim/core/instrument'
+import { getScenario } from '@sim/core/scenario'
+import { fetchGroundTruth, fetchIndication, gql } from './api.js'
+
+const run = promisify(execFile)
+const BENCH_DIR = join(dirname(fileURLToPath(import.meta.url)), '..')
+const DIST = join(BENCH_DIR, 'dist')
+
+let close: (() => Promise<void>) | undefined
+afterEach(async () => { await close?.(); close = undefined })
+
+describe('@sim/bench (spec §9/§10)', () => {
+  it('vite build produces the servable SPA', async () => {
+    if (!existsSync(DIST)) {
+      await run('npx', ['vite', 'build'], { cwd: BENCH_DIR, timeout: 120000 })
+    }
+    expect(existsSync(join(DIST, 'index.html'))).toBe(true)
+  }, 130000)
+
+  it('the sim serves the bench at / and the channels beside it', async () => {
+    const clock = new VirtualClock()
+    const host: WorldContext = {
+      instrument: new SimulatedInstrument(getScenario('good-cell'), clock, 1),
+      clock,
+      swap(def) { this.instrument = new SimulatedInstrument(def, clock, 1) },
+    }
+    const server = await createSimServer({
+      worldSchema: buildWorldSchema(host),
+      twinSchema: generateTwinSchema(LC500_CONTRACT, { instrument: host.instrument, clock }),
+      benchDir: DIST,
+      port: 0,
+      title: 'LC-500 bench test',
+    })
+    close = server.close
+    const res = await fetch(`${server.url}/`)
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    expect(html).toContain('terminal-input')
+    // the channels still work beside the bench
+    const gt = await fetchGroundTruth(server.url)
+    expect(gt.appliedLoadKg).toBe(0)
+    const ind = await fetchIndication(server.url)
+    expect(ind.indication.unit).toBe('kg')
+  }, 30000)
+
+  it('api.gql posts to a channel and unwraps data', async () => {
+    const clock = new VirtualClock()
+    const host: WorldContext = {
+      instrument: new SimulatedInstrument(getScenario('good-cell'), clock, 1),
+      clock,
+      swap(def) { this.instrument = new SimulatedInstrument(def, clock, 1) },
+    }
+    const server = await createSimServer({ worldSchema: buildWorldSchema(host), port: 0 })
+    close = server.close
+    const d = await gql(server.url, '/world', `mutation { placeLoad(massKg: 40) { groundTruth { appliedLoadKg } } }`) as { placeLoad: { groundTruth: { appliedLoadKg: number } } }
+    expect(d.placeLoad.groundTruth.appliedLoadKg).toBe(40)
+  }, 30000)
+})

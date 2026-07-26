@@ -11,7 +11,8 @@ import { generateTwinSchema } from '@sim/core/twin-schema'
 import { checkTwinConformance } from '@sim/core/conformance'
 import { loadBakedContract } from '@sim/core/twin-bake'
 import { createSimServer } from '@sim/core/server'
-import { runConsole, httpConsoleIo } from '@sim/core/console/client'
+import { runConsole } from '@sim/core/console/readline'
+import { httpConsoleIo } from '@sim/core/console/client'
 import { getScenario, LC500_META } from './instrument.js'
 
 const { values } = parseArgs({
