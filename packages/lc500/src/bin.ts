@@ -41,7 +41,7 @@ const contract = values.package
   ? await (await import('@sim/core/twin-contract-prl')).parseTwinContract(values.package)
   : await loadBakedContract(join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'lc500.twin.json'))
 
-const io = { instrument: host.instrument, clock }
+const io = { get instrument() { return host.instrument }, clock }
 const twinSchema = generateTwinSchema(contract, io)
 const diffs = checkTwinConformance(twinSchema, contract)
 if (diffs.length > 0) {
