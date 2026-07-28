@@ -1,15 +1,15 @@
-// scripts/bake.ts — regenerate the bundled twin contract artifact.
-// SIM-R91-2's product package has not landed: the artifact bakes the
-// STAND-IN fixture (src/twin-contract.ts), clearly marked as such in
-// its `source`. When the package lands, this script gains the .prl
-// parse path (lc500's bake.ts idiom) and the handshake test enforces
-// fixture ≡ package.
+// scripts/bake.ts — regenerate the bundled twin contract artifact from
+// the real acme-rs180 product package (spec §9: baked at pack time;
+// the standalone boot rides this, primmel-ts never imports at runtime).
+// The handshake test (src/handshake.test.ts) enforces fixture ≡ package.
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { parseTwinContract } from '@sim/core/twin-contract-prl'
 import { bakeTwinContract } from '@sim/core/twin-bake'
-import { R91_CONTRACT } from '../src/twin-contract.js'
 
+const PKG = process.argv[2] ?? '/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-rs180'
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'r91.twin.json')
 
-await bakeTwinContract(R91_CONTRACT, OUT, 'stand-in fixture src/twin-contract.ts (SIM-R91-2 product package pending)')
-console.log(`baked ${R91_CONTRACT.serves.length} serves / ${R91_CONTRACT.operations.length} operations (stand-in fixture) → ${OUT}`)
+const contract = await parseTwinContract(PKG)
+await bakeTwinContract(contract, OUT, PKG)
+console.log(`baked ${contract.serves.length} serves / ${contract.operations.length} operations from ${PKG} → ${OUT}`)
