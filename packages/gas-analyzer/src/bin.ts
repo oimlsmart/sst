@@ -1,11 +1,11 @@
 #!/usr/bin/env tsx
-// sim-gas-analyzer — the standalone simulated R 144 reference CGM
+// sim-gas-analyzer — the standalone simulated CGM-200 reference CGM
 // (CO + NOx): one process, both channels, the landing page, GraphiQL
 // playgrounds. The twin rides the DECLARED contract
-// (GAS_ANALYZER_CONTRACT) until the SIM-R144-2 product reference
-// package lands — pass --package to re-parse a real package and prove
-// the handshake (the development posture). The console is the next
-// leg's scope.
+// (GAS_ANALYZER_CONTRACT — mirroring primmel-packages/acme-cgm-200,
+// pinned by the handshake test) — pass --package to re-parse the real
+// package and prove the handshake (the development posture). The
+// console is the next leg's scope.
 import { parseArgs } from 'node:util'
 import { VirtualClock } from '@sim/core/time'
 import { SimulatedGasAnalyzer, type GasComponent } from '@sim/core/gas-instrument'
@@ -34,9 +34,10 @@ const host: GasWorldContext = {
   swap(def) { this.instrument = new SimulatedGasAnalyzer(def, clock, seed) },
 }
 
-// the serve contract: --package re-parses a landed product package
-// (development posture); otherwise the DECLARED intended serves —
-// the conformance check below still fails the process on any diff.
+// the serve contract: --package re-parses the landed product package
+// (development posture); otherwise the DECLARED contract (the package
+// mirror) — the conformance check below still fails the process on
+// any diff.
 const contract = values.package
   ? await (await import('@sim/core/twin-contract-prl')).parseTwinContract(values.package)
   : GAS_ANALYZER_CONTRACT
@@ -77,7 +78,7 @@ sim-gas-analyzer — a simulated ${GAS_ANALYZER_META.designation} (${GAS_ANALYZE
   scenario:   ${scenario.name} — ${scenario.description}
   CO ${GAS_ANALYZER_META.rangeCoPpm[0]}–${GAS_ANALYZER_META.rangeCoPpm[1]} ppm (${GAS_ANALYZER_META.principles.co})
   NOx ${GAS_ANALYZER_META.rangeNoxPpm[0]}–${GAS_ANALYZER_META.rangeNoxPpm[1]} ppm (${GAS_ANALYZER_META.principles.nox})
-  twin:       ${values.package ? `parsed from ${values.package}` : 'DECLARED contract (the SIM-R144-2 product package is pending)'}
+  twin:       ${values.package ? `parsed from ${values.package}` : 'DECLARED contract (mirrors primmel-packages/acme-cgm-200)'}
 
   landing:    ${server.url}/
   /twin  (SMART digital twin interface):  ${server.url}/twin   (GraphiQL)
