@@ -1,0 +1,21 @@
+{
+  "name": "@sim/r91",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The simulated R 91 Doppler radar speed-meter family (sim-instruments instrument #3)",
+  "bin": { "sim-r91": "./src/bin.ts" },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/bin.ts",
+    "bake": "tsx scripts/bake.ts"
+  },
+  "dependencies": {
+    "@sim/core": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0"
+  }
+}

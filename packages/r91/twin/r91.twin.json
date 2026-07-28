@@ -1,0 +1,44 @@
+{
+  "format": "sim/baked-twin-contract",
+  "version": 1,
+  "bakedAt": "2026-07-28T17:02:54.638Z",
+  "source": "stand-in fixture src/twin-contract.ts (SIM-R91-2 product package pending)",
+  "contract": {
+    "instrumentId": "ref-radar-r91",
+    "serves": [
+      {
+        "target": "indication",
+        "via": "get_indication",
+        "freshWithinS": 2
+      },
+      {
+        "target": "state",
+        "via": "watch_state",
+        "freshWithinS": 1
+      },
+      {
+        "target": "environmental_context",
+        "via": "watch_state",
+        "freshWithinS": 1
+      }
+    ],
+    "operations": [
+      {
+        "id": "get_indication",
+        "kind": "query"
+      },
+      {
+        "id": "watch_state",
+        "kind": "watch"
+      },
+      {
+        "id": "run_self_test",
+        "kind": "command"
+      },
+      {
+        "id": "report_faults",
+        "kind": "command"
+      }
+    ]
+  }
+}
