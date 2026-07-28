@@ -2,7 +2,7 @@
 // stage set of the brief: emission+reflection → demodulation+estimation
 // → conditioning). The epistemic wall (law 1) is here: indication()/
 // servedAt()/operationalState()/environment() are the instrument's
-// legal view (the TwinInstrument seam); groundTruth() is reality,
+// legal view (the TwinInstrumentView seam); groundTruth() is reality,
 // exposed to /world only. Every fault and environment effect realizes
 // THROUGH the physics stages — there is no indication override path.
 import type { VirtualClock } from '@sim/core/time'
@@ -98,8 +98,18 @@ export const R91_META = {
   carrierGHz: 24.15,
   speedIntervalKmh: [20, 180] as const,
   installAngleDeg: 12,
+  /** The accuracy declaration: the stationary MPE (R 91-1, 6.4) —
+   *  ±3 km/h for speeds ≤ 100 km/h, ±3 % above. (The moving-mode
+   *  classes A/B of 6.15.1 do not apply to this stationary meter.) */
+  mpeStationary: { atOrBelowKmh: 100, absKmh: 3, percentAbove: 3, source: 'R 91-1, 6.4' },
   productPackage: 'SIM-R91-2 (smart repo primmel-packages) — PENDING; twin rides the stand-in contract fixture',
 } as const
+
+/** The stationary MPE envelope (km/h) at a true speed — R 91-1, 6.4. */
+export function mpeStationaryKmh(speedKmh: number): number {
+  const m = R91_META.mpeStationary
+  return speedKmh <= m.atOrBelowKmh ? m.absKmh : (m.percentAbove / 100) * speedKmh
+}
 
 const DEFAULT_WORLD: RadarWorldState = {
   target: { speedKmh: 50, rangeM: 120, angleDeg: 12, rcsM2: 5 },
@@ -225,7 +235,7 @@ export class RadarSpeedMeter {
     return { valid: true, reason: 'ok', indicatedKmh: cond.indicatedKmh, highResKmh: est.speedKmh, snrDb: est.snrDb, source: est.source }
   }
 
-  // ── the TwinInstrument seam (the instrument's legal view) ───────
+  // ── the TwinInstrumentView seam (the instrument's legal view) ────
 
   indication(): Qty {
     // Inoperative while faulted: the served indication freezes at the

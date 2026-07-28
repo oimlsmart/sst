@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { VirtualClock } from '@sim/core/time'
 import { mulberry32 } from '@sim/core/physics/rng'
-import { RadarSpeedMeter } from './instrument.js'
+import { RadarSpeedMeter, R91_META, mpeStationaryKmh } from './instrument.js'
 import { getR91Scenario } from './scenarios.js'
 
 function boot(scenario = 'good-radar', seed = 7) {
@@ -146,6 +146,24 @@ describe('the radar speed meter (the family stage set, through physics)', () => 
     meter.setAntennaMisalignment(10) // θ = 22° now
     const expected = 100 * Math.cos((22 * Math.PI) / 180) / Math.cos((12 * Math.PI) / 180)
     expect(Math.abs(meter.indication().value - Math.round(expected))).toBeLessThanOrEqual(1)
+  })
+
+  it('the declared accuracy class: the good preset reads inside the stationary MPE (R 91-1, 6.4) across the interval', () => {
+    // the envelope itself: ±3 km/h ≤ 100 km/h, ±3 % above
+    expect(mpeStationaryKmh(50)).toBe(3)
+    expect(mpeStationaryKmh(100)).toBe(3)
+    expect(mpeStationaryKmh(150)).toBeCloseTo(4.5, 9)
+    expect(mpeStationaryKmh(180)).toBeCloseTo(5.4, 9)
+    expect(R91_META.mpeStationary.source).toBe('R 91-1, 6.4')
+    const { clock, meter } = boot()
+    ready(clock)
+    // sweep the declared interval at a clean geometry (SNR ≈ 33 dB —
+    // the good meter's own noise is ~0.3 km/h here, far inside the MPE)
+    for (const v of [20, 50, 100, 150, 180]) {
+      meter.setTarget({ speedKmh: v, rangeM: 150 })
+      const ind = meter.indication().value
+      expect(Math.abs(ind - v)).toBeLessThanOrEqual(mpeStationaryKmh(v))
+    }
   })
 
   it('driveProfile scripts the vehicle speed over virtual time', () => {

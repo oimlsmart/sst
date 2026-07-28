@@ -17,7 +17,7 @@ export const R91_SCENARIOS: Record<string, RadarScenario> = {
   'good-radar': {
     ...R91_GOOD,
     name: 'good-radar',
-    description: 'The reference radar: stationary Doppler, 20–180 km/h (R 91-1, 6.1), all coefficients inside R 91 limits.',
+    description: 'The reference radar: stationary Doppler, 20–180 km/h (R 91-1, 6.1), the 6.4 stationary MPE (±3 km/h ≤ 100, ±3 % above) — all coefficients inside R 91 limits.',
   },
   'angle-misaligned': {
     id: 'r91-ref-misaligned',
