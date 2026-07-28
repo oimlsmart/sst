@@ -4,12 +4,12 @@ import { R91_CONTRACT } from './twin-contract.js'
 
 // THE TWIN-SCHEMA HANDSHAKE with SIM-R91-2's product package (law 2):
 // the /twin schema must GENERATE from the product reference package's
-// serve declarations. The package has not landed (the smart repo's
-// primmel-packages gains it on branch feat/radar-product-package) —
-// this leg is SKIP-GUARDED until it exists. When it lands: point
-// SIM_R91_PRODUCT_PACKAGE at it (or rename the default), and the parse
-// must produce exactly the stand-in fixture — any drift fails here.
-const PKG = process.env.SIM_R91_PRODUCT_PACKAGE ?? '/Users/mulgogi/src/oimlsmart/smart/primmel-packages/ref-radar-r91'
+// serve declarations. The package has LANDED as the smart repo's
+// primmel-packages/acme-rs180 — this leg parses it in place and
+// asserts the parse produces exactly the fixture: any drift fails
+// here. The guard only skips when the (private) smart checkout is
+// absent (CI); override the path with SIM_R91_PRODUCT_PACKAGE.
+const PKG = process.env.SIM_R91_PRODUCT_PACKAGE ?? '/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-rs180'
 const PRESENT = existsSync(PKG)
 
 describe('the SIM-R91-2 handshake (the product package parses to the contract)', () => {
@@ -21,7 +21,7 @@ describe('the SIM-R91-2 handshake (the product package parses to the contract)',
 
   it('the guard itself is honest: the skip reason is the missing package', () => {
     if (!PRESENT) {
-      // documents the guard: the package directory does not exist yet
+      // documents the guard: the package directory is absent in this checkout
       expect(PRESENT).toBe(false)
     }
   })

@@ -60,7 +60,7 @@ describe('the radar /twin (generated from the serve contract — law 2)', () => 
     const queries = body.data.__schema.queryType.fields.map(f => f.name)
     const mutations = body.data.__schema.mutationType.fields.map(f => f.name)
     expect(queries.sort()).toEqual(['environmentalContext', 'indication', 'state'])
-    expect(mutations.sort()).toEqual(['reportFaults', 'runSelfTest'])
+    expect(mutations.sort()).toEqual(['runSelfTest'])
     // no target, no groundTruth, no setTarget — the world is unreachable
     for (const f of [...queries, ...mutations]) expect(f).not.toMatch(/target|ground|world|rain/i)
   })
@@ -73,8 +73,8 @@ describe('the radar /twin (generated from the serve contract — law 2)', () => 
     const st = await gql(yoga, `mutation { runSelfTest { state } }`) as { runSelfTest: { state: string } }
     expect(st.runSelfTest.state).toBe('ready')
     meter.injectFault()
-    const rf = await gql(yoga, `mutation { reportFaults { state } }`) as { reportFaults: { state: string } }
-    expect(rf.reportFaults.state).toBe('fault') // the legal fault report
+    // the package declares no fault-report operation: the fault report
+    // IS the state answer (R 91-1, 6.18.4), served by state / watch_state
     const s1 = await gql(yoga, `{ state }`) as { state: string }
     expect(s1.state).toBe('fault')
   })
@@ -128,9 +128,9 @@ describe('the radar /twin (generated from the serve contract — law 2)', () => 
     expect(states).toEqual(['warming', 'ready'])
   }, 10000)
 
-  it('the baked artifact is the stand-in fixture, byte-fresh', async () => {
+  it('the baked artifact rides the real product package, byte-fresh', async () => {
     const raw = JSON.parse(await readFile(join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'r91.twin.json'), 'utf-8')) as BakedContract
-    expect(raw.source).toMatch(/stand-in fixture/)
+    expect(raw.source).toMatch(/acme-rs180/)
     expect(raw.contract).toEqual(R91_CONTRACT)
     expect(await loadBakedContract(join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'r91.twin.json'))).toEqual(R91_CONTRACT)
   })

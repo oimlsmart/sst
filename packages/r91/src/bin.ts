@@ -34,9 +34,9 @@ const host: R91WorldContext = {
   swap(def) { this.instrument = new RadarSpeedMeter(def, clock, mulberry32(seed)) },
 }
 
-// the serve contract: --package re-parses (the development posture, for
-// when SIM-R91-2's product package exists); otherwise the bundled baked
-// artifact (standalone — zero SMART).
+// the serve contract: --package re-parses the landed product package
+// (the development posture); otherwise the bundled baked artifact
+// (standalone — zero SMART).
 const contract = values.package
   ? await (await import('@sim/core/twin-contract-prl')).parseTwinContract(values.package)
   : await loadBakedContract(join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'r91.twin.json'))
@@ -46,8 +46,8 @@ const io: TwinIo = {
   clock,
   operations: {
     run_self_test: () => host.instrument.selfTest(),
-    // report_faults: the fault report IS the state answer (no world
-    // side effect — the generator's default).
+    // no fault-report operation: a detected fault IS the state answer
+    // (R 91-1, 6.18.4), already served by state / watch_state.
   },
 }
 const twinSchema = generateTwinSchema(contract, io)

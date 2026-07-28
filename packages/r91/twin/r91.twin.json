@@ -1,15 +1,15 @@
 {
   "format": "sim/baked-twin-contract",
   "version": 1,
-  "bakedAt": "2026-07-28T17:02:54.638Z",
-  "source": "stand-in fixture src/twin-contract.ts (SIM-R91-2 product package pending)",
+  "bakedAt": "2026-07-28T18:55:32.765Z",
+  "source": "/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-rs180",
   "contract": {
-    "instrumentId": "ref-radar-r91",
+    "instrumentId": "acme-rs180",
     "serves": [
       {
         "target": "indication",
         "via": "get_indication",
-        "freshWithinS": 2
+        "freshWithinS": 1
       },
       {
         "target": "state",
@@ -33,10 +33,6 @@
       },
       {
         "id": "run_self_test",
-        "kind": "command"
-      },
-      {
-        "id": "report_faults",
         "kind": "command"
       }
     ]

@@ -34,7 +34,7 @@ async function gql(url: string, channel: string, query: string): Promise<unknown
 }
 
 describe('sim-r91 (standalone boot, spec §9)', () => {
-  it('boots zero-SMART (baked stand-in contract) and serves both channels + landing', async () => {
+  it('boots zero-SMART (baked contract) and serves both channels + landing', async () => {
     const { url, child } = await boot()
     try {
       const landing = await fetch(`${url}/`)
