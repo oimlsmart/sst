@@ -8,8 +8,8 @@ const TSX = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'nod
 
 interface Boot { url: string; child: ChildProcess; output: string }
 
-async function boot(args: string[] = []): Promise<Boot> {
-  const child = spawn(TSX, [BIN, '--port', '0', ...args], { stdio: ['pipe', 'pipe', 'pipe'] })
+async function boot(args: string[] = [], env: Record<string, string> = {}): Promise<Boot> {
+  const child = spawn(TSX, [BIN, '--port', '0', ...args], { stdio: ['pipe', 'pipe', 'pipe'], env: { ...process.env, ...env } })
   let output = ''
   const url = await new Promise<string>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(`boot timeout; output so far:\n${output}`)), 25000)
@@ -66,4 +66,28 @@ describe('sim-lc500 (standalone boot, spec §9)', () => {
     const creep = await measure('creep-cell')
     expect(creep).toBeGreaterThan(Math.abs(good) * 5)
   }, 80000)
+
+  it('SIM_WORLD_TOKEN guards /world mutations (env → server); queries and /twin stay open', async () => {
+    const { url, child, output } = await boot([], { SIM_WORLD_TOKEN: 's3cret-world-token' })
+    try {
+      expect(output).toMatch(/\/world mutations guarded/)
+      const mutate = (token?: string) => fetch(`${url}/world`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', ...(token !== undefined ? { authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ query: `mutation { placeLoad(massKg: 40) { groundTruth { appliedLoadKg } } }` }),
+      })
+      expect((await mutate()).status).toBe(401)
+      const ok = await mutate('s3cret-world-token')
+      expect(ok.status).toBe(200)
+      const body = await ok.json() as { data: { placeLoad: { groundTruth: { appliedLoadKg: number } } } }
+      expect(body.data.placeLoad.groundTruth.appliedLoadKg).toBe(40)
+      // queries + /twin: no token needed
+      const gt = await gql(url, '/world', `{ groundTruth { appliedLoadKg } }`) as { groundTruth: { appliedLoadKg: number } }
+      expect(gt.groundTruth.appliedLoadKg).toBe(40)
+      const ind = await gql(url, '/twin', `{ indication { unit } }`) as { indication: { unit: string } }
+      expect(ind.indication.unit).toBe('kg')
+    } finally {
+      child.kill('SIGTERM')
+    }
+  }, 40000)
 })

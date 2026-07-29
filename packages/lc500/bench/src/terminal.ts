@@ -3,7 +3,7 @@
 // /world — the console teaches the epistemic split).
 import { parseCommand, HELP_TEXT } from '@sim/core/console/grammar'
 import { execute, promptOf, type ConsoleIo, type ConsoleState } from '@sim/core/console/client'
-import { gql } from './api.js'
+import { gql, isUnauthorized, setWorldToken, clearWorldToken } from './api.js'
 
 export function mountTerminal(root: HTMLElement, baseUrl: string): void {
   const log = root.querySelector<HTMLDivElement>('#terminal-log')!
@@ -19,7 +19,21 @@ export function mountTerminal(root: HTMLElement, baseUrl: string): void {
       log.appendChild(div)
       log.scrollTop = log.scrollHeight
     },
-    query: (channel, query) => gql(baseUrl, channel, query),
+    // when the sim guards /world, the first rejected mutation prompts
+    // for the token once (sessionStorage); a wrong token is forgotten
+    // so the next attempt prompts again. Unguarded sims never prompt.
+    query: async (channel, query) => {
+      let result = await gql(baseUrl, channel, query)
+      if (channel === '/world' && isUnauthorized(result)) {
+        const token = window.prompt('this sim guards /world mutations — enter the world token (SIM_WORLD_TOKEN)')
+        if (token) {
+          setWorldToken(token)
+          result = await gql(baseUrl, channel, query)
+          if (isUnauthorized(result)) clearWorldToken()
+        }
+      }
+      return result
+    },
   }
 
   io.write('sim-instruments console — `help` for commands, `enable` for privileged mode\n')

@@ -11,7 +11,7 @@ import { LC500_CONTRACT } from '@sim/core/twin-contract'
 import { VirtualClock } from '@sim/core/time'
 import { SimulatedInstrument } from '@sim/core/instrument'
 import { getScenario } from '@sim/core/scenario'
-import { fetchGroundTruth, fetchIndication, gql } from './api.js'
+import { fetchGroundTruth, fetchIndication, gql, isUnauthorized, setWorldToken, clearWorldToken, worldToken } from './api.js'
 
 const run = promisify(execFile)
 const BENCH_DIR = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -65,5 +65,39 @@ describe('@sim/bench (spec §9/§10)', () => {
     close = server.close
     const d = await gql(server.url, '/world', `mutation { placeLoad(massKg: 40) { groundTruth { appliedLoadKg } } }`) as { placeLoad: { groundTruth: { appliedLoadKg: number } } }
     expect(d.placeLoad.groundTruth.appliedLoadKg).toBe(40)
+  }, 30000)
+
+  it('guarded /world: gql without the token is rejected; the stored token lands the mutation; queries stay open', async () => {
+    // a tab-scoped storage shim — the SPA runs this in sessionStorage
+    const mem = new Map<string, string>()
+    ;(globalThis as { sessionStorage?: unknown }).sessionStorage = {
+      getItem: (k: string) => mem.get(k) ?? null,
+      setItem: (k: string, v: string) => void mem.set(k, v),
+      removeItem: (k: string) => void mem.delete(k),
+    }
+    try {
+      const clock = new VirtualClock()
+      const host: WorldContext = {
+        instrument: new SimulatedInstrument(getScenario('good-cell'), clock, 1),
+        clock,
+        swap(def) { this.instrument = new SimulatedInstrument(def, clock, 1) },
+      }
+      const server = await createSimServer({ worldSchema: buildWorldSchema(host), port: 0, worldToken: 's3cret-world-token' })
+      close = server.close
+      const rejected = await gql(server.url, '/world', `mutation { placeLoad(massKg: 40) { clock } }`)
+      expect(isUnauthorized(rejected)).toBe(true)
+      setWorldToken('s3cret-world-token')
+      expect(worldToken()).toBe('s3cret-world-token')
+      const d = await gql(server.url, '/world', `mutation { placeLoad(massKg: 40) { groundTruth { appliedLoadKg } } }`) as { placeLoad: { groundTruth: { appliedLoadKg: number } } }
+      expect(isUnauthorized(d)).toBe(false)
+      expect(d.placeLoad.groundTruth.appliedLoadKg).toBe(40)
+      // queries never needed the token
+      clearWorldToken()
+      expect(worldToken()).toBeUndefined()
+      const gt = await fetchGroundTruth(server.url)
+      expect(gt.appliedLoadKg).toBe(40)
+    } finally {
+      delete (globalThis as { sessionStorage?: unknown }).sessionStorage
+    }
   }, 30000)
 })
