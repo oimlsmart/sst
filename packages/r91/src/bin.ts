@@ -63,6 +63,7 @@ const server = await createSimServer({
   twinSchema,
   port: Number(values.port ?? 5291),
   title: `${R91_META.designation} (simulated)`,
+  worldToken: process.env.SIM_WORLD_TOKEN,
 })
 
 console.log(`

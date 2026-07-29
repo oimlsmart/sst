@@ -57,6 +57,7 @@ const server = await createSimServer({
   port: Number(values.port ?? 5290),
   benchDir: existsSync(join(benchDir, 'index.html')) ? benchDir : undefined,
   title: `${LC500_META.designation} (simulated)`,
+  worldToken: process.env.SIM_WORLD_TOKEN,
 })
 
 console.log(`
@@ -74,5 +75,5 @@ sim-lc500 — a simulated ${LC500_META.designation}
 `)
 
 if (values.console) {
-  runConsole(httpConsoleIo(server.url, t => process.stdout.write(t)), process.stdin, process.stdout)
+  runConsole(httpConsoleIo(server.url, t => process.stdout.write(t), process.env.SIM_WORLD_TOKEN), process.stdin, process.stdout)
 }
