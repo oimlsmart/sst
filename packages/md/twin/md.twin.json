@@ -1,0 +1,68 @@
+{
+  "format": "sim/baked-twin-contract",
+  "version": 1,
+  "bakedAt": "2026-07-29T03:35:16.206Z",
+  "source": "/Users/mulgogi/src/oimlsmart/smart-wt-acme-md/primmel-packages/acme-md3xx",
+  "contract": {
+    "instrumentId": "acme-md3xx",
+    "serves": [
+      {
+        "target": "indication_length",
+        "via": "get_dimensions",
+        "freshWithinS": 2
+      },
+      {
+        "target": "indication_width",
+        "via": "get_dimensions",
+        "freshWithinS": 2
+      },
+      {
+        "target": "indication_height",
+        "via": "get_dimensions",
+        "freshWithinS": 2
+      },
+      {
+        "target": "dim_volume",
+        "via": "get_volume",
+        "freshWithinS": 2
+      },
+      {
+        "target": "dim_weight",
+        "via": "get_dim_weight",
+        "freshWithinS": 2
+      },
+      {
+        "target": "state",
+        "via": "watch_state",
+        "freshWithinS": 1
+      },
+      {
+        "target": "environmental_context",
+        "via": "watch_state",
+        "freshWithinS": 1
+      }
+    ],
+    "operations": [
+      {
+        "id": "get_dimensions",
+        "kind": "query"
+      },
+      {
+        "id": "get_volume",
+        "kind": "query"
+      },
+      {
+        "id": "get_dim_weight",
+        "kind": "query"
+      },
+      {
+        "id": "watch_state",
+        "kind": "watch"
+      },
+      {
+        "id": "run_self_test",
+        "kind": "command"
+      }
+    ]
+  }
+}
