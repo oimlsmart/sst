@@ -1,7 +1,7 @@
 {
   "format": "sim/baked-twin-contract",
   "version": 1,
-  "bakedAt": "2026-07-26T07:48:41.780Z",
+  "bakedAt": "2026-07-29T01:49:33.313Z",
   "source": "/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-lc500",
   "contract": {
     "instrumentId": "acme-lc500",
@@ -13,11 +13,6 @@
       },
       {
         "target": "state",
-        "via": "watch_state",
-        "freshWithinS": 1
-      },
-      {
-        "target": "environmental_context",
         "via": "watch_state",
         "freshWithinS": 1
       }
