@@ -1,0 +1,21 @@
+{
+  "name": "@sim/md",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The simulated R 129 optical multi-dimensional measuring-instrument family (sim-instruments instrument #4)",
+  "bin": { "sim-md": "./src/bin.ts" },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/bin.ts",
+    "bake": "tsx scripts/bake.ts"
+  },
+  "dependencies": {
+    "@sim/core": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0"
+  }
+}
