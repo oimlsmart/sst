@@ -12,6 +12,9 @@ import { VirtualClock } from '@sim/core/time'
 import { SimulatedInstrument } from '@sim/core/instrument'
 import { getScenario } from '@sim/core/scenario'
 import { fetchGroundTruth, fetchIndication, gql } from './api.js'
+import { dialSvg, needleAngleDeg } from './dial.js'
+import { LC500_PAIRED_DIAL } from '@sim/core/instrument'
+import { pointerPositionKg } from '@sim/core/physics/stages/dial'
 
 const run = promisify(execFile)
 const BENCH_DIR = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -47,12 +50,30 @@ describe('@sim/bench (spec §9/§10)', () => {
     expect(res.status).toBe(200)
     const html = await res.text()
     expect(html).toContain('terminal-input')
+    expect(html).toContain('pane-dial') // the paired passive indicator rides the bench
     // the channels still work beside the bench
     const gt = await fetchGroundTruth(server.url)
     expect(gt.appliedLoadKg).toBe(0)
     const ind = await fetchIndication(server.url)
     expect(ind.indication.unit).toBe('kg')
   }, 30000)
+
+  it('the dial pane renders its scale and the needle tracks a known load', () => {
+    // The scale: one tick per graduation (101), numbered majors every
+    // ten (0…500 step 50), the declared graduation + uncertainty caption.
+    const svg = dialSvg(LC500_PAIRED_DIAL)
+    expect(svg.match(/class="tick minor/g)).toHaveLength(90)
+    expect(svg.match(/class="tick major/g)).toHaveLength(11)
+    expect(svg.match(/class="dial-num"/g)).toHaveLength(11)
+    expect(svg).toContain('>500</text>')
+    expect(svg).toContain('graduation 5 kg — read to ±2.5 kg')
+    // The needle: a known 40 kg load rests on the 40 kg graduation at
+    // its sweep angle; half scale points straight up (270° of sweep).
+    expect(pointerPositionKg(LC500_PAIRED_DIAL, 40)).toBeCloseTo(40, 12)
+    expect(needleAngleDeg(LC500_PAIRED_DIAL, 40)).toBeCloseTo(135 + (40 / 500) * 270, 9)
+    expect(needleAngleDeg(LC500_PAIRED_DIAL, 250)).toBeCloseTo(270, 9)
+    expect(needleAngleDeg(LC500_PAIRED_DIAL, 500)).toBeCloseTo(405, 9)
+  })
 
   it('api.gql posts to a channel and unwraps data', async () => {
     const clock = new VirtualClock()

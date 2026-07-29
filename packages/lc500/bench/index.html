@@ -23,6 +23,9 @@
     #terminal-prompt { padding: 0.5rem 0 0.5rem 0.8rem; font-family: ui-monospace, monospace; }
     #terminal-input { flex: 1; border: 0; padding: 0.5rem 0.8rem 0.5rem 0.4rem; font: inherit; font-family: ui-monospace, monospace; outline: none; }
     #how { padding: 0.6rem 0.8rem; font-size: 0.85rem; line-height: 1.55; overflow-y: auto; }
+    #dial-scale { display: flex; justify-content: center; padding: 0.6rem 0.8rem 0; }
+    #dial-scale svg { width: 15rem; max-width: 100%; }
+    #dial-note { margin: 0; padding: 0 0.8rem 0.6rem; font-size: 0.75rem; color: #555; text-align: center; }
     #how table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
     #how td, #how th { text-align: left; padding: 0.15rem 0.4rem; border-bottom: 1px solid #efeeea; }
     #how .law { color: #555; font-style: italic; }
@@ -51,6 +54,11 @@
       <h2>Terminal</h2>
       <div id="terminal-log"></div>
       <form id="terminal-form"><span id="terminal-prompt">sim&gt;</span><input id="terminal-input" autocomplete="off" autofocus /></form>
+    </section>
+    <section class="pane" id="pane-dial">
+      <h2>The paired dial — a passive indicator</h2>
+      <div id="dial-scale"></div>
+      <p id="dial-note">No twin interface — you read the needle; the app never serves it.</p>
     </section>
     <section class="pane" id="pane-how">
       <h2>How it works — the live signal chain</h2>
