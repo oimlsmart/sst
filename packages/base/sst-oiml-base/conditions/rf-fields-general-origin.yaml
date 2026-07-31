@@ -1,0 +1,17 @@
+id: rf-fields-general-origin
+title: RF EM fields (general origin)
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-3, IEC 61000-4-1]
+d11_table: 33
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Radiated RF field exposure from any general source. Disturbance:
+  indication glitches. Level 3 applies to all environment classes E1/E2/E3.
+severity_levels:
+  - { level: 3, field_strength_v_m: 10, frequency_range_mhz: [80, 6000] }
+modulation: "80% AM, 1 kHz"
+notes: >
+  General-origin fields are uniform across the E1/E2/E3 environment
+  classes per D 11 §7 (Table 1).

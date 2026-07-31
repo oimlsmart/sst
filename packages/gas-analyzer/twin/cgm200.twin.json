@@ -1,0 +1,57 @@
+{
+  "format": "sim/baked-twin-contract",
+  "version": 1,
+  "bakedAt": "2026-07-31T04:44:58.482Z",
+  "source": "packages/core/src/twin-contract.ts (fixture)",
+  "contract": {
+    "instrumentId": "acme-cgm-200",
+    "serves": [
+      {
+        "target": "indication_co",
+        "via": "get_indication_co",
+        "freshWithinS": 5
+      },
+      {
+        "target": "indication_nox",
+        "via": "get_indication_nox",
+        "freshWithinS": 5
+      },
+      {
+        "target": "state",
+        "via": "watch_op_state",
+        "freshWithinS": 1
+      },
+      {
+        "target": "environmental_context",
+        "via": "watch_op_state",
+        "freshWithinS": 1
+      }
+    ],
+    "operations": [
+      {
+        "id": "get_indication_co",
+        "kind": "query"
+      },
+      {
+        "id": "get_indication_nox",
+        "kind": "query"
+      },
+      {
+        "id": "watch_op_state",
+        "kind": "watch"
+      },
+      {
+        "id": "zero_calibration",
+        "kind": "command"
+      },
+      {
+        "id": "span_calibration",
+        "kind": "command"
+      },
+      {
+        "id": "run_self_check",
+        "kind": "command"
+      }
+    ]
+  }
+}

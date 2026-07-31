@@ -1,0 +1,20 @@
+id: cold-aa
+title: Cold steady (AA) — ramp + hold
+condition: cold
+iecs: [IEC 60068-2-1]
+total_duration_h: 4
+loop: false
+keyframes:
+  - { at_h: 0, temperature_degC: 25 }
+  - { at_h: 1, temperature_degC: -10 }      # ramp at ≤ 1 °C/min
+  - { at_h: 3, temperature_degC: -10 }      # 2 h hold
+  - { at_h: 4, temperature_degC: 25 }       # return
+constraints:
+  max_ramp_degC_per_min: 1
+level_target_degC:
+  level_1: 5
+  level_2: -10
+  level_3: -20
+  level_4: -25
+  level_5: -30
+  level_6: -40

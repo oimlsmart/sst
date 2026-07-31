@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { VirtualClock } from '@sim/core/time'
-import { mulberry32 } from '@sim/core/physics/rng'
+import { VirtualClock } from '@primmel/sst-runtime/time'
+import { mulberry32 } from '@primmel/sst-runtime/physics/rng'
 import {
   MultiDimensionalInstrument, MD350_GOOD, mpePerAxisCm,
   type ConveyorObjectSpec,

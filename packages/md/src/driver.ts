@@ -4,7 +4,7 @@
 // which case the feed DEFERS to a later clock advance (a paced
 // conveyor gate, never an override and never a lost parcel).
 // Deterministic (driven only by VirtualClock advance notifications).
-import type { VirtualClock } from '@sim/core/time'
+import type { VirtualClock } from '@primmel/sst-runtime/time'
 import { validateObjectSpec, type ConveyorObjectSpec } from './physics/geometry.js'
 
 export interface FeedKeyframe { atS: number; object: ConveyorObjectSpec }

@@ -1,0 +1,65 @@
+# R 60 kind-level damage scenarios — abstract patterns an instance can
+# apply to any sample to model a specific failure mode. The instance's
+# samples/<name>.yaml references one of these (or 'fresh') to override
+# coefficients.
+
+fresh:
+  description: All coefficients inside R 60 limits — passes the test program.
+  overrides: {}
+
+creep-fail:
+  description: Creep coefficient/τ beyond MPE — fails the 30-minute creep test.
+  overrides:
+    creepCoefficient: 0.004
+    creepTauS: 120
+
+temp-fail:
+  description: Excessive temperature coefficients on zero and span.
+  overrides:
+    tcZeroPerDegC: 0.001
+    tcSpanPerDegC: 0.002
+    compensationResidualPerDegC: 0.005
+    thermalHysteresisPerDegC: 0.0002
+    thermalHysteresisTauS: 1800
+
+drift-fail:
+  description: Excessive span drift — fails span-stability over the endurance program.
+  overrides:
+    spanDriftPerDay: 0.0005
+
+lying-twin:
+  description: Honest physics; the served indication carries a firmware-mapping offset.
+  overrides: {}
+  fidelity:
+    servedOffsetKg: 0.25
+    servedLagS: 0
+
+stale-twin:
+  description: Honest physics and values; servedAt lags beyond freshness.
+  overrides: {}
+  fidelity:
+    servedOffsetKg: 0
+    servedLagS: 30
+
+aged:
+  description: 5 years of service — drift up, hysteresis memory up.
+  overrides:
+    spanDriftPerDay: 0.00004
+    hysteresisClass: 0.55
+    creepCoefficient: 0.0005
+    noiseSigmaKg: 0.08                # multiplier on the instance's base noise
+
+dropped:
+  description: Dropped in handling — offset shift + non-linearity; fails linearity.
+  overrides:
+    linearizationErrorKg: 0.3
+    hysteresisClass: 0.6
+  fidelity:
+    servedOffsetKg: 0.4
+
+corroded:
+  description: Marine-environment corrosion — drift and noise up; fails endurance.
+  overrides:
+    spanDriftPerDay: 0.0001
+    creepCoefficient: 0.0008
+    noiseSigmaKg: 1.5                 # multiplier on the instance's base noise

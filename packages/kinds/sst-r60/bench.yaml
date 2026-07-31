@@ -1,0 +1,76 @@
+# Bench UI metadata for R 60 load cells. The SST shell's bench reads this
+# to lay out HUD cells, graph axes, MPE band source, and scene behavior
+# without hard-coding load-cell specifics.
+
+hud_cells:
+  - key: appliedLoadKg
+    label: load
+    channel: world
+    format: "{:.2f} kg"
+    source: groundTruth.appliedLoadKg
+  - key: clock
+    label: clock
+    channel: world
+    format: "t = {:.0f} s"
+    source: groundTruth.clockS
+  - key: temperatureDegC
+    label: temp
+    channel: world
+    format: "{:.1f} °C"
+    source: groundTruth.environment.temperatureDegC
+  - key: humidityPercentRh
+    label: rh
+    channel: world
+    format: "{:.0f} %"
+    source: groundTruth.environment.humidityPercentRh
+  - key: pressureKPa
+    label: press
+    channel: world
+    format: "{:.1f} kPa"
+    source: groundTruth.environment.pressureKPa
+
+indication_card:
+  channel: twin
+  source: indication.value
+  unit_source: indication.unit
+  title: "/twin · indication"
+  subtitle: "the instrument's legal answer"
+
+graph:
+  x_axis: { source: groundTruth.clockS, label: "virtual time →", unit: s }
+  y_axis: { auto_scale: true, min: 0, label: mass, unit: kg }
+  lines:
+    actual:    { source: groundTruth.appliedLoadKg, channel: world, color: world }
+    indicated: { source: indication.value,          channel: twin,  color: twin }
+  mpe_band:
+    source: r60/mpe-from-load
+    color: twin_soft
+    description: Per-class MPE envelope (R 60-1 §3.5.2)
+
+console_grammar:
+  # The kind's contribution to the console grammar (extends the base
+  # grammar with kind-specific commands). The instance's behavior.js
+  # handlers back these.
+  commands:
+    place:   { template: "place load <kg>",  handler: applyMass }
+    remove:  { template: "remove load",      handler: removeMass }
+    show:    { targets: [indication, ground-truth, state, environment, clock, scenarios, fidelity] }
+
+dial:
+  # The paired analogue-passive indicator (spec §14) — optional per
+  # instance; the LC-500 ships one. Future instances may omit.
+  present: true
+  spec_source: instance.coefficients.paired_dial
+
+scene_3d:
+  # The bench's WebGL2 scene reads the instance's glTF and applies these
+  # deformations based on ground truth.
+  model: instance.model          # the instance's model.glb
+  deformations:
+    - node_substring: "cell"
+      squash_by: "1 - groundTruth.strainMm * 400"
+      description: "the cell compresses with strain, exaggerated ×400"
+    - node_substring: "weight"
+      visible_when: "groundTruth.appliedLoadKg > 0"
+      scale_by: "0.5 + groundTruth.appliedLoadKg / e_max_kg"
+      description: "the calibration mass appears on the pan when loaded"

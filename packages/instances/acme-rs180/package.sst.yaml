@@ -1,0 +1,38 @@
+sst_version: "1.0"
+tier: primmel-instance
+id: acme-rs180
+title: "ACME RS-180 stationary K-band radar speed meter"
+kind: primmel-sst-r91
+version: "2024.1"
+maps_to: acme-rs180
+manufacturer:
+  id: mfr-acme
+  name: ACME Instruments
+  country: US
+classification:
+  carrier_band: K
+  instrument_category: stationary
+  antenna_type: horn
+  install_class: class-1
+  speed_range: standard
+design_parameters:
+  carrier_GHz:        { value: 24.125, unit: GHz }
+  speed_interval_kmh: { value: 1,      unit: km_per_h }
+  min_speed_kmh:      { value: 20,     unit: km_per_h }
+  max_speed_kmh:      { value: 180,    unit: km_per_h }
+  beam_width_deg:     { value: 5,      unit: deg }
+  side_lobe_level_db: { value: -20,    unit: dB }
+  antenna_gain_dB:    { value: 25,     unit: dB }
+  emitted_power_mW:   { value: 10,     unit: mW }
+  install_angle_deg:  { value: 20,     unit: deg }
+model: model.glb
+coefficients: coefficients.yaml
+behavior: behavior.js
+samples:
+  - samples/fresh.yaml
+  - samples/oscillator-drift.yaml
+  - samples/interference-capture.yaml
+  - samples/lying-twin.yaml
+provenance:
+  certificate: "R91/2023-DE-18-044"
+  first_issued: "2023-09-12"

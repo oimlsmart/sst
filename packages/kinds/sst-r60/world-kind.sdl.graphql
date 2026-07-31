@@ -1,0 +1,32 @@
+# R 60 load-cell /world Mutation surface — kind-level SDL fragments.
+# The instance's behavior.js provides the handlers; the runtime binds
+# SDL field → handler via world-kind.yaml.
+
+extend type Mutation {
+  """Apply a load (in kg) to the cell. The mass becomes the ground-truth
+  applied_load_kg; the indication responds through the physics chain."""
+  placeLoad(massKg: Float!): WorldState!
+
+  """Remove the applied load (return to dead load)."""
+  removeLoad: WorldState!
+
+  """Inject a twin-fidelity offset/lag (a firmware-mapping fault; spec §8.1).
+  The ground truth is unaffected — only the SERVED value drifts."""
+  setFidelity(servedOffsetKg: Float, servedLagS: Float): WorldState!
+
+  """Restore the honest twin (clear any injected fidelity knobs)."""
+  fidelityReset: WorldState!
+
+  """Configure the post-cycle thermal-hysteresis residual (the memory of
+  a temperature cycle that didn't quite return)."""
+  setThermalHysteresis(perDegC: Float!, tauS: Float): WorldState!
+}
+
+# The GroundTruth type extension this kind contributes (added to the
+# base's GroundTruth via the runtime's schema composition).
+extend type GroundTruth {
+  appliedLoadKg: Float!
+  strainMm: Float!
+  spanDriftFraction: Float!
+  thermalOffsetMVperV: Float!
+}

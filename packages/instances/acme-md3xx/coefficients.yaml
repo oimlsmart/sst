@@ -1,0 +1,33 @@
+# ACME MD-300 dimensioner physics coefficients.
+
+# Stage 1 — optical scanning
+optics:
+  camera_baseline_mm: 500
+  light_section_angle_deg: 45
+  optics_sigma_cm: 0.5
+  ambient_light_susceptibility: 0.1
+  emi_susceptibility: 0.05
+
+# Stage 2 — geometry
+geometry:
+  scanner_tilt_effect_per_deg: 0.05         # cm bias per deg of tilt
+  encoder_slip_effect: 1.0                  # multiplier
+  belt_speed_calibration: 1.0               # 1.0 = perfect
+
+# Stage 3 — computation
+computation:
+  filter_tau_s: 0.2
+  linearization_error_cm: 0.2
+  thermal_residual_effect: 0.5              # post-cycle residual effect
+  thermal_span_effect: 0.5
+
+# Stage 4 — conditioning (digital)
+conditioning:
+  stack: digital
+  scale_interval_cm: 1.0
+  noise_sigma_cm: 0.3
+
+# Default fidelity
+fidelity:
+  served_offset_kg: 0                       # field reused: cm offset
+  served_lag_s: 0

@@ -1,0 +1,56 @@
+# ACME LC-500 physics coefficients — sim-owned, not in the R 60 SSOT.
+# These are the values the instance's behavior.js feeds to the
+# r60/mechanical-*, r60/transduction-strain-gauge, and r60/conditioning-digital
+# stages (see the kind's physics-chain.yaml).
+
+# Stage 1 — mechanical (column compression profile)
+mechanical:
+  compliance_kg_per_mm: 2.0e-6           # datasheet rated deflection
+  hysteresis_class: 0.45                  # R 60 hysteresis class
+  creep_coefficient: 3.0e-4               # good-cell baseline
+  creep_tau_s: 300
+  resonant_hz: 250
+  off_center_sensitivity: 0.001
+
+# Stage 2 — transduction (Wheatstone bridge)
+transduction:
+  sensitivity_mVperV: 2.0
+  gauge_factor: 2.0
+  excitation_V: 10
+  tc_zero_per_degC: 0.0001
+  tc_span_per_degC: 0.0002
+  barometric_per_kPa: 0.00005
+  reference_temp_degC: 20
+  reference_pressure_kPa: 101.325
+
+# Stage 3 — conditioning (digital stack)
+conditioning:
+  stack: digital                          # analog-passive | analog-active | digital | digital-processing
+  scale_interval_kg: 0.05
+  capacity_kg: 500
+  filter_tau_s: 1.0
+  linearization_error_kg: 0.01
+  compensation_residual_per_degC: 0.0005
+  noise_sigma_kg: 0.005
+
+# Warm-up + drift
+temporal:
+  warm_up_tau_s: 60
+  span_drift_per_day: 0.000005
+
+# Thermal hysteresis (post-cycle memory)
+thermal_hysteresis:
+  per_degC: 0.00002
+  tau_s: 3600
+
+# The paired analogue-passive indicator (spec §14) — a 500 kg dial at
+# 5 kg graduations alongside the digital stack.
+paired_dial:
+  capacity_kg: 500
+  graduation_kg: 5
+  unit: kg
+
+# Default fidelity — the honest twin. Damage scenarios override.
+fidelity:
+  served_offset_kg: 0
+  served_lag_s: 0

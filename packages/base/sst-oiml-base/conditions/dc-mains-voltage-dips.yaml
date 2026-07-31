@@ -1,0 +1,14 @@
+id: dc-mains-voltage-dips
+title: DC mains voltage dips and interruptions
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-29, IEC 61000-4-1]
+d11_table: 22
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Voltage reductions on the DC mains (40%/70% reductions; full
+  interruptions). Disturbance: dips deeper than ride-through latch a
+  fault; shallow dips cause indication glitches.
+severity_levels:
+  - { level: 1, residual_voltage_pct: [40, 70, 0], duration_ms: [10, 100, 1000] }

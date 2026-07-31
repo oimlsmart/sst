@@ -1,0 +1,17 @@
+id: damp-heat-steady
+title: Damp heat, steady-state (Cab)
+kind: steady
+classification: influence
+iec_standard: [IEC 60068-2-78, IEC 60068-3-4]
+d11_table: 8
+d11_section: "8.5"
+applicability: [electronic]
+description: >
+  Steady high-humidity exposure at constant temperature (non-condensing).
+  Influence quantity: humidity coefficients shift the bridge output and
+  the electronics. Long exposure can disturb (corrosion, leakage).
+severity_levels:
+  - { level: 1, temperature_degC: 30, humidity_pct_rh: 85, cycles: 2, preferred: true }
+  - { level: 2, temperature_degC: 40, humidity_pct_rh: 93, cycles: 4 }
+constraints:
+  non_condensing: true

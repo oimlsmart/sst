@@ -1,0 +1,39 @@
+# ACME CGM-200 continuous gas monitor physics coefficients.
+
+# Stage 1 — sampling
+sampling:
+  sample_flow_l_min: 1.5
+  sample_line_leak_effect: 1.0
+
+# Stage 2 — transduction (per component)
+transduction:
+  CO:
+    principle: NDIR
+    source_ageing_effect: 1.0
+    optics_contamination_effect: 1.0
+  NOx:
+    principle: chemiluminescence
+    o3_generator_efficiency: 1.0
+    photon_counter_dark_rate_hz: 100
+
+# Stage 3 — conditioning
+conditioning:
+  stack: digital
+  filter_tau_s: 5.0
+  warm_up_tau_s: 1800                  # 30 min
+  noise_sigma_ppm: 0.05
+
+# Drift coefficients (class-2 default)
+drift:
+  zero_drift_per_day_ppm: 0.1          # class-2 limit is 1% of range = 0.5 ppm
+  span_drift_per_day_pct: 1.0          # class-2 limit is 2%
+
+# Cross-sensitivity matrix (interferent → component → fraction)
+cross_sensitivity:
+  H2O: { CO: 0.005, NOx: 0.002 }       # water vapor
+  CO2: { CO: 0.001 }                   # carbon dioxide
+
+# Default fidelity
+fidelity:
+  served_offset_kg: 0                  # field reused: ppm offset
+  served_lag_s: 0

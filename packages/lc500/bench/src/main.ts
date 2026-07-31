@@ -7,7 +7,7 @@ import { mountTerminal } from './terminal.js'
 import { mountBench, renderDials } from './bench.js'
 import { mountDial } from './dial.js'
 import { renderHow } from './how-it-works.js'
-import { LC500_PAIRED_DIAL } from '@sim/core/instrument'
+import { LC500_PAIRED_DIAL } from '@primmel/sst-runtime/instrument'
 
 const baseUrl = location.origin
 const COEFFS: Record<string, number | string> = {

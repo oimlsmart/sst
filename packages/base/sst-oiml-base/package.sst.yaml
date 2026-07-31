@@ -1,0 +1,58 @@
+sst_version: "1.0"
+tier: oiml-base
+id: primmel-sst-oiml-base
+title: "OIML D 11 environmental conditions (Edition 13)"
+maps_to: oiml-d11-e13
+description: >
+  The OIML SST base package. Declares the environmental condition classes
+  every measuring instrument is subjected to (D 11 §2 — the passive world
+  that acts on the instrument, never the other way around). Loaded once
+  per SST runtime; every instrument kind package references this base.
+
+# Influence vs. disturbance (D 11 §2):
+#   - influence quantities: conditions within rated operating range that
+#     cause measurement errors (a drift, an offset). The sim applies
+#     these as continuous coefficients.
+#   - disturbances: conditions outside rated range that cause faults.
+#     The sim latches these as operational-state transitions.
+# Each condition file declares which side of the line it lives on.
+
+condition_classes:
+  climatic:
+    - dry-heat                       # IEC 60068-2-2 (table 6)
+    - cold                           # IEC 60068-2-1 (table 7)
+    - damp-heat-steady               # IEC 60068-2-78 Cab (table 8)
+    - damp-heat-cyclic               # IEC 60068-2-30 Db (table 9)
+    - water                          # IEC 60068-2-18 (table 10)
+    - atmospheric-pressure-static    # Annex C (table 11)
+    - atmospheric-pressure-variation # Annex C (table 12)
+    - sand-and-dust                  # IEC 60512-11-8 (table 13)
+    - salt-mist                      # IEC 60068-2-11 (table 14)
+  mechanical:
+    - vibration-random               # IEC 60068-2-64 (table 15)
+    - vibration-sinusoidal           # IEC 60068-2-6 (table 16)
+    - mechanical-shock               # IEC 60068-2-31 (table 17)
+  electromagnetic:
+    - dc-mains-voltage-variation     # IEC 60654-2 (table 18)
+    - ripple-on-dc-mains             # IEC 61000-4-17 (table 19)
+    - ac-mains-voltage-variation     # IEC 61000-4-1 (table 20)
+    - ac-mains-frequency-variation   # IEC 61000-4-1 (table 21)
+    - dc-mains-voltage-dips          # IEC 61000-4-29 (table 22)
+    - ac-mains-voltage-dips          # IEC 61000-4-11 (table 23)
+    - ac-mains-harmonics             # IEC 61000-4-13 (table 24)
+    - vlf-lf-disturbances            # IEC 61000-4-19 (table 25)
+    - bursts-on-mains                # IEC 61000-4-4 (table 26)
+    - surges-on-mains                # IEC 61000-4-5 (table 27)
+    - bursts-on-signal-lines         # IEC 61000-4-4 (table 28)
+    - surges-on-signal-lines         # IEC 61000-4-5 (table 29)
+    - mains-power-frequency-em-field # IEC 61000-4-8 (table 30)
+    - conducted-rf-currents          # IEC 61000-4-6 (table 31)
+    - radiated-rf-fields             # IEC 61000-4-3 (tables 32-34)
+    - electrostatic-discharge        # IEC 61000-4-2 (table 35)
+  vehicle_supply:                    # only for vehicle-powered instruments
+    - low-battery-voltage            # (table 36)
+    - vehicle-battery-variation      # ISO 16750-2 (table 37)
+    - vehicle-supply-transients      # ISO 7637-2 (table 38)
+    - vehicle-non-supply-transients  # ISO 7637-3 (table 39)
+    - battery-cranking-variation     # ISO 16750-2 (table 40)
+    - load-dump                      # ISO 16750-2 (table 41)

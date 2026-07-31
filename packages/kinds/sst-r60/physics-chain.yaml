@@ -1,0 +1,68 @@
+# R 60 load-cell physics stage composition.
+# A strain-gauge load cell composes three stages:
+#
+#   applied load (kg)
+#     → [1] MECHANICAL       elastic element: strain, hysteresis memory, creep, resonance
+#     → [2] TRANSDUCTION     strain-gauge bridge: gauge factor, excitation, temp coefficients
+#     → [3] CONDITIONING     per technology stack (analog-passive / -active / digital / +)
+#     → indication (kg)
+#
+# Each stage is registered in the SST runtime's stage registry. Instance
+# behavior.js references these stage keys + supplies the per-instance
+# coefficients to instantiate them.
+
+stages:
+  - key: r60/mechanical-compression
+    position: 1
+    description: Elastic-element response for column/canister compression profiles.
+    consumes: { applied_load_kg: float, environment: climate }
+    produces: { strain_mm: float, hysteresis_state: object, creep_state: object }
+    applies_to_constructions: [column, canister]
+
+  - key: r60/mechanical-shear-beam
+    position: 1
+    description: Elastic-element response for shear-beam profiles.
+    consumes: { applied_load_kg: float, environment: climate }
+    produces: { strain_mm: float, hysteresis_state: object, creep_state: object }
+    applies_to_constructions: [shear-beam]
+
+  - key: r60/mechanical-bending-beam
+    position: 1
+    description: Elastic-element response for bending-beam profiles.
+    consumes: { applied_load_kg: float, environment: climate }
+    produces: { strain_mm: float, hysteresis_state: object, creep_state: object }
+    applies_to_constructions: [bending-beam, single-point, s-beam]
+
+  - key: r60/transduction-strain-gauge
+    position: 2
+    description: Wheatstone bridge output (mV/V) from strain via gauge factor.
+    consumes: { strain_mm: float, excitation_v: float, environment: climate }
+    produces: { bridge_mV_per_V: float }
+    applies_to_technologies: [strain-gauge]
+
+  - key: r60/conditioning-digital
+    position: 3
+    description: >
+      Digital stack: amplifier noise + ADC quantization + IIR filter +
+      linearization + temperature compensation residual.
+    consumes: { bridge_mV_per_V: float, environment: climate, dt_s: float }
+    produces: { indication_kg: float, faults: "string[]" }
+    applies_to_stacks: [digital, digital-processing]
+
+  - key: r60/conditioning-analog-active
+    position: 3
+    description: Active analog stack (amplifier offset + noise + output stage).
+    consumes: { bridge_mV_per_V: float, environment: climate, dt_s: float }
+    produces: { indication_kg: float, faults: "string[]" }
+    applies_to_stacks: [analog-active]
+
+  - key: r60/conditioning-analog-passive
+    position: 3
+    description: Passive (raw mV/V bridge output — the indication forms downstream).
+    consumes: { bridge_mV_per_V: float }
+    produces: { indication_kg: float, faults: "string[]" }
+    applies_to_stacks: [analog-passive]
+
+# The instance's behavior.js picks one stage per position based on its
+# classification (construction profile → stage 1; technology → stage 2;
+# stack → stage 3) and instantiates them with the instance's coefficients.

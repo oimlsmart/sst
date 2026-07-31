@@ -1,0 +1,40 @@
+# Bench UI metadata for R 144 continuous gas monitors.
+
+hud_cells:
+  - { key: clock,           label: clock,    channel: world, format: "t = {:.0f} s",   source: groundTruth.clockS }
+  - { key: temperature,     label: temp,     channel: world, format: "{:.1f} °C",      source: groundTruth.environment.temperatureDegC }
+  - { key: flow,            label: flow,     channel: world, format: "{:.2f} L/min",   source: groundTruth.bench.sampleFlowLMin }
+  - { key: optics,          label: optics,   channel: world, format: "{:.2f}",         source: groundTruth.bench.opticsContaminationFrac }
+  - { key: source_age,      label: src age,  channel: world, format: "{:.2f}",         source: groundTruth.bench.sourceAgeingFrac }
+
+indication_card:
+  channel: twin
+  source: indication.value
+  unit_source: indication.unit
+  title: "/twin · indication"
+  subtitle: "the gas concentration (component depends on channel)"
+
+graph:
+  x_axis: { source: groundTruth.clockS, label: "virtual time →", unit: s }
+  y_axis: { auto_scale: true, min: 0, max: 50, label: concentration, unit: ppm }
+  lines:
+    actual:    { source: "groundTruth.channels[0].concentrationPpm", channel: world, color: world }
+    indicated: { source: indication.value,                         channel: twin,  color: twin }
+  mpe_band:
+    source: r144/mpe-from-concentration
+    color: twin_soft
+
+console_grammar:
+  commands:
+    set:  { template: "set <param> <value>", targets: [concentration, flow, optics, source] }
+    zero: { template: "zero calibration" }
+    span: { template: "span calibration <ppm>" }
+
+scene_3d:
+  model: instance.model
+  deformations:
+    - node_substring: "bench"
+      description: "the gas bench scene"
+    - node_substring: "display"
+      text_from: "indication.value + ' ' + indication.unit"
+      description: "the digital display updates with the indication"

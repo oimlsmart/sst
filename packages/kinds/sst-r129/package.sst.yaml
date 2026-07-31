@@ -1,0 +1,20 @@
+sst_version: "1.0"
+tier: oiml-kind
+id: primmel-sst-r129
+title: "OIML R 129 — multi-dimensional measuring instruments"
+maps_to: oiml-r129
+base: primmel-sst-oiml-base
+active_domain: dimensions
+oiml_recommendation:
+  id: oiml-r129
+  edition: "2014"
+  parts: [oiml-r129-1, oiml-r129-2]
+description: >
+  Multi-dimensional measuring instruments (automatic light-section
+  conveyor dimensioners; R 129-1 §4.1.2 per-axis MPE ±1.0 d). Carries
+  classification axes (instrument category, scanning method, scale
+  interval, speed range), the active-domain /world vocabulary
+  (setConveyorSpeed, feedObject, setBeamOccluded, …), the physics-stage
+  template (optical-scanning → geometry → computation → conditioning),
+  and the TypeScript contract every R 129 instance's behavior.js must
+  satisfy.

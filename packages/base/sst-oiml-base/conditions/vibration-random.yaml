@@ -1,0 +1,17 @@
+id: vibration-random
+title: Vibration (random)
+kind: transient
+classification: disturbance       # vibrations are disturbances per D 11 §2
+iec_standard: [IEC 60068-2-47, IEC 60068-2-64, IEC 60068-3-8]
+d11_table: 15
+d11_section: "8.8"
+applicability: [electronic, non-electronic]
+description: >
+  Broadband random vibration across 10-150 Hz. Disturbance: induces
+  fault-indicating offsets via mechanical resonance; sustained
+  exposure can permanently degrade mechanical bonds.
+severity_levels:
+  - { level: 1, rms_m_s2: 1.6, frequency_range_hz: [10, 150], duration_min_per_axis: 2 }
+  - { level: 2, rms_m_s2: 7,   frequency_range_hz: [10, 150], duration_min_per_axis: 2, preferred: true }
+  - { level: 3, rms_m_s2: 16,  frequency_range_hz: [10, 150], duration_min_per_axis: 2 }
+axes: [x, y, z]

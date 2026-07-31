@@ -1,0 +1,12 @@
+# ACME LC-500 — creep-fail sample. Same physical cell, exaggerated creep.
+sample_name: creep-fail
+serial_number: LC500-002
+kind_scenario: creep-fail
+description: Creep coefficient/τ beyond MPE — fails the 30-minute creep test.
+custody:
+  - { at: "2024-03-10", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2024-04-22", event: "type-test",    location: "PTB Braunschweig", note: "Creep test failed at minute 28." }
+overrides:
+  creep_coefficient: 0.004
+  creep_tau_s: 120
+fidelity: {}

@@ -1,0 +1,9 @@
+sample_name: fresh
+serial_number: CGM200-001
+kind_scenario: fresh
+description: All coefficients inside R 144-1 limits — passes the type test.
+custody:
+  - { at: "2024-02-20", event: "manufactured", location: "ACME Karlsruhe" }
+  - { at: "2024-03-15", event: "calibrated",   location: "UBA Langen" }
+overrides: {}
+fidelity: {}

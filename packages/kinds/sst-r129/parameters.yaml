@@ -1,0 +1,36 @@
+# R 129 characteristic parameters.
+
+parameters:
+  scale_interval_cm:
+    unit: cm
+    scope: family
+    typical: 1.0
+    definition: The displayed resolution per axis (the d in MPE ±1.0 d).
+  conveyor_speed_min_m_s:
+    unit: m_per_s
+    scope: family
+    typical: 0.1
+  conveyor_speed_max_m_s:
+    unit: m_per_s
+    scope: family
+    typical: 1.5
+  measurement_range_max_cm:
+    unit: cm
+    scope: family
+    typical: 300
+  camera_baseline_mm:
+    unit: mm
+    scope: family
+    typical: 500
+  light_section_angle_deg:
+    unit: deg
+    scope: family
+    typical: 45
+  encoder_resolution_ppr:
+    unit: pulses_per_rev
+    scope: family
+    typical: 1024
+  ambient_light_max_lx:
+    unit: lux
+    scope: family
+    typical: 1000

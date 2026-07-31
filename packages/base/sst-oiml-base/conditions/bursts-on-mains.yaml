@@ -1,0 +1,19 @@
+id: bursts-on-mains
+title: Electrical fast transients (bursts) on AC/DC mains
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-4, IEC 61000-4-1]
+d11_table: 26
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Repetitive fast transient bursts耦合 onto mains leads. Disturbance:
+  the indication is briefly perturbed during the burst; the operational
+  state may flicker to fault but must recover. Severity is the peak
+  voltage at 5 kHz repetition.
+severity_levels:
+  - { level: 1, peak_kv: 0.5, repetition_khz: 5 }
+  - { level: 2, peak_kv: 1.0, repetition_khz: 5, preferred: true }
+  - { level: 3, peak_kv: 2.0, repetition_khz: 5, preferred: true }
+  - { level: 4, peak_kv: 4.0, repetition_khz: 5 }
+coupling: [ capacitive_clamp ]

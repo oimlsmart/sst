@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { spawn, type ChildProcess } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { createTwinDriver } from '@primmel/sst-runtime/twin/driver'
+import { MD3XX_CONTRACT } from '@primmel/sst-runtime/twin-contract'
 
 const BIN = join(dirname(fileURLToPath(import.meta.url)), 'bin.ts')
 const TSX = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'node_modules', '.bin', 'tsx')
@@ -42,26 +44,21 @@ describe('sim-md (standalone boot, spec §9)', () => {
       await gql(url, '/world', `mutation { advanceTime(seconds: 400) { clock } }`) // warm-up
       await gql(url, '/world', `mutation { feedObject(lengthCm: 60, widthCm: 40, heightCm: 30) { groundTruth { object { positionM } } } }`)
       await gql(url, '/world', `mutation { advanceTime(seconds: 1) { groundTruth { lastReading { valid } } } }`)
-      const dims = await gql(url, '/twin', `{ indicationLength { value unit } indicationWidth { value } indicationHeight { value } }`) as {
-        indicationLength: { value: number; unit: string }
-        indicationWidth: { value: number }
-        indicationHeight: { value: number }
-      }
-      expect(dims.indicationLength.unit).toBe('cm')
-      expect(Math.abs(dims.indicationLength.value - 60)).toBeLessThanOrEqual(0.5)
-      expect(Math.abs(dims.indicationWidth.value - 40)).toBeLessThanOrEqual(0.5)
-      expect(Math.abs(dims.indicationHeight.value - 30)).toBeLessThanOrEqual(0.5)
-      const vol = await gql(url, '/twin', `{ dimVolume { value unit } dimWeight { value unit } }`) as {
-        dimVolume: { value: number; unit: string }
-        dimWeight: { value: number; unit: string }
-      }
-      expect(vol.dimVolume.unit).toBe('cm3')
-      expect(vol.dimVolume.value).toBeCloseTo(
-        dims.indicationLength.value * dims.indicationWidth.value * dims.indicationHeight.value, 6,
-      )
-      expect(vol.dimWeight.value).toBeCloseTo(vol.dimVolume.value / 5000, 6)
-      const st = await gql(url, '/twin', `{ state }`) as { state: string }
-      expect(st.state).toBe('ready')
+      // Typed TwinDriver — methods derived from MD3XX_CONTRACT.
+      const driver = createTwinDriver(MD3XX_CONTRACT, `${url}/twin`)
+      const [len, wid, hgt] = await Promise.all([
+        driver.indicationLength(), driver.indicationWidth(), driver.indicationHeight(),
+      ])
+      expect(len.unit).toBe('cm')
+      expect(Math.abs(len.value - 60)).toBeLessThanOrEqual(0.5)
+      expect(Math.abs(wid.value - 40)).toBeLessThanOrEqual(0.5)
+      expect(Math.abs(hgt.value - 30)).toBeLessThanOrEqual(0.5)
+      const [vol, wt] = await Promise.all([driver.dimVolume(), driver.dimWeight()])
+      expect(vol.unit).toBe('cm3')
+      expect(vol.value).toBeCloseTo(len.value * wid.value * hgt.value, 6)
+      expect(wt.value).toBeCloseTo(vol.value / 5000, 6)
+      const st = await driver.state()
+      expect(st).toBe('ready')
     } finally {
       child.kill('SIGTERM')
     }
@@ -70,15 +67,14 @@ describe('sim-md (standalone boot, spec §9)', () => {
   it('--scenario thermally-cycled serves the residual through /twin (the preset realizes through physics)', async () => {
     const { url, child } = await boot(['--scenario', 'thermally-cycled'])
     try {
+      const driver = createTwinDriver(MD3XX_CONTRACT, `${url}/twin`)
       await gql(url, '/world', `mutation { advanceTime(seconds: 400) { clock } }`)
-      // a 100 cm box at a 1.5 % residual span error: +1.5 cm = 3 d —
-      // robustly past the ±1 d MPE whatever the noise draws.
       await gql(url, '/world', `mutation { feedObject(lengthCm: 100, widthCm: 40, heightCm: 30) { clock } }`)
       await gql(url, '/world', `mutation { advanceTime(seconds: 2) { clock } }`)
-      const dims = await gql(url, '/twin', `{ indicationLength { value } }`) as { indicationLength: { value: number } }
-      expect(dims.indicationLength.value - 100).toBeGreaterThanOrEqual(1.0)
-      const st = await gql(url, '/twin', `mutation { runSelfTest { state } }`) as { runSelfTest: { state: string } }
-      expect(st.runSelfTest.state).toBe('fault') // the checking facility catches the residual
+      const len = await driver.indicationLength()
+      expect(len.value - 100).toBeGreaterThanOrEqual(1.0)
+      const result = await driver.runSelfTest()
+      expect(result.state).toBe('fault') // the checking facility catches the residual
     } finally {
       child.kill('SIGTERM')
     }

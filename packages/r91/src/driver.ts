@@ -3,7 +3,7 @@
 // the last value — the ProfilePlayer idiom of the D 11 environment
 // layer, applied to the road. Deterministic (driven only by VirtualClock
 // advance notifications).
-import type { VirtualClock } from '@sim/core/time'
+import type { VirtualClock } from '@primmel/sst-runtime/time'
 
 export interface SpeedKeyframe { atS: number; speedKmh: number }
 

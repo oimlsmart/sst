@@ -1,0 +1,10 @@
+sample_name: lying-twin
+serial_number: CGM200-004
+kind_scenario: lying-twin
+description: Honest physics; the served CO concentration carries a mapping offset.
+custody:
+  - { at: "2024-02-20", event: "manufactured", location: "ACME Karlsruhe" }
+overrides: {}
+fidelity:
+  served_offset_kg: 0.5                # ppm offset
+  served_lag_s: 0

@@ -1,0 +1,21 @@
+id: cold
+title: Cold
+kind: steady
+classification: influence
+iec_standard: [IEC 60068-2-1, IEC 60068-3-1]
+d11_table: 7
+d11_section: "8.4"
+applicability: [electronic, non-electronic]
+description: >
+  Steady low-temperature exposure. Influence quantity: temperature
+  coefficients shift zero and span. Below rated range the instrument
+  may fault (electronics misbehave, lubricants stiffen).
+severity_levels:
+  - { level: 1, temperature_degC: 5,   duration_h: 2 }
+  - { level: 2, temperature_degC: -10, duration_h: 2 }
+  - { level: 3, temperature_degC: -20, duration_h: 2, preferred: true }
+  - { level: 4, temperature_degC: -25, duration_h: 2 }
+  - { level: 5, temperature_degC: -30, duration_h: 2 }
+  - { level: 6, temperature_degC: -40, duration_h: 2 }
+constraints:
+  max_ramp_degC_per_min: 1

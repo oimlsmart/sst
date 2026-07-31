@@ -1,0 +1,15 @@
+# ACME LC-500 — dropped sample. Mechanical damage from a handling incident.
+sample_name: dropped-2023
+serial_number: LC500-008
+kind_scenario: dropped
+description: Dropped in handling — offset shift and non-linearity; fails linearity.
+custody:
+  - { at: "2023-11-15", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2023-12-04", event: "dropped",      location: "ACME Bay 12", note: "Forklift incident; ~30 cm fall." }
+  - { at: "2024-01-10", event: "inspected",    location: "PTB Braunschweig", note: "Linearity fail; offset shift measured." }
+overrides:
+  linearization_error_kg: 0.3
+  hysteresis_class: 0.6
+  noise_sigma_kg: 0.01
+fidelity:
+  served_offset_kg: 0.4

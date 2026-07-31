@@ -1,0 +1,25 @@
+# R 91 mutation → handler-method binding.
+
+mutations:
+  setTarget:
+    handler: setTarget
+  clearTarget:
+    handler: clearTarget
+  setRain:
+    handler: setRain
+  setVibration:
+    handler: setVibration
+  setEmi:
+    handler: setEmi
+  setOscillatorDrift:
+    handler: setOscillatorDrift
+  setAntennaMisalignment:
+    handler: setAntennaMisalignment
+  setInterferenceSource:
+    handler: setInterferenceSource
+  clearInterferenceSource:
+    handler: clearInterferenceSource
+  driveProfile:
+    handler: driveProfile
+  stopProfile:
+    handler: stopProfile

@@ -1,0 +1,9 @@
+# Placeholder for the ACME CGM-200 3D model.
+#
+# Real artifact: glTF 2.0 binary — a gas bench with:
+#   - a "bench" node (the analyzer enclosure) — static
+#   - a "display" node (the digital display) — click for self-check
+#   - a "flow-meter" node (a rotameter) — drag to set flow
+#   - a "sample-line" node (the intake coupling) — drag to introduce leak
+#   - a "zero-bottle" node (zero-cal gas) — click to start zero cal
+#   - a "span-bottle" node (span-cal gas) — click to start span cal

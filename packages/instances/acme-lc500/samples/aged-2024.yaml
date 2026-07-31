@@ -1,0 +1,15 @@
+# ACME LC-500 — aged sample. 5 years in service.
+sample_name: aged-2024
+serial_number: LC500-007
+kind_scenario: aged
+description: 5 years of service — span drift up, hysteresis memory up.
+custody:
+  - { at: "2019-06-20", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2019-09-15", event: "installed",    location: "ACME Bay 7 line 3" }
+  - { at: "2024-08-01", event: "removed",      location: "ACME Bay 7 line 3", note: "Routine replacement." }
+overrides:
+  span_drift_per_day: 0.00004
+  hysteresis_class: 0.55
+  creep_coefficient: 0.0005
+  noise_sigma_kg: 0.008
+fidelity: {}

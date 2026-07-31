@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { spawn, type ChildProcess } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { createTwinDriver } from '@primmel/sst-runtime/twin/driver'
+import { RS180_CONTRACT } from '@primmel/sst-runtime/twin-contract'
 
 const BIN = join(dirname(fileURLToPath(import.meta.url)), 'bin.ts')
 const TSX = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'node_modules', '.bin', 'tsx')
@@ -43,11 +45,13 @@ describe('sim-r91 (standalone boot, spec §9)', () => {
       await gql(url, '/world', `mutation { setTarget(speedKmh: 87, rangeM: 150) { groundTruth { target { speedKmh } } } }`)
       const gt = await gql(url, '/world', `{ groundTruth { target { speedKmh } } }`) as { groundTruth: { target: { speedKmh: number } } }
       expect(gt.groundTruth.target.speedKmh).toBe(87)
-      const ind = await gql(url, '/twin', `{ indication { value unit } }`) as { indication: { value: number; unit: string } }
-      expect(ind.indication.unit).toBe('km/h')
-      expect(Math.abs(ind.indication.value - 87)).toBeLessThanOrEqual(1)
-      const st = await gql(url, '/twin', `{ state }`) as { state: string }
-      expect(st.state).toBe('ready')
+      // Typed TwinDriver — methods derived from RS180_CONTRACT.
+      const driver = createTwinDriver(RS180_CONTRACT, `${url}/twin`)
+      const ind = await driver.indication()
+      expect(ind.unit).toBe('km/h')
+      expect(Math.abs(ind.value - 87)).toBeLessThanOrEqual(1)
+      const st = await driver.state()
+      expect(st).toBe('ready')
     } finally {
       child.kill('SIGTERM')
     }
@@ -56,12 +60,13 @@ describe('sim-r91 (standalone boot, spec §9)', () => {
   it('--scenario interference-present serves the ghost through /twin (the preset realizes through physics)', async () => {
     const { url, child } = await boot(['--scenario', 'interference-present'])
     try {
+      const driver = createTwinDriver(RS180_CONTRACT, `${url}/twin`)
       await gql(url, '/world', `mutation { advanceTime(seconds: 200) { clock } }`)
-      const ind = await gql(url, '/twin', `{ indication { value } }`) as { indication: { value: number } }
-      expect(ind.indication.value).toBe(45) // captured by the 45 km/h ghost
+      const ind = await driver.indication()
+      expect(ind.value).toBe(45) // captured by the 45 km/h ghost
       await gql(url, '/world', `mutation { clearInterferenceSource { clock } }`)
-      const clean = await gql(url, '/twin', `{ indication { value } }`) as { indication: { value: number } }
-      expect(Math.abs(clean.indication.value - 50)).toBeLessThanOrEqual(1)
+      const clean = await driver.indication()
+      expect(Math.abs(clean.value - 50)).toBeLessThanOrEqual(1)
     } finally {
       child.kill('SIGTERM')
     }

@@ -1,0 +1,11 @@
+sample_name: encoder-slip
+serial_number: MD300-003
+kind_scenario: encoder-slip
+description: The belt encoder slips — along-track error grows.
+custody:
+  - { at: "2024-04-12", event: "manufactured", location: "ACME Lyon" }
+  - { at: "2024-07-15", event: "service",      location: "Sortation Hub 4", note: "Worn drive pulley noted." }
+overrides:
+  encoder_slip_effect: 2.5
+  belt_speed_calibration: 1.05
+fidelity: {}

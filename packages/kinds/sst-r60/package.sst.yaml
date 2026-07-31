@@ -1,0 +1,21 @@
+sst_version: "1.0"
+tier: oiml-kind
+id: primmel-sst-r60
+title: "OIML R 60 — load cells"
+maps_to: oiml-r60
+base: primmel-sst-oiml-base
+active_domain: mass                  # the kind's actuation vocabulary concerns mass
+oiml_recommendation:
+  id: oiml-r60
+  edition: "2017"
+  parts:
+    - oiml-r60-1                     # Metrological and technical requirements
+    - oiml-r60-2                     # Test report format
+    - oiml-r60-3                     # Standard report format
+description: >
+  OIML R 60 load cells — the force-to-electric-signal transducers used in
+  weighing instruments. The kind package carries classification axes,
+  the per-class MPE envelope, the active-domain /world vocabulary
+  (placeLoad / removeLoad / setFidelity), the physics-stage template
+  (mechanical → transduction → conditioning), and the TypeScript interface
+  every instance's behavior.js must satisfy.

@@ -1,0 +1,25 @@
+id: rf-fields-digital-radio
+title: RF EM fields (digital radio)
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-3, IEC 61000-4-1]
+d11_table: 34
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Radiated RF field exposure in PMR/GSM bands. Disturbance: indication
+  glitches specific to digital modulation. Severity is field strength
+  in V/m at the radio band center.
+severity_levels:
+  - { level: 3, field_strength_v_m: 10 }
+  - { level: 4, field_strength_v_m: 30, preferred: true }
+bands:
+  - { name: PMR_446, range_mhz: [446, 446.2] }
+  - { name: GSM_900, range_mhz: [925, 960] }
+  - { name: GSM_1800, range_mhz: [1805, 1880] }
+  - { name: UMTS, range_mhz: [2110, 2170] }
+  - { name: LTE, range_mhz: [791, 821] }
+  - { name: WLAN_2_4, range_mhz: [2400, 2500] }
+  - { name: WLAN_5, range_mhz: [5150, 5350] }
+  - { name: DECT, range_mhz: [1880, 1900] }
+modulation: "per band standard"

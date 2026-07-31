@@ -1,0 +1,20 @@
+id: surges-on-mains
+title: Surges on AC/DC mains
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-5, IEC 61000-4-1]
+d11_table: 27
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Single high-energy surge events (1.2/50 µs voltage, 8/20 µs current)
+  coupled onto mains leads. Disturbance: the indication may glitch;
+  the operational state may latch to fault if the surge exceeds the
+  instrument's immunity.
+severity_levels:
+  - { level: 1, line_to_line_kv: 0.5, line_to_ground_kv: 0.5 }
+  - { level: 2, line_to_line_kv: 1.0, line_to_ground_kv: 2.0 }
+  - { level: 3, line_to_line_kv: 2.0, line_to_ground_kv: 4.0, preferred: true }
+  - { level: 4, line_to_line_kv: 4.0, line_to_ground_kv: 8.0 }
+coupling: [ capacitive_coupling, decoupling_network ]
+wave_shape: "1.2/50 µs (voltage), 8/20 µs (current)"

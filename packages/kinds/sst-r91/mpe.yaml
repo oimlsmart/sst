@@ -1,0 +1,32 @@
+# R 91 MPE envelope per install class.
+# Source: R 91-1 §6.4, table 4 (stationary); §6.4.2 (mobile).
+
+classes:
+  class-1:                            # high precision
+    bands:
+      - { speed_kmh: [0,    100], absolute_kmh: 1 }
+      - { speed_kmh: [100,  ∞],    absolute_kmh: 2 }
+  class-2:                            # industrial standard
+    bands:
+      - { speed_kmh: [0,    100], absolute_kmh: 3 }
+      - { speed_kmh: [100,  ∞],    absolute_kmh: 3 }
+  class-3:                            # coarse
+    bands:
+      - { speed_kmh: [0,    100], absolute_kmh: 5 }
+      - { speed_kmh: [100,  ∞],    absolute_kmh: 5 }
+
+# Note: R 91 specifies ABSOLUTE km/h limits (not relative like R 60's v_min
+# bands). The runtime's MPE rendering uses this directly without needing
+# v_min or n_lc.
+
+additional_limits:
+  cosine_error:
+    description: The geometric projection error from the install angle.
+    formula: v_measured = v_true * cos(install_angle)
+    correction: Required for class-1; optional for class-2/3.
+  capture_lock_time_s:
+    description: Time to lock onto a target's speed.
+    limit_s: 0.5
+  oscillator_drift_limit_ppm:
+    description: Carrier-frequency drift over rated temperature.
+    limit_ppm: 50

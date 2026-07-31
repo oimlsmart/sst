@@ -1,0 +1,14 @@
+id: vehicle-non-supply-transients
+title: Road vehicle non-supply (signal) line transients
+kind: transient
+classification: disturbance
+iec_standard: [ISO 7637-3]
+d11_table: 39
+d11_section: "8.7"
+applicability: [vehicle-powered]
+description: >
+  Transient pulses on signal/data lines (pulses a, b per ISO 7637-3).
+  Disturbance: indication glitches via signal-line coupling.
+severity_levels:
+  - { level: III, pulses: [a, b] }
+  - { level: IV, pulses: [a, b], preferred: true }

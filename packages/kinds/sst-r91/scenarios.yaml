@@ -1,0 +1,48 @@
+# R 91 kind-level damage scenarios — abstract patterns.
+
+fresh:
+  description: All coefficients inside R 91-1 limits — passes the type test.
+  overrides: {}
+
+oscillator-drift:
+  description: Excessive oscillator drift — fails carrier-frequency stability.
+  overrides:
+    oscillatorStabilityPpm: 200
+
+rain-fade:
+  description: Heavy rain fades the return signal — missed readings.
+  overrides:
+    rainFadeDbPerMmH: 1.0     # higher than typical 0.3
+
+interference-capture:
+  description: A co-channel interferer captures the estimator — wrong readings.
+  overrides:
+    sideLobeLevelDb: -5       # worse than typical -20
+
+vibration-susceptibility:
+  description: Vibration disturbs the antenna — noisy readings.
+  overrides:
+    vibrationSusceptibility: 1.0
+
+emi-susceptibility:
+  description: EMI breaks the demodulator — wrong or no readings.
+  overrides:
+    emiSusceptibility: 1.0
+
+antenna-misalignment:
+  description: The antenna is tilted beyond rated — cosine error grows.
+  overrides: {}              # the misalignment is a state, not a coefficient
+
+lying-twin:
+  description: Honest physics; the served speed carries a mapping offset.
+  overrides: {}
+  fidelity:
+    servedOffsetKg: 2        # field name reused for speed offset
+    servedLagS: 0
+
+stale-twin:
+  description: Honest physics and values; servedAt lags beyond freshness.
+  overrides: {}
+  fidelity:
+    servedOffsetKg: 0
+    servedLagS: 30

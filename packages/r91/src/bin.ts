@@ -6,12 +6,12 @@
 import { parseArgs } from 'node:util'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { VirtualClock } from '@sim/core/time'
-import { mulberry32 } from '@sim/core/physics/rng'
-import { generateTwinSchema, type TwinIo } from '@sim/core/twin-schema'
-import { checkTwinConformance } from '@sim/core/conformance'
-import { loadBakedContract } from '@sim/core/twin-bake'
-import { createSimServer } from '@sim/core/server'
+import { VirtualClock } from '@primmel/sst-runtime/time'
+import { mulberry32 } from '@primmel/sst-runtime/physics/rng'
+import { generateTwinSchema, type TwinIo } from '@primmel/sst-runtime/twin-schema'
+import { checkTwinConformance } from '@primmel/sst-runtime/conformance'
+import { loadBakedContract } from '@primmel/sst-runtime/twin-bake'
+import { createSimServer } from '@primmel/sst-runtime/server'
 import { RadarSpeedMeter, R91_META } from './instrument.js'
 import { getR91Scenario } from './scenarios.js'
 import { buildR91WorldSchema, type R91WorldContext } from './world.js'
@@ -38,7 +38,7 @@ const host: R91WorldContext = {
 // (the development posture); otherwise the bundled baked artifact
 // (standalone — zero SMART).
 const contract = values.package
-  ? await (await import('@sim/core/twin-contract-prl')).parseTwinContract(values.package)
+  ? await (await import('@primmel/sst-runtime/twin-contract-prl')).parseTwinContract(values.package)
   : await loadBakedContract(join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'r91.twin.json'))
 
 const io: TwinIo = {

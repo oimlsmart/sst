@@ -1,0 +1,18 @@
+id: damp-heat-cyclic-db
+title: Damp heat cyclic (Db) — 24-hour cycle
+condition: damp-heat-cyclic
+iecs: [IEC 60068-2-30]
+total_duration_h: 24
+loop: true
+keyframes:
+  - { at_h: 0,  temperature_degC: 25, humidity_pct_rh: 95 }
+  - { at_h: 3,  temperature_degC: 40, humidity_pct_rh: 95 }   # 3 h ramp up; condensation expected
+  - { at_h: 12, temperature_degC: 40, humidity_pct_rh: 93 }   # 9 h upper hold
+  - { at_h: 18, temperature_degC: 25, humidity_pct_rh: 95 }   # 3-6 h cool-down
+  - { at_h: 24, temperature_degC: 25, humidity_pct_rh: 95 }   # lower hold to complete cycle
+constraints:
+  max_ramp_degC_per_min: 1
+  condensation_expected: true
+upper_temperature_levels:
+  level_1: 40                    # prefers the level-1 severity
+  level_2: 55                    # prefers the level-2 severity

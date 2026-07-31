@@ -1,0 +1,16 @@
+# Placeholder for the ACME LC-500 3D model.
+#
+# This file is a stub. The real artifact will be a glTF 2.0 binary (.glb)
+# produced from a CAD/Blender export of the LC-500 load cell. Phase 5 of
+# the SST migration introduces the glTF loader; until then the runtime
+# uses procedural geometry as a fallback.
+#
+# The model SHOULD contain named nodes matching the kind's bench.yaml
+# scene_3d.deformations:
+#   - a node whose name contains "cell"   (the elastic element — squashes with strain)
+#   - a node whose name contains "weight" (the calibration mass — visible when loaded)
+#   - a node whose name contains "base"   (the platform — static)
+#
+# Format: glTF 2.0 binary container (.glb)
+# Source: ACME CAD (TBD)
+# Pipeline: Blender → glTF export → .glb

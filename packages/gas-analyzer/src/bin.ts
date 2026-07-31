@@ -7,13 +7,13 @@
 // package and prove the handshake (the development posture). The
 // console is the next leg's scope.
 import { parseArgs } from 'node:util'
-import { VirtualClock } from '@sim/core/time'
-import { SimulatedGasAnalyzer, type GasComponent } from '@sim/core/gas-instrument'
-import { buildGasWorldSchema, type GasWorldContext } from '@sim/core/gas-world'
-import { generateTwinSchema, type TwinIo } from '@sim/core/twin-schema'
-import { checkTwinConformance } from '@sim/core/conformance'
-import { GAS_ANALYZER_CONTRACT } from '@sim/core/twin-contract'
-import { createSimServer } from '@sim/core/server'
+import { VirtualClock } from '@primmel/sst-runtime/time'
+import { SimulatedGasAnalyzer, type GasComponent } from '@primmel/sst-runtime/gas-instrument'
+import { buildGasWorldSchema, type GasWorldContext } from '@primmel/sst-runtime/gas-world'
+import { generateTwinSchema, type TwinIo } from '@primmel/sst-runtime/twin-schema'
+import { checkTwinConformance } from '@primmel/sst-runtime/conformance'
+import { GAS_ANALYZER_CONTRACT } from '@primmel/sst-runtime/twin-contract'
+import { createSimServer } from '@primmel/sst-runtime/server'
 import { getGasScenario, GAS_ANALYZER_META } from './instrument.js'
 
 const { values } = parseArgs({
@@ -39,7 +39,7 @@ const host: GasWorldContext = {
 // mirror) — the conformance check below still fails the process on
 // any diff.
 const contract = values.package
-  ? await (await import('@sim/core/twin-contract-prl')).parseTwinContract(values.package)
+  ? await (await import('@primmel/sst-runtime/twin-contract-prl')).parseTwinContract(values.package)
   : GAS_ANALYZER_CONTRACT
 
 function served(component: GasComponent) {

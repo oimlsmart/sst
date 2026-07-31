@@ -1,0 +1,19 @@
+id: load-dump
+title: Load dump
+kind: transient
+classification: disturbance
+iec_standard: [ISO 16750-2]
+d11_table: 41
+d11_section: "8.7"
+applicability: [vehicle-powered]
+description: >
+  Single high-energy load-dump transient (the alternator's output spike
+  on a sudden battery disconnect). Disturbance: highest-severity
+  vehicle-supply event; instruments must survive without permanent
+  damage.
+severity_levels:
+  - { shape: I,  Us_v: 79,  Ri_ohm: 0.5, tr_s: 5e-3, td_s: 400e-3 }
+  - { shape: II, Us_v: 101, Ri_ohm: 0.5, tr_s: 5e-3, td_s: 350e-3, preferred: true }
+notes: >
+  Shape II includes load-dump suppression per ISO 16750-2. Multiply
+  voltages by 2 for 24 V systems.

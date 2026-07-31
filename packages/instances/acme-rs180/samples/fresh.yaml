@@ -1,0 +1,10 @@
+# ACME RS-180 — fresh sample.
+sample_name: fresh
+serial_number: RS180-001
+kind_scenario: fresh
+description: All coefficients inside R 91-1 limits — passes the type test.
+custody:
+  - { at: "2024-01-15", event: "manufactured", location: "ACME Sunnyvale" }
+  - { at: "2024-02-20", event: "calibrated",   location: "NIST Gaithersburg" }
+overrides: {}
+fidelity: {}

@@ -1,0 +1,24 @@
+id: dry-heat
+title: Dry heat
+kind: steady                       # steady | cyclic | transient
+classification: influence          # influence (error within rated) | disturbance (fault)
+iec_standard: [IEC 60068-2-2, IEC 60068-3-1]
+d11_table: 6
+d11_section: "8.3"
+applicability: [electronic, non-electronic]
+description: >
+  Steady high-temperature exposure within a chamber. Acts as an
+  INFLUENCE quantity on the instrument: temperature coefficients on
+  zero and span shift the indication linearly per ΔT. Sustained
+  exposure beyond rated range becomes a disturbance (drift, fault).
+severity_levels:
+  - { level: 1, temperature_degC: 30, duration_h: 2 }
+  - { level: 2, temperature_degC: 35, duration_h: 2 }
+  - { level: 3, temperature_degC: 40, duration_h: 2, preferred: true }
+  - { level: 4, temperature_degC: 45, duration_h: 2 }
+  - { level: 5, temperature_degC: 50, duration_h: 2 }
+  - { level: 6, temperature_degC: 55, duration_h: 2 }
+  - { level: 7, temperature_degC: 60, duration_h: 2 }
+constraints:
+  max_ramp_degC_per_min: 1
+  absolute_humidity_max_g_per_m3: 20

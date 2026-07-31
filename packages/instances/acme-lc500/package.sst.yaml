@@ -1,0 +1,51 @@
+sst_version: "1.0"
+tier: primmel-instance
+id: acme-lc500
+title: "ACME LC-500 class C6 load cell"
+kind: primmel-sst-r60                    # references the R 60 kind package
+version: "2024.1"
+maps_to: acme-lc500                      # the upstream Primmel product reference package
+
+manufacturer:
+  id: mfr-acme
+  name: ACME Instruments
+  country: US
+  contact: sim-support@acme.invalid
+
+classification:
+  accuracy_class: C
+  class_number: 6
+  n_lc: 6000
+  humidity_class: CH
+  load_type: universal
+  construction: column
+  technology: strain-gauge
+
+design_parameters:
+  e_max:  { value: 500,    unit: kg }
+  e_min:  { value: 10,     unit: kg }
+  v_min:  { value: 0.0833, unit: kg }   # = (e_max - e_min) / y  with y = 6000
+  dr:     { value: 0.05,   unit: kg }
+  t_min:  { value: -10,    unit: degC }
+  t_max:  { value: 40,     unit: degC }
+  rated_output:        { value: 2.0,         unit: mV_per_V }
+  input_impedance:     { value: "350 ± 3.5", unit: ohm }
+  safe_overload:       { value: 150,         unit: percent }
+
+# File paths (relative to the package root)
+model: model.glb                          # the 3D dynamic artifact (placeholder for now)
+coefficients: coefficients.yaml
+behavior: behavior.js                     # the bundled behavior implementing R60Behavior
+samples:
+  - samples/fresh.yaml
+  - samples/creep-fail.yaml
+  - samples/temp-fail.yaml
+  - samples/drift-fail.yaml
+  - samples/lying-twin.yaml
+  - samples/stale-twin.yaml
+  - samples/aged-2024.yaml
+  - samples/dropped-2023.yaml
+
+provenance:
+  certificate: "R60/2021-DE-24-071"
+  first_issued: "2021-04-15"

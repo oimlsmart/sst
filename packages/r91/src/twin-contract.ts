@@ -10,7 +10,7 @@
 // produces exactly this fixture (the LC500_CONTRACT idiom in core).
 // The package declares no fault-report operation: a detected fault IS
 // the state answer (R 91-1, 6.18.4), served by state / watch_state.
-import type { TwinContract } from '@sim/core/twin-contract'
+import type { TwinContract } from '@primmel/sst-runtime/twin-contract'
 
 export const R91_CONTRACT: TwinContract = {
   instrumentId: 'acme-rs180',

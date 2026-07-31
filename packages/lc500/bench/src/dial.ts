@@ -4,9 +4,9 @@
 // /world poll in main.ts). A passive indicator has no twin interface:
 // the dial is a RENDERING of reality, never a served value — the
 // reading enters evidence through a human observer, never through a
-// channel. The dial spec is declared once in @sim/core
+// channel. The dial spec is declared once in @primmel/sst-runtime
 // (LC500_PAIRED_DIAL) and consumed by both the model and this renderer.
-import { pointerPositionKg, readingUncertaintyKg, type DialSpec } from '@sim/core/physics/stages/dial'
+import { pointerPositionKg, readingUncertaintyKg, type DialSpec } from '@primmel/sst-runtime/physics/stages/dial'
 
 // Gauge geometry: a 270° sweep opening at the bottom (the classic
 // indicator layout) — zero rests at 135° (lower-left), full scale at

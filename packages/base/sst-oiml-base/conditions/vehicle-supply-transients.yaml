@@ -1,0 +1,17 @@
+id: vehicle-supply-transients
+title: Road vehicle supply line transients
+kind: transient
+classification: disturbance
+iec_standard: [ISO 7637-2]
+d11_table: 38
+d11_section: "8.7"
+applicability: [vehicle-powered]
+description: >
+  Transient pulses on the supply line (pulses 2a, 2b, 3a, 3b per
+  ISO 7637-2). Disturbance: indication glitches and fault-latch events.
+severity_levels:
+  - { level: III, pulses: [2a, 2b, 3a, 3b] }
+  - { level: IV, pulses: [2a, 2b, 3a, 3b], preferred: true }
+notes: >
+  Severity levels are the ISO severity class (III or IV); pulse
+  amplitudes vary per pulse type and nominal supply voltage.

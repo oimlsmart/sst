@@ -1,0 +1,34 @@
+# R 129 classification axes (R 129-1 §3, §4).
+
+axes:
+  instrument_category:
+    scope: family
+    values: [automatic-light-section, automatic-image-recognition, manual-digital]
+    r129_ref: "R 129-1 §3.1"
+    description: >
+      The instrument's measurement principle. Automatic-light-section:
+      a backlit silhouette is imaged. Automatic-image-recognition:
+      camera + ML. Manual-digital: handheld calipers with display.
+  scanning_method:
+    scope: family
+    values: [light-section, laser-line, structured-light, stereo-cam]
+    r129_ref: "R 129-1 §4.1"
+  scale_interval_cm:
+    scope: family
+    values: [0.1, 0.5, 1.0, 2.0, 5.0]
+    unit: cm
+    r129_ref: "R 129-1 §4.1.2"
+    description: >
+      The display resolution (d). The per-axis MPE is ±1.0 d.
+  speed_range_m_s:
+    scope: family
+    values: [low, standard, high]
+    r129_ref: "R 129-1 §4.3"
+    description: >
+      The rated conveyor speed range. Low: 0.05-0.5 m/s (precision
+      sorting). Standard: 0.1-1.5 m/s (logistics). High: 0.5-3.0 m/s
+      (high-speed sortation).
+  axis_count:
+    scope: family
+    values: [1, 2, 3]
+    description: Length only / length+girth / length+girth+height.

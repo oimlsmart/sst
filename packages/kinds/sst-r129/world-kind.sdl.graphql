@@ -1,0 +1,55 @@
+# R 129 /world surface — mutations (kind handlers) + GroundTruth (instrument.groundTruth()).
+
+extend type Mutation {
+  setConveyorSpeed(speedMS: Float!): WorldState!
+  feedObject(lengthCm: Float, widthCm: Float, heightCm: Float): WorldState!
+  clearObject: WorldState!
+  setAmbientLight(lux: Float!): WorldState!
+  setEmi(severity: Float!): WorldState!
+  setBeamOccluded(occluded: Boolean!): WorldState!
+  setEncoderSlip(fraction: Float!): WorldState!
+  setScannerTilt(degrees: Float!): WorldState!
+  setThermalResidual(fraction: Float!): WorldState!
+  driveFeed(profileId: String!): WorldState!
+  stopFeed: WorldState!
+}
+
+type ConveyorObject {
+  lengthCm: Float!
+  widthCm: Float!
+  heightCm: Float!
+  shape: String!
+  reflectance: Float!
+  protrusionCm: Float!
+  orientationDeg: Float!
+  positionM: Float!
+}
+type MdReading {
+  valid: Boolean!
+  reason: String!
+  measuredLengthCm: Float!
+  measuredWidthCm: Float!
+  measuredHeightCm: Float!
+  indicatedLengthCm: Float!
+  indicatedWidthCm: Float!
+  indicatedHeightCm: Float!
+  dimVolumeCm3: Float!
+  dimWeightKg: Float!
+  protrusionMissed: Boolean!
+  quantizationCm: Float!
+}
+
+extend type GroundTruth {
+  clockS: Float!
+  environment: Environment!
+  conveyorSpeedMS: Float!
+  object: ConveyorObject
+  ambientLx: Float!
+  emiSeverity: Float!
+  beamOccluded: Boolean!
+  encoderSlipFrac: Float!
+  scannerTiltDeg: Float!
+  thermalResidualFrac: Float!
+  thermalSpanFrac: Float!
+  lastReading: MdReading
+}

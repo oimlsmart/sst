@@ -6,10 +6,10 @@
 // seam); groundTruth() is reality, exposed to /world only. Every fault
 // and environment effect realizes THROUGH the physics stages — there is
 // no indication override path.
-import type { VirtualClock } from '@sim/core/time'
-import { qty, type Qty } from '@sim/core/physics/quantity'
-import { normal } from '@sim/core/physics/rng'
-import { REFERENCE_ENVIRONMENT, type Environment } from '@sim/core/instrument'
+import type { VirtualClock } from '@primmel/sst-runtime/time'
+import { qty, type Qty } from '@primmel/sst-runtime/physics/quantity'
+import { normal } from '@primmel/sst-runtime/physics/rng'
+import { REFERENCE_ENVIRONMENT, type Environment } from '@primmel/sst-runtime/instrument'
 import {
   beginTraversal, advanceTraversal, traversalComplete, validateObjectSpec,
   type ConveyorObjectSpec, type Traversal,

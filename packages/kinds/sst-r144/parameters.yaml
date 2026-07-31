@@ -1,0 +1,38 @@
+# R 144 characteristic parameters.
+
+parameters:
+  range_min_ppm:
+    unit: ppm
+    scope: group
+    typical: 0
+  range_max_ppm:
+    unit: ppm
+    scope: group
+    typical: 50
+    description: >
+      Per-component; CO typical 0-50, NOx typical 0-1, SO2 typical 0-1, O3 typical 0-0.5.
+  response_time_t90_s:
+    unit: s
+    scope: family
+    typical: 60
+    definition: Time to reach 90% of step input.
+  sample_flow_l_min:
+    unit: l_per_min
+    scope: family
+    typical: 1.5
+  warm_up_time_min:
+    unit: min
+    scope: family
+    typical: 30
+  lower_detectable_limit_ppm:
+    unit: ppm
+    scope: group
+    typical: 0.1
+  zero_drift_per_day_pct:
+    unit: percent_per_day
+    scope: group
+    derive: from_drift_class(drift_class)
+  span_drift_per_day_pct:
+    unit: percent_per_day
+    scope: group
+    derive: from_drift_class(drift_class)

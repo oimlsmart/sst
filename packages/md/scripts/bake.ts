@@ -4,8 +4,8 @@
 // The handshake test (src/handshake.test.ts) enforces fixture ≡ package.
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { parseTwinContract } from '@sim/core/twin-contract-prl'
-import { bakeTwinContract } from '@sim/core/twin-bake'
+import { parseTwinContract } from '@primmel/sst-runtime/twin-contract-prl'
+import { bakeTwinContract } from '@primmel/sst-runtime/twin-bake'
 
 const PKG = process.argv[2] ?? '/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-md3xx'
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'md.twin.json')

@@ -1,0 +1,49 @@
+# R 144 kind-level damage scenarios.
+
+fresh:
+  description: All coefficients inside R 144-1 limits — passes the type test.
+  overrides: {}
+
+zero-drift:
+  description: Zero drift exceeds class limit — fails stability test.
+  overrides:
+    zeroDriftPerDayPpm: 0.5
+
+span-drift:
+  description: Span drift exceeds class limit — fails span-stability test.
+  overrides:
+    spanDriftPerDayPct: 5
+
+optics-contamination:
+  description: Optics contamination degrades NDIR/UV sensitivity.
+  overrides:
+    opticsContaminationEffect: 1.0
+
+source-aging:
+  description: IR/UV source aging reduces output.
+  overrides:
+    sourceAgingEffect: 1.0
+
+sample-line-leak:
+  description: Sample-line leak dilutes the gas.
+  overrides:
+    sampleLineLeakEffect: 1.0
+
+cross-sensitivity:
+  description: An interferent's cross-sensitivity exceeds the limit.
+  overrides:
+    crossSensitivityMatrix: { H2O: { CO: 0.05 } }    # 5% cross-sensitivity (limit is 2%)
+
+lying-twin:
+  description: Honest physics; the served concentration carries a mapping offset.
+  overrides: {}
+  fidelity:
+    servedOffsetKg: 0.5        # field name reused for ppm offset
+    servedLagS: 0
+
+stale-twin:
+  description: Honest physics and values; servedAt lags beyond freshness.
+  overrides: {}
+  fidelity:
+    servedOffsetKg: 0
+    servedLagS: 30

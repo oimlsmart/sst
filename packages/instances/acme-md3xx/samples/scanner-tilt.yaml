@@ -1,0 +1,9 @@
+sample_name: scanner-tilt
+serial_number: MD300-002
+kind_scenario: scanner-tilt
+description: The scan head is tilted — biased axis dimensions.
+custody:
+  - { at: "2024-04-12", event: "manufactured", location: "ACME Lyon" }
+overrides:
+  scanner_tilt_effect_per_deg: 0.5
+fidelity: {}

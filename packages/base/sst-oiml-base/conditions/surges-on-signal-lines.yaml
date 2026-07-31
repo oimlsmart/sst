@@ -1,0 +1,20 @@
+id: surges-on-signal-lines
+title: Surges on signal/data lines
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-5, IEC 61000-4-1]
+d11_table: 29
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  High-energy surge events coupled onto signal/data leads. Disturbance:
+  may permanently damage unprotected inputs; the indication must recover
+  or latch to fault.
+severity_levels:
+  - { level: 0, peak_kv: 0 }            # no surge test
+  - { level: 1, peak_kv: 0.5 }
+  - { level: 2, peak_kv: 1.0 }
+  - { level: 3, peak_kv: 2.0, preferred: true }
+  - { level: 4, peak_kv: 4.0 }
+coupling: [ capacitive_coupling ]
+wave_shape: "1.2/50 µs (voltage), 8/20 µs (current)"

@@ -3,7 +3,7 @@
 // mutation realizes THROUGH the physics stages — there is no path from
 // /world to the indication but the signal chain.
 import type { GraphQLSchema } from 'graphql'
-import { buildWorldSchemaFor, type WorldContext, type WorldKind } from '@sim/core/world-schema'
+import { buildWorldSchemaFor, type WorldContext, type WorldKind } from '@primmel/sst-runtime/world-schema'
 import { MultiDimensionalInstrument, type MdDefinition, type ConveyorObjectSpec } from './instrument.js'
 import { MD_SCENARIOS } from './scenarios.js'
 import { validateFeedKeyframes, type FeedKeyframe } from './driver.js'

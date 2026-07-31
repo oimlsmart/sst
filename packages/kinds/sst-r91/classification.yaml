@@ -1,0 +1,34 @@
+# R 91 classification axes (R 91-1 §3, §6.1).
+
+axes:
+  carrier_band:
+    scope: family
+    values: [X, K, Ka]
+    r91_ref: "R 91-1 §6.1"
+    description: >
+      The radar's carrier-frequency band. X (8-12 GHz), K (24-26 GHz,
+      most common for traffic radar), Ka (26-40 GHz).
+  instrument_category:
+    scope: family
+    values: [stationary, mobile, combined]
+    r91_ref: "R 91-1 §3.1"
+    description: >
+      Stationary: fixed-installation. Mobile: vehicle-mounted.
+      Combined: both modes.
+  antenna_type:
+    scope: family
+    values: [horn, patch, lens, phased-array]
+    r91_ref: "R 91-1 §6.2"
+  install_class:
+    scope: group
+    values: [class-1, class-2, class-3]
+    r91_ref: "R 91-1 §6.4"
+    description: >
+      The R 91-1 stationary MPE class. Class-1: ±1 km/h below 100 km/h,
+      ±2 above. Class-2: ±3 / ±3. Class-3: ±5 / ±5.
+  speed_range:
+    scope: family
+    values: [low, standard, high]
+    description: >
+      The rated speed measurement range. Low: 0-60 km/h (parking/industrial).
+      Standard: 20-180 km/h (traffic). High: up to 350 km/h (motorsport).

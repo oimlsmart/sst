@@ -1,0 +1,40 @@
+# Bench UI metadata for R 129 dimensioners.
+
+hud_cells:
+  - { key: clock,           label: clock,    channel: world, format: "t = {:.0f} s",   source: groundTruth.clockS }
+  - { key: temperature,     label: temp,     channel: world, format: "{:.1f} °C",      source: groundTruth.environment.temperatureDegC }
+  - { key: conveyor,        label: belt,     channel: world, format: "{:.2f} m/s",     source: groundTruth.conveyorSpeedMS }
+  - { key: ambient,         label: ambient,  channel: world, format: "{:.0f} lx",      source: groundTruth.ambientLx }
+  - { key: position,        label: pos,      channel: world, format: "{:.1f} m",       source: groundTruth.object.positionM }
+
+indication_card:
+  channel: twin
+  source: indication.value
+  unit_source: indication.unit
+  title: "/twin · dimensions"
+  subtitle: "L × W × H"
+
+graph:
+  x_axis: { source: groundTruth.clockS, label: "virtual time →", unit: s }
+  y_axis: { auto_scale: true, min: 0, label: length, unit: cm }
+  lines:
+    actual:    { source: groundTruth.object.lengthCm, channel: world, color: world }
+    indicated: { source: indicationLength.value,      channel: twin,  color: twin }
+  mpe_band:
+    source: r129/mpe-per-axis
+    color: twin_soft
+
+console_grammar:
+  commands:
+    set:  { template: "set <param> <value>", targets: [conveyor, ambient, emi, encoder, scanner] }
+    feed: { template: "feed object <l>x<w>x<h>", units: cm }
+
+scene_3d:
+  model: instance.model
+  deformations:
+    - node_substring: "conveyor"
+      translate_by: "[groundTruth.conveyorSpeedMS * groundTruth.clockS, 0, 0]"
+      description: "the conveyor moves with the belt speed"
+    - node_substring: "object"
+      visible_when: "groundTruth.object.present"
+      description: "the object appears when fed"

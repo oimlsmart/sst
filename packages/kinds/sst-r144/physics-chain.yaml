@@ -1,0 +1,52 @@
+# R 144 continuous gas monitor physics stage composition.
+#
+#   sample gas at bench
+#     → [1] SAMPLING           intake + filter + pump + sample line
+#     → [2] TRANSDUCTION       per detection principle:
+#                              NDIR: IR source → cuvette → detector
+#                              chemiluminescence: O3 reaction → photon count
+#     → [3] CONDITIONING       per stack: filter, linearize, span
+#     → indication (ppm)
+
+stages:
+  - key: r144/sampling
+    position: 1
+    description: Sample gas conditioning (intake, filter, pump, line).
+    consumes: { bench: object, sample_flow_l_min: float, environment: climate }
+    produces: { sample_at_cell: object }
+    notes: Sample-line leak, optics contamination, source aging degrade this.
+
+  - key: r144/transduction-ndir
+    position: 2
+    description: Non-dispersive IR transduction for CO.
+    consumes: { sample_at_cell: object, source_ageing_rate: float, optics_contamination: float }
+    produces: { detector_signal_v: float }
+    applies_to_components: [CO, CH4, CO2]
+
+  - key: r144/transduction-chemiluminescence
+    position: 2
+    description: O3 reaction + photon counting for NOx.
+    consumes: { sample_at_cell: object, o3_generator_state: object }
+    produces: { photon_count_rate: float }
+    applies_to_components: [NO, NO2, NOx]
+
+  - key: r144/transduction-uv-fluorescence
+    position: 2
+    description: UV excitation + fluorescence detection for SO2.
+    consumes: { sample_at_cell: object, uv_source_ageing: float }
+    produces: { detector_signal_v: float }
+    applies_to_components: [SO2]
+
+  - key: r144/transduction-uv-photometry
+    position: 2
+    description: UV absorption photometry for O3.
+    consumes: { sample_at_cell: object, uv_source_ageing: float }
+    produces: { absorbance: float }
+    applies_to_components: [O3]
+
+  - key: r144/conditioning
+    position: 3
+    description: Linearization, filtering, span/zero calibration application.
+    consumes: { signal: float, dt_s: float, calibration_state: object }
+    produces: { indication_ppm: float, faults: "string[]" }
+    applies_to_stacks: [digital, analog]

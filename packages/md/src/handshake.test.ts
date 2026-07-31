@@ -16,7 +16,7 @@ const PRESENT = existsSync(PKG)
 
 describe('the R 129 handshake (the product package parses to the contract)', () => {
   it.skipIf(!PRESENT)(`the real package parses to exactly the served contract (${PKG})`, async () => {
-    const { parseTwinContract } = await import('@sim/core/twin-contract-prl')
+    const { parseTwinContract } = await import('@primmel/sst-runtime/twin-contract-prl')
     const contract = await parseTwinContract(PKG)
     expect(contract).toEqual(MD350_CONTRACT)
   })

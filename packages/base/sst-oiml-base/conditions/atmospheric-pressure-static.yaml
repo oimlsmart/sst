@@ -1,0 +1,16 @@
+id: atmospheric-pressure-static
+title: Atmospheric pressure (static)
+kind: steady
+classification: influence
+iec_standard: []                  # D 11 Annex C — no IEC method
+d11_table: 11
+d11_section: "8.9"
+applicability: [electronic, non-electronic]
+description: >
+  Static barometric pressure deviation from reference (101.325 kPa).
+  Influence quantity: shifts the indication via the barometric
+  coefficient (R 60-1, 5.6.2 for load cells; analogous terms in
+  other Recommendations).
+severity_levels:
+  - { level: 1, pressure_kpa_delta: 2.5 }                              # ambient ± 2.5 kPa
+  - { level: 2, pressure_kpa_range: [86, 106] }                        # explicit low/high

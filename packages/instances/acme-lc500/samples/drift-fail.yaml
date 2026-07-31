@@ -1,0 +1,10 @@
+# ACME LC-500 — drift-fail sample. Excessive span drift.
+sample_name: drift-fail
+serial_number: LC500-004
+kind_scenario: drift-fail
+description: Excessive span drift — fails span-stability over the endurance program.
+custody:
+  - { at: "2024-03-10", event: "manufactured", location: "ACME Darmstadt" }
+overrides:
+  span_drift_per_day: 0.0005
+fidelity: {}

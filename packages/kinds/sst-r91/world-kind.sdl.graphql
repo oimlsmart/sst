@@ -1,0 +1,32 @@
+# R 91 /world surface — mutations (kind handlers) + GroundTruth (instrument.groundTruth()).
+
+extend type Mutation {
+  setTarget(speedKmh: Float!, rangeM: Float, angleDeg: Float): WorldState!
+  clearTarget: WorldState!
+  setRain(rateMmH: Float!): WorldState!
+  setVibration(severity: Float!): WorldState!
+  setEmi(severity: Float!): WorldState!
+  setOscillatorDrift(ppm: Float!): WorldState!
+  setAntennaMisalignment(degrees: Float!): WorldState!
+  setInterferenceSource(band: String!, powerDbm: Float!): WorldState!
+  clearInterferenceSource: WorldState!
+  driveProfile(profileId: String!): WorldState!
+  stopProfile: WorldState!
+}
+
+type RadarTarget { speedKmh: Float!, rangeM: Float!, angleDeg: Float!, rcsM2: Float! }
+type InterferenceSource { apparentSpeedKmh: Float!, rcsM2: Float!, rangeM: Float! }
+type RadarReading { valid: Boolean!, reason: String!, indicatedKmh: Float!, highResKmh: Float!, snrDb: Float!, source: String! }
+
+extend type GroundTruth {
+  clockS: Float!
+  environment: Environment!
+  target: RadarTarget!
+  rainRateMmH: Float!
+  vibrationSeverity: Float!
+  emiSeverity: Float!
+  interference: InterferenceSource
+  oscillatorErrorPpm: Float!
+  carrierActualHz: Float!
+  lastReading: RadarReading
+}

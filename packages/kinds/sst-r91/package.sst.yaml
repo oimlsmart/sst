@@ -1,0 +1,19 @@
+sst_version: "1.0"
+tier: oiml-kind
+id: primmel-sst-r91
+title: "OIML R 91 — Doppler radar speed meters"
+maps_to: oiml-r91
+base: primmel-sst-oiml-base
+active_domain: speed
+oiml_recommendation:
+  id: oiml-r91
+  edition: "1990"
+  parts: [oiml-r91-1]
+description: >
+  Doppler radar speed meters (stationary K-band CW; 20-180 km/h).
+  Carries classification axes (carrier band, antenna type, install
+  class), the R 91-1 §6.4 stationary MPE envelope, the active-domain
+  /world vocabulary (setTarget, setRain, setOscillatorDrift, …), the
+  physics-stage template (emission → reflection → demodulation →
+  estimation → conditioning), and the TypeScript contract every R 91
+  instance's behavior.js must satisfy.

@@ -1,0 +1,500 @@
+[
+  {
+    "id": "mfr-hbk",
+    "name": "Hottinger Brüel & Kjaer GmbH",
+    "shortName": "HottingerBrüel",
+    "country": "Germany",
+    "models": [
+      {
+        "id": "mod-hbk-hlci-2-2t-d1",
+        "designation": "HottingerBrüel HLCi D6",
+        "manufacturerId": "mfr-hbk",
+        "accuracyClass": "D",
+        "classNumber": 6,
+        "eMaxKg": 2.2,
+        "nLc": 6000,
+        "samples": []
+      },
+      {
+        "id": "mod-hbk-hlci-2-2t-c3",
+        "designation": "HottingerBrüel HLCi C6",
+        "manufacturerId": "mfr-hbk",
+        "accuracyClass": "C",
+        "classNumber": 6,
+        "eMaxKg": 2.2,
+        "nLc": 6000,
+        "samples": [
+          {
+            "id": "smp-hbk-hlci-001",
+            "scenarioId": "fresh",
+            "serialNumber": "HLCi-2025-001",
+            "sampleName": "fresh",
+            "description": "Serial HLCi-2025-001; SSOT id smp-hbk-hlci-001",
+            "damageKind": "fresh"
+          },
+          {
+            "id": "smp-hbk-hlci-002",
+            "scenarioId": "fresh",
+            "serialNumber": "HLCi-2025-002",
+            "sampleName": "fresh",
+            "description": "Serial HLCi-2025-002; SSOT id smp-hbk-hlci-002",
+            "damageKind": "fresh"
+          }
+        ]
+      },
+      {
+        "id": "mod-hbk-hlci-1-1t",
+        "designation": "HottingerBrüel HLCi C6",
+        "manufacturerId": "mfr-hbk",
+        "accuracyClass": "C",
+        "classNumber": 6,
+        "eMaxKg": 1.1,
+        "nLc": 6000,
+        "samples": []
+      },
+      {
+        "id": "mod-hbk-hlci-550kg",
+        "designation": "HottingerBrüel HLCi C6",
+        "manufacturerId": "mfr-hbk",
+        "accuracyClass": "C",
+        "classNumber": 6,
+        "eMaxKg": 550,
+        "nLc": 6000,
+        "samples": []
+      },
+      {
+        "id": "mod-hbk-hlci-220kg",
+        "designation": "HottingerBrüel HLCi C6",
+        "manufacturerId": "mfr-hbk",
+        "accuracyClass": "C",
+        "classNumber": 6,
+        "eMaxKg": 220,
+        "nLc": 6000,
+        "samples": []
+      },
+      {
+        "id": "mod-hbk-hlci-2-2t-c3",
+        "designation": "HottingerBrüel HLCi C6",
+        "manufacturerId": "mfr-hbk",
+        "accuracyClass": "C",
+        "classNumber": 6,
+        "eMaxKg": 2.2,
+        "nLc": 6000,
+        "samples": [
+          {
+            "id": "smp-hbk-hlci-003",
+            "scenarioId": "fresh",
+            "serialNumber": "HLCi-2025-003",
+            "sampleName": "fresh",
+            "description": "Serial HLCi-2025-003; SSOT id smp-hbk-hlci-003",
+            "damageKind": "fresh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mfr-minebea-mitsumi",
+    "name": "Minebea Mitsumi Components Europe GmbH",
+    "shortName": "MinebeaMitsumi",
+    "country": "Germany",
+    "models": [
+      {
+        "id": "mod-minebea-mlg-12t",
+        "designation": "MinebeaMitsumi MLG-12K C3",
+        "manufacturerId": "mfr-minebea-mitsumi",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 12,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-minebea-mlg-001",
+            "scenarioId": "fresh",
+            "serialNumber": "MLG-12K-2023-001",
+            "sampleName": "fresh",
+            "description": "Serial MLG-12K-2023-001; SSOT id smp-minebea-mlg-001",
+            "damageKind": "fresh"
+          }
+        ]
+      },
+      {
+        "id": "mod-minebea-mlg-6t",
+        "designation": "MinebeaMitsumi MLG-12K C4",
+        "manufacturerId": "mfr-minebea-mitsumi",
+        "accuracyClass": "C",
+        "classNumber": 4,
+        "eMaxKg": 6,
+        "nLc": 4000,
+        "samples": []
+      },
+      {
+        "id": "mod-minebea-mlg-1-2t",
+        "designation": "MinebeaMitsumi MLG-12K C6",
+        "manufacturerId": "mfr-minebea-mitsumi",
+        "accuracyClass": "C",
+        "classNumber": 6,
+        "eMaxKg": 1.2,
+        "nLc": 6000,
+        "samples": []
+      }
+    ]
+  },
+  {
+    "id": "mfr-wtd",
+    "name": "Wägetechnik Dresden GmbH",
+    "shortName": "WägetechnikDresden",
+    "country": "Germany",
+    "models": [
+      {
+        "id": "mod-wtd-k180-180kg",
+        "designation": "WägetechnikDresden WTD-K180 C3",
+        "manufacturerId": "mfr-wtd",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 180,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-wtd-k180-001",
+            "scenarioId": "fresh",
+            "serialNumber": "WTD-K180-2024-001",
+            "sampleName": "fresh",
+            "description": "Serial WTD-K180-2024-001; SSOT id smp-wtd-k180-001",
+            "damageKind": "fresh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mfr-mettler-toledo",
+    "name": "Mettler-Toledo GmbH",
+    "shortName": "MettlerToledo",
+    "country": "Switzerland",
+    "models": [
+      {
+        "id": "mod-mettler-sbc-10t-c3",
+        "designation": "MettlerToledo MT-SBC-10t C3",
+        "manufacturerId": "mfr-mettler-toledo",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 10,
+        "nLc": 3000,
+        "samples": []
+      },
+      {
+        "id": "mod-mettler-sbc-10t-c4",
+        "designation": "MettlerToledo MT-SBC-10t C4",
+        "manufacturerId": "mfr-mettler-toledo",
+        "accuracyClass": "C",
+        "classNumber": 4,
+        "eMaxKg": 10,
+        "nLc": 4000,
+        "samples": [
+          {
+            "id": "smp-mettler-sbc-001",
+            "scenarioId": "fresh",
+            "serialNumber": "MT-SBC-10t-2024-001",
+            "sampleName": "fresh",
+            "description": "Serial MT-SBC-10t-2024-001; SSOT id smp-mettler-sbc-001",
+            "damageKind": "fresh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mfr-siemens",
+    "name": "Siemens AG, Process Instrumentation",
+    "shortName": "SiemensAG,",
+    "country": "Germany",
+    "models": [
+      {
+        "id": "mod-siemens-ws100-5t",
+        "designation": "SiemensAG, SITRANS WS100 C3",
+        "manufacturerId": "mfr-siemens",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 5,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-siemens-ws100-001",
+            "scenarioId": "fresh",
+            "serialNumber": "WS100-2025-001",
+            "sampleName": "fresh",
+            "description": "Serial WS100-2025-001; SSOT id smp-siemens-ws100-001",
+            "damageKind": "fresh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mfr-vishay-nobel",
+    "name": "Vishay Nobel AB",
+    "shortName": "VishayNobel",
+    "country": "Sweden",
+    "models": [
+      {
+        "id": "mod-vishay-kis5-5t",
+        "designation": "VishayNobel KIS-5 C3",
+        "manufacturerId": "mfr-vishay-nobel",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 5,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-vishay-kis5-001",
+            "scenarioId": "fresh",
+            "serialNumber": "KIS-5-2021-001",
+            "sampleName": "fresh",
+            "description": "Serial KIS-5-2021-001; SSOT id smp-vishay-kis5-001",
+            "damageKind": "fresh"
+          }
+        ]
+      },
+      {
+        "id": "mod-vishay-kis5-2-5t",
+        "designation": "VishayNobel KIS-5 C4",
+        "manufacturerId": "mfr-vishay-nobel",
+        "accuracyClass": "C",
+        "classNumber": 4,
+        "eMaxKg": 2.5,
+        "nLc": 4000,
+        "samples": []
+      }
+    ]
+  },
+  {
+    "id": "mfr-scaime",
+    "name": "SCAIME SAS",
+    "shortName": "SCAIMESAS",
+    "country": "France",
+    "models": [
+      {
+        "id": "mod-scaime-cpj-30t-c4",
+        "designation": "SCAIMESAS CPJ-30t C4",
+        "manufacturerId": "mfr-scaime",
+        "accuracyClass": "C",
+        "classNumber": 4,
+        "eMaxKg": 30,
+        "nLc": 4000,
+        "samples": [
+          {
+            "id": "smp-scaime-cpj-001",
+            "scenarioId": "fresh",
+            "serialNumber": "CPJ-30t-2022-001",
+            "sampleName": "fresh",
+            "description": "Serial CPJ-30t-2022-001; SSOT id smp-scaime-cpj-001",
+            "damageKind": "fresh"
+          }
+        ]
+      },
+      {
+        "id": "mod-scaime-cpj-30t-c3",
+        "designation": "SCAIMESAS CPJ-30t C3",
+        "manufacturerId": "mfr-scaime",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 30,
+        "nLc": 3000,
+        "samples": []
+      }
+    ]
+  },
+  {
+    "id": "mfr-ad",
+    "name": "A&D Company Ltd",
+    "shortName": "A&DCompany",
+    "country": "Japan",
+    "models": [
+      {
+        "id": "mod-ad-lcsp15-15t",
+        "designation": "A&DCompany LC-SP15 C3",
+        "manufacturerId": "mfr-ad",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 15,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-ad-lcsp15-001",
+            "scenarioId": "fresh",
+            "serialNumber": "LC-SP15-2024-001",
+            "sampleName": "fresh",
+            "description": "Serial LC-SP15-2024-001; SSOT id smp-ad-lcsp15-001",
+            "damageKind": "fresh"
+          }
+        ]
+      },
+      {
+        "id": "mod-ad-lcsp15-7-5t",
+        "designation": "A&DCompany LC-SP15 C4",
+        "manufacturerId": "mfr-ad",
+        "accuracyClass": "C",
+        "classNumber": 4,
+        "eMaxKg": 7.5,
+        "nLc": 4000,
+        "samples": []
+      }
+    ]
+  },
+  {
+    "id": "mfr-flintec",
+    "name": "Flintec GmbH",
+    "shortName": "FlintecGmbH",
+    "country": "Germany",
+    "models": [
+      {
+        "id": "mod-flintec-pc6-20t-c3",
+        "designation": "FlintecGmbH PC6-20t C3",
+        "manufacturerId": "mfr-flintec",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 20,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-flintec-pc6-001",
+            "scenarioId": "fresh",
+            "serialNumber": "PC6-20t-2024-001",
+            "sampleName": "fresh",
+            "description": "Serial PC6-20t-2024-001; SSOT id smp-flintec-pc6-001",
+            "damageKind": "fresh"
+          }
+        ]
+      },
+      {
+        "id": "mod-flintec-pc6-20t-c4",
+        "designation": "FlintecGmbH PC6-20t C4",
+        "manufacturerId": "mfr-flintec",
+        "accuracyClass": "C",
+        "classNumber": 4,
+        "eMaxKg": 20,
+        "nLc": 4000,
+        "samples": []
+      }
+    ]
+  },
+  {
+    "id": "mfr-revere",
+    "name": "Revere Transducers Europe B.V.",
+    "shortName": "RevereTransducers",
+    "country": "Netherlands",
+    "models": [
+      {
+        "id": "mod-revere-363-500kg",
+        "designation": "RevereTransducers 363-D1-500kg C3",
+        "manufacturerId": "mfr-revere",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 500,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-revere-363-001",
+            "scenarioId": "fresh",
+            "serialNumber": "363-D1-500kg-2025-001",
+            "sampleName": "fresh",
+            "description": "Serial 363-D1-500kg-2025-001; SSOT id smp-revere-363-001",
+            "damageKind": "fresh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mfr-precia-molen",
+    "name": "Precia-Molen S.A.",
+    "shortName": "PreciaMolen",
+    "country": "France",
+    "models": [
+      {
+        "id": "mod-precia-esr-200kg",
+        "designation": "PreciaMolen ESR-200kg C3",
+        "manufacturerId": "mfr-precia-molen",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 200,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-precia-esr-001",
+            "scenarioId": "fresh",
+            "serialNumber": "ESR-200kg-2025-001",
+            "sampleName": "fresh",
+            "description": "Serial ESR-200kg-2025-001; SSOT id smp-precia-esr-001",
+            "damageKind": "fresh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mfr-janner-waagen",
+    "name": "Janner Waagen GmbH",
+    "shortName": "JannerWaagen",
+    "country": "Austria",
+    "models": [
+      {
+        "id": "mod-janner-rtes-24b-c3",
+        "designation": "JannerWaagen RTES 24 B C3",
+        "manufacturerId": "mfr-janner-waagen",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 24,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-janner-rtes-001",
+            "scenarioId": "fresh",
+            "serialNumber": "RTES-24B-2025-001",
+            "sampleName": "fresh",
+            "description": "Serial RTES-24B-2025-001; SSOT id smp-janner-rtes-001",
+            "damageKind": "fresh"
+          }
+        ]
+      },
+      {
+        "id": "mod-janner-rtes-24b-c4",
+        "designation": "JannerWaagen RTES 24 B C4",
+        "manufacturerId": "mfr-janner-waagen",
+        "accuracyClass": "C",
+        "classNumber": 4,
+        "eMaxKg": 24,
+        "nLc": 4000,
+        "samples": []
+      }
+    ]
+  },
+  {
+    "id": "mfr-digi-sens",
+    "name": "DIGI SENS AG",
+    "shortName": "DIGISENS",
+    "country": "Switzerland",
+    "models": [
+      {
+        "id": "mod-digi-sens-slc-nz-500kg",
+        "designation": "DIGISENS SLC NZ C3",
+        "manufacturerId": "mfr-digi-sens",
+        "accuracyClass": "C",
+        "classNumber": 3,
+        "eMaxKg": 500,
+        "nLc": 3000,
+        "samples": [
+          {
+            "id": "smp-digi-sens-slc-nz-001",
+            "scenarioId": "fresh",
+            "serialNumber": "DS-2025-SLC-NZ-001",
+            "sampleName": "fresh",
+            "description": "Serial DS-2025-SLC-NZ-001; SSOT id smp-digi-sens-slc-nz-001",
+            "damageKind": "fresh"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,37 @@
+sst_version: "1.0"
+tier: primmel-instance
+id: acme-cgm-200
+title: "ACME CGM-200 continuous gas monitor (CO + NOx)"
+kind: primmel-sst-r144
+version: "2024.1"
+maps_to: acme-cgm-200
+manufacturer:
+  id: mfr-acme
+  name: ACME Instruments
+  country: US
+classification:
+  measured_components: [CO, NOx]
+  detection_principle:
+    CO: NDIR
+    NOx: chemiluminescence
+  sample_method: extractive
+  drift_class: class-2
+  range_class: class-A
+design_parameters:
+  range_min_ppm:          { value: 0,    unit: ppm }
+  range_max_ppm:          { value: 50,   unit: ppm }
+  response_time_t90_s:    { value: 60,   unit: s }
+  sample_flow_l_min:      { value: 1.5,  unit: l_per_min }
+  warm_up_time_min:       { value: 30,   unit: min }
+  lower_detectable_limit_ppm: { value: 0.1, unit: ppm }
+model: model.glb
+coefficients: coefficients.yaml
+behavior: behavior.js
+samples:
+  - samples/fresh.yaml
+  - samples/zero-drift.yaml
+  - samples/optics-contamination.yaml
+  - samples/lying-twin.yaml
+provenance:
+  certificate: "R144/2024-DE-12-117"
+  first_issued: "2024-02-08"

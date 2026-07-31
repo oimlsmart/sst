@@ -1,0 +1,19 @@
+id: vibration-sinusoidal
+title: Vibration (sinusoidal)
+kind: transient
+classification: disturbance
+iec_standard: [IEC 60068-2-6, IEC 60068-2-47, IEC 60068-3-8]
+d11_table: 16
+d11_section: "8.8"
+applicability: [electronic, non-electronic]
+description: >
+  Swept sinusoidal vibration across 10-150 Hz. Disturbance: excites
+  mechanical resonances; sustained exposure can loosen mechanical bonds.
+  Severity is the peak acceleration and sweep count per axis.
+severity_levels:
+  - { level: 1, peak_m_s2: 10, frequency_range_hz: [10, 150], sweeps_per_axis: 20, preferred: true }
+  - { level: 2, peak_m_s2: 20, frequency_range_hz: [10, 150], sweeps_per_axis: 20 }
+constraints:
+  sweep_type: logarithmic
+  octaves_per_min: 1
+axes: [x, y, z]

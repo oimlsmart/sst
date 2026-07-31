@@ -1,0 +1,37 @@
+sst_version: "1.0"
+tier: primmel-instance
+id: acme-md3xx
+title: "ACME MD-300 multi-dimensional measuring instrument"
+kind: primmel-sst-r129
+version: "2024.1"
+maps_to: acme-md3xx
+manufacturer:
+  id: mfr-acme
+  name: ACME Instruments
+  country: US
+classification:
+  instrument_category: automatic-light-section
+  scanning_method: light-section
+  scale_interval_cm: 1.0
+  speed_range: standard
+  axis_count: 3
+design_parameters:
+  scale_interval_cm:      { value: 1.0, unit: cm }
+  conveyor_speed_min_m_s: { value: 0.1, unit: m_per_s }
+  conveyor_speed_max_m_s: { value: 1.5, unit: m_per_s }
+  measurement_range_max_cm: { value: 300, unit: cm }
+  camera_baseline_mm:     { value: 500, unit: mm }
+  light_section_angle_deg: { value: 45, unit: deg }
+  encoder_resolution_ppr: { value: 1024, unit: pulses_per_rev }
+  ambient_light_max_lx:   { value: 1000, unit: lux }
+model: model.glb
+coefficients: coefficients.yaml
+behavior: behavior.js
+samples:
+  - samples/fresh.yaml
+  - samples/scanner-tilt.yaml
+  - samples/encoder-slip.yaml
+  - samples/lying-twin.yaml
+provenance:
+  certificate: "R129/2024-FR-09-201"
+  first_issued: "2024-03-04"

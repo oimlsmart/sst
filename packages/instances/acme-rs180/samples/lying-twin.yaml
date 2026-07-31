@@ -1,0 +1,11 @@
+# ACME RS-180 — lying-twin sample. Honest physics; dishonest twin.
+sample_name: lying-twin
+serial_number: RS180-004
+kind_scenario: lying-twin
+description: Honest physics; the served speed carries a firmware-mapping offset.
+custody:
+  - { at: "2024-04-05", event: "manufactured", location: "ACME Sunnyvale" }
+overrides: {}
+fidelity:
+  served_offset_kg: 2                  # km/h offset
+  served_lag_s: 0

@@ -1,0 +1,11 @@
+# ACME LC-500 — stale-twin sample. Honest physics and values; servedAt lags.
+sample_name: stale-twin
+serial_number: LC500-006
+kind_scenario: stale-twin
+description: Honest physics and values; servedAt lags beyond the declared freshness.
+custody:
+  - { at: "2024-05-04", event: "manufactured", location: "ACME Darmstadt" }
+overrides: {}
+fidelity:
+  served_offset_kg: 0
+  served_lag_s: 30

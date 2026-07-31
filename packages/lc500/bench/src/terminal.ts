@@ -1,8 +1,8 @@
 // terminal.ts — the console pane: the §7 grammar executed against the
 // channels (show indication reads /twin; everything actuating reads
 // /world — the console teaches the epistemic split).
-import { parseCommand, HELP_TEXT } from '@sim/core/console/grammar'
-import { execute, promptOf, type ConsoleIo, type ConsoleState } from '@sim/core/console/client'
+import { parseCommand, HELP_TEXT } from '@primmel/sst-runtime/console/grammar'
+import { execute, promptOf, type ConsoleIo, type ConsoleState } from '@primmel/sst-runtime/console/client'
 import { gql, isUnauthorized, setWorldToken, clearWorldToken } from './api.js'
 
 export function mountTerminal(root: HTMLElement, baseUrl: string): void {

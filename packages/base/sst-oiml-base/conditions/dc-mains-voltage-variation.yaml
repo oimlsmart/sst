@@ -1,0 +1,14 @@
+id: dc-mains-voltage-variation
+title: DC mains voltage variation
+kind: steady
+classification: influence
+iec_standard: [IEC 60654-2]
+d11_table: 18
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Steady DC supply-voltage deviation from nominal. Influence quantity
+  for instruments without internal regulation; sustained undervoltage
+  becomes a disturbance.
+severity_levels:
+  - { level: 1, voltage_range: "manufacturer-specified lower/upper limits" }

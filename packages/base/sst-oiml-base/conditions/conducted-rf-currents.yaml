@@ -1,0 +1,19 @@
+id: conducted-rf-currents
+title: Conducted RF currents (common mode)
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-6, IEC 61000-4-1]
+d11_table: 31
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Conducted RF disturbances (common-mode) on leads, 0.15-80 MHz,
+  amplitude-modulated (80% AM, 1 kHz). Disturbance: induces indication
+  glitches via non-linear demodulation.
+severity_levels:
+  - { level: 1, emf_v: 1 }
+  - { level: 2, emf_v: 3, preferred: true }
+  - { level: 3, emf_v: 10, preferred: true }
+frequency_range_mhz: [0.15, 80]
+modulation: "80% AM, 1 kHz"
+coupling: [ cdn, bci, em_clamp ]

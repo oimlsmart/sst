@@ -1,0 +1,50 @@
+# R 91 radar speed-meter physics stage composition.
+#
+#   target motion (m, v)
+#     → [1] EMISSION         antenna: emits CW at carrier GHz
+#     → [2] REFLECTION       target: returns Doppler-shifted echo
+#     → [3] DEMODULATION     mixer: heterodynes TX/RX → Doppler tone
+#     → [4] ESTIMATION       DSP: FFT peak → speed
+#     → [5] CONDITIONING     per stack (analog / digital)
+#     → indication (km/h)
+
+stages:
+  - key: r91/emission
+    position: 1
+    description: CW carrier emission at the rated GHz.
+    consumes: { carrier_GHz: float, emitted_power_mW: float }
+    produces: { tx_signal: object }
+
+  - key: r91/reflection
+    position: 2
+    description: Target reflection with Doppler shift.
+    consumes: { tx_signal: object, target: object, environment: climate }
+    produces: { rx_signal: object }
+    notes: The Doppler shift = 2 * v * f / c; modulated by rain fade and
+           target cross-section.
+
+  - key: r91/demodulation
+    position: 3
+    description: Mixes TX and RX to extract the Doppler tone.
+    consumes: { tx_signal: object, rx_signal: object, oscillator_error_ppm: float }
+    produces: { doppler_tone_hz: float }
+
+  - key: r91/estimation
+    position: 4
+    description: Estimates speed from the Doppler tone (FFT peak or zero-crossing).
+    consumes: { doppler_tone_hz: float, carrier_GHz: float, install_angle_deg: float }
+    produces: { speed_kmh: float, valid: boolean }
+
+  - key: r91/conditioning-digital
+    position: 5
+    description: "Digital stack: filter, cosine correction, quantize to scale interval."
+    consumes: { speed_kmh: float, valid: boolean, dt_s: float }
+    produces: { indication_kmh: float, faults: "string[]" }
+    applies_to_stacks: [digital]
+
+  - key: r91/conditioning-analog
+    position: 5
+    description: "Analog stack: tone filter, counter, display driver."
+    consumes: { speed_kmh: float, valid: boolean, dt_s: float }
+    produces: { indication_kmh: float, faults: "string[]" }
+    applies_to_stacks: [analog]

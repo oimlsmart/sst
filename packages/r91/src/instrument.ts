@@ -5,10 +5,10 @@
 // legal view (the TwinInstrumentView seam); groundTruth() is reality,
 // exposed to /world only. Every fault and environment effect realizes
 // THROUGH the physics stages — there is no indication override path.
-import type { VirtualClock } from '@sim/core/time'
-import { qty, type Qty } from '@sim/core/physics/quantity'
-import { normal } from '@sim/core/physics/rng'
-import { REFERENCE_ENVIRONMENT, type Environment, type OperationalState } from '@sim/core/instrument'
+import type { VirtualClock } from '@primmel/sst-runtime/time'
+import { qty, type Qty } from '@primmel/sst-runtime/physics/quantity'
+import { normal } from '@primmel/sst-runtime/physics/rng'
+import { REFERENCE_ENVIRONMENT, type Environment, type OperationalState } from '@primmel/sst-runtime/instrument'
 import { reflect, type EmissionParams, type RadarTarget } from './physics/emission.js'
 import { estimate, type EstimationParams, type DopplerLine, DISCRIMINATION_MODE, type DiscriminationMode } from './physics/estimation.js'
 import { oscillatorErrorPpm, actualCarrierHz, conditionReading, type ConditioningParams } from './physics/conditioning.js'

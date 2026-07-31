@@ -1,0 +1,14 @@
+id: low-battery-voltage
+title: Low internal battery voltage
+kind: steady
+classification: influence
+iec_standard: []                  # manufacturer-specified per D 11
+d11_table: 36
+d11_section: "8.7"
+applicability: [electronic, vehicle-powered]
+description: >
+  Steady undervoltage of an internal battery supply. Influence: shifts
+  the indication via the supply-voltage coefficient. Below the
+  manufacturer-specified minimum the instrument faults.
+severity_levels:
+  - { level: 1, voltage: "manufacturer-specified Umin" }

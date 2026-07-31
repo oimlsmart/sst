@@ -1,0 +1,17 @@
+id: water
+title: Water (drip, rain, spraying)
+kind: transient
+classification: disturbance
+iec_standard: [IEC 60068-2-18, IEC 60512-14-7, IEC 60529]
+d11_table: 10
+d11_section: "8.5"
+applicability: [electronic, non-electronic]
+description: >
+  Direct water exposure (dripping, spraying, splashing). Disturbance:
+  breaches enclosure; causes fault or permanent damage depending on
+  IP rating. Severity is the water flow rate and exposure pattern.
+severity_levels:
+  - { level: 1, flow_l_per_min: 0.07, duration_min: 10, arc_deg: 60 }
+  - { level: 2, flow_l_per_min: 0.07, duration_min: 10, arc_deg: 180, preferred: true }
+constraints:
+  ip_ratings_tested: [IPX1, IPX2, IPX3, IPX4, IPX5, IPX6]

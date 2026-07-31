@@ -1,0 +1,15 @@
+id: atmospheric-pressure-variation
+title: Atmospheric pressure (variation)
+kind: transient
+classification: influence
+iec_standard: []                  # D 11 Annex C
+d11_table: 12
+d11_section: "8.9"
+applicability: [electronic, non-electronic]
+description: >
+  Dynamic barometric pressure variation around ambient. Models
+  altitude-change or weather-front transients. Influence: same
+  barometric coefficient as static, applied as a time-varying signal.
+severity_levels:
+  - { level: 1, amplitude_kpa: 1.0 }
+  - { level: 2, amplitude_kpa: 10.0 }

@@ -1,0 +1,18 @@
+id: electrostatic-discharge
+title: Electrostatic discharge (ESD)
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-2, IEC 61000-4-1]
+d11_table: 35
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Single electrostatic discharge events (contact or air). Disturbance:
+  the indication may glitch or latch to fault; the instrument must
+  recover to its pre-discharge state.
+severity_levels:
+  - { level: 1, contact_kv: 2,  air_kv: 2 }
+  - { level: 2, contact_kv: 4,  air_kv: 4 }
+  - { level: 3, contact_kv: 6,  air_kv: 8,  preferred: true }
+  - { level: 4, contact_kv: 8,  air_kv: 15, preferred: true }
+wave_shape: "330 ps rise, 60 ns half-life"

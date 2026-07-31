@@ -1,0 +1,44 @@
+# R 60 classification axes (R 60-1 §3.5; SSOT model/instrument.yaml).
+# Each axis is a closed enum. Family scope carries the same value across
+# all groups/models; group scope can vary (e.g. one family ships as both
+# C3 and D1 groups).
+
+axes:
+  technology:
+    scope: family
+    values: [strain-gauge, piezo-electric, electro-magnetic, capacitive, vibrating-wire, optical]
+    r60_ref: "R 60-1 §3.5.1"
+  accuracy_class:
+    scope: group
+    values: [A, B, C, D]
+    r60_ref: "R 60-1 §3.5.2"
+    description: >
+      Class A: highest precision (few thousand intervals, tightest MPE).
+      Class B: high precision.
+      Class C: industrial (most common for load cells).
+      Class D: coarse (large MPE, generous tolerance).
+  humidity_class:
+    scope: family
+    values: [NH, CH, SH]
+    r60_ref: "R 60-1 §3.5.3"
+    description: >
+      NH: no humidity protection. CH: conditional humidity. SH: sealed humidity.
+  load_type:
+    scope: group
+    values: [compression, tension, universal, beam]
+    r60_ref: "R 60-1 §3.5.4"
+  construction:
+    scope: family
+    values: [bending-beam, shear-beam, column, canister, ring, pancake, single-point, s-beam, button]
+    r60_ref: "R 60-1 §3.5.5"
+    description: The elastic-element geometry; determines compliance, hysteresis class, off-center sensitivity.
+
+# The class number after the letter (e.g. C3, C6) is the multiplier for
+# n_lc — the maximum number of verification intervals the cell supports.
+# C3 ⇒ n_lc ≤ 3000; C6 ⇒ n_lc ≤ 6000; D1 ⇒ n_lc ≤ 1000; etc.
+class_number_semantics:
+  multiplier: 1000
+  description: >
+    A class symbol like "C6" means accuracy class C with n_lc ≤ 6000
+    verification intervals. The number constrains resolution; the letter
+    constrains the MPE envelope.

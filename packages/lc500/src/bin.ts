@@ -5,15 +5,16 @@ import { parseArgs } from 'node:util'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { existsSync } from 'node:fs'
-import { VirtualClock } from '@sim/core/time'
-import { SimulatedInstrument } from '@sim/core/instrument'
-import { buildWorldSchema, type WorldContext } from '@sim/core/world-schema'
-import { generateTwinSchema } from '@sim/core/twin-schema'
-import { checkTwinConformance } from '@sim/core/conformance'
-import { loadBakedContract } from '@sim/core/twin-bake'
-import { createSimServer } from '@sim/core/server'
-import { runConsole } from '@sim/core/console/readline'
-import { httpConsoleIo } from '@sim/core/console/client'
+import { VirtualClock } from '@primmel/sst-runtime/time'
+import { SimulatedInstrument } from '@primmel/sst-runtime/instrument'
+import { buildWorldSchema, type WorldContext } from '@primmel/sst-runtime/world-schema'
+import { generateTwinSchema } from '@primmel/sst-runtime/twin-schema'
+import { checkTwinConformance } from '@primmel/sst-runtime/conformance'
+import { loadBakedContract } from '@primmel/sst-runtime/twin-bake'
+import { createSimServer } from '@primmel/sst-runtime/server'
+import { runConsole } from '@primmel/sst-runtime/console/readline'
+import { httpConsoleIo } from '@primmel/sst-runtime/console/client'
+import { LC500_FULL_MODEL, withModel } from '@primmel/sst-runtime/twin-contract'
 import { getScenario, LC500_META } from './instrument.js'
 
 const { values } = parseArgs({
@@ -37,9 +38,12 @@ const host: WorldContext = {
 
 // the serve contract: --package re-parses (development posture);
 // otherwise the bundled baked artifact (standalone — zero SMART).
-const contract = values.package
-  ? await (await import('@sim/core/twin-contract-prl')).parseTwinContract(values.package)
-  : await loadBakedContract(join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'lc500.twin.json'))
+const contract = withModel(
+  values.package
+    ? await (await import('@primmel/sst-runtime/twin-contract-prl')).parseTwinContract(values.package)
+    : await loadBakedContract(join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'lc500.twin.json')),
+  LC500_FULL_MODEL,
+)
 
 const io = { get instrument() { return host.instrument }, clock }
 const twinSchema = generateTwinSchema(contract, io)

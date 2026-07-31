@@ -1,0 +1,10 @@
+# ACME LC-500 — fresh sample.
+sample_name: fresh
+serial_number: LC500-001
+kind_scenario: fresh                       # references sst-r60/scenarios.yaml
+description: All coefficients inside R 60 limits — passes the test program.
+custody:
+  - { at: "2024-01-15", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2024-02-01", event: "calibrated",   location: "PTB Braunschweig" }
+overrides: {}                              # none — the coefficients.yaml baseline applies
+fidelity: {}                               # the honest twin

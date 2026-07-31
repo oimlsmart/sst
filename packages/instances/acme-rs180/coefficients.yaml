@@ -1,0 +1,46 @@
+# ACME RS-180 radar speed-meter physics coefficients — sim-owned.
+
+# Stage 1 — emission (CW carrier)
+emission:
+  carrier_GHz: 24.125
+  emitted_power_mW: 10
+
+# Stage 2 — reflection (target + environment)
+reflection:
+  rain_fade_db_per_mmH: 0.3
+  target_cross_section_m2: 1.0         # typical sedan
+
+# Stage 3 — demodulation
+demodulation:
+  mixer_noise_figure_db: 3
+
+# Stage 4 — estimation
+estimation:
+  fft_window: hann
+  capture_lock_tau_s: 0.3
+  speed_interval_kmh: 1
+  cosine_error_correction: true        # apply geometric correction
+
+# Stage 5 — conditioning (digital stack)
+conditioning:
+  stack: digital
+  filter_tau_s: 0.2
+  quantize_to_interval: true
+  noise_sigma_kmh: 0.5
+
+# RF front-end coefficients
+rf_frontend:
+  oscillator_stability_ppm: 10         # class-1 limit is 50
+  antenna_gain_db: 25
+  side_lobe_level_db: -20
+  beam_width_deg: 5
+
+# Environmental susceptibility
+susceptibility:
+  vibration: 0.1                       # low — horn antennas are rigid
+  emi: 0.05                            # shielded receiver
+
+# Default fidelity — the honest twin
+fidelity:
+  served_offset_kg: 0                  # field reused: km/h offset
+  served_lag_s: 0

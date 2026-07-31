@@ -1,0 +1,15 @@
+id: mechanical-shock
+title: Mechanical shock
+kind: transient
+classification: disturbance
+iec_standard: [IEC 60068-2-31]
+d11_table: 17
+d11_section: "8.8"
+applicability: [electronic, non-electronic]
+description: >
+  Single mechanical shock from a defined drop height. Disturbance:
+  produces a momentary fault indication; the operational state must
+  recover to ready afterwards.
+severity_levels:
+  - { level: 1, drop_height_mm: 25 }
+  - { level: 2, drop_height_mm: 50 }

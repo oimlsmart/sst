@@ -1,0 +1,20 @@
+id: salt-mist
+title: Salt mist
+kind: transient
+classification: disturbance
+iec_standard: [IEC 60068-2-11, IEC 60721-2-5]
+d11_table: 14
+d11_section: "8.5"
+applicability: [electronic, non-electronic]
+description: >
+  Salt-fog exposure (marine atmosphere simulation). Disturbance: corrodes
+  metallic parts, leakage paths on PCBs. Severity is the exposure duration.
+severity_levels:
+  - { level: 1, duration_h: 16 }
+  - { level: 2, duration_h: 24, preferred: true }
+  - { level: 3, duration_h: 48 }
+  - { level: 4, duration_h: 96 }
+constraints:
+  nacl_concentration_percent: 5
+  chamber_temp_degC: 35
+  ph_range: [6.5, 7.2]

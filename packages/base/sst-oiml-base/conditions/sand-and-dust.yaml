@@ -1,0 +1,18 @@
+id: sand-and-dust
+title: Sand and dust
+kind: transient
+classification: disturbance
+iec_standard: [IEC 60512-11-8, IEC 60529, IEC 60721-2-5]
+d11_table: 13
+d11_section: "8.5"
+applicability: [electronic, non-electronic]
+description: >
+  Airborne particulate exposure (sand storm, dust ingress). Disturbance:
+  abrades surfaces, blocks optical paths, penetrates enclosure seals.
+  Severity is the cycle count of the dust chamber.
+severity_levels:
+  - { level: 1, cycles: 1, preferred: true }
+  - { level: 2, cycles: 2 }
+constraints:
+  dust_type: talcum_powder_per_iec_60512
+  temperature_during_test_degC: [25, 35]

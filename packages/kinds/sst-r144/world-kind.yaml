@@ -1,0 +1,13 @@
+# R 144 mutation → handler-method binding.
+
+mutations:
+  setGasConcentration:    { handler: setGasConcentration }
+  setNo2Fraction:         { handler: setNo2Fraction }
+  setInterferents:        { handler: setInterferents }
+  setSampleFlow:          { handler: setSampleFlow }
+  setOpticsContamination: { handler: setOpticsContamination }
+  setSourceAgingRate:     { handler: setSourceAgingRate }
+  setSampleLineLeak:      { handler: setSampleLineLeak }
+  zeroCalibration:        { handler: zeroCalibration }
+  spanCalibration:        { handler: spanCalibration }
+  runSelfCheck:           { handler: runSelfCheck }

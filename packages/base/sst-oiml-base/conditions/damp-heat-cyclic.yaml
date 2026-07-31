@@ -1,0 +1,24 @@
+id: damp-heat-cyclic
+title: Damp heat, cyclic (Db)
+kind: cyclic
+classification: influence
+iec_standard: [IEC 60068-2-30, IEC 60068-3-4]
+d11_table: 9
+d11_section: "8.6"
+applicability: [electronic]
+description: >
+  24-hour cyclic humidity program. Condensation forms during the
+  temperature-rise phase (the most punishing aspect). Influence on
+  humidity coefficients; cyclic recovery allows partial relaxation.
+  See profiles/damp-heat-cyclic-db.yaml for the canonical time program.
+severity_levels:
+  - { level: 1, upper_temperature_degC: 40, preferred: true }
+  - { level: 2, upper_temperature_degC: 55, preferred: true }
+constraints:
+  cycle_duration_h: 24
+  rise_phase_h: 3
+  upper_hold_h: 9
+  fall_phase_h: [3, 6]            # 3-6 h per IEC 60068-2-30
+  lower_temperature_degC: 25
+  humidity_rise_pct_rh: 95
+  humidity_upper_pct_rh: 93

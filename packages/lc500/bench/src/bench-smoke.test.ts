@@ -4,17 +4,17 @@ import { promisify } from 'node:util'
 import { existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createSimServer } from '@sim/core/server'
-import { buildWorldSchema, type WorldContext } from '@sim/core/world-schema'
-import { generateTwinSchema } from '@sim/core/twin-schema'
-import { LC500_CONTRACT } from '@sim/core/twin-contract'
-import { VirtualClock } from '@sim/core/time'
-import { SimulatedInstrument } from '@sim/core/instrument'
-import { getScenario } from '@sim/core/scenario'
+import { createSimServer } from '@primmel/sst-runtime/server'
+import { buildWorldSchema, type WorldContext } from '@primmel/sst-runtime/world-schema'
+import { generateTwinSchema } from '@primmel/sst-runtime/twin-schema'
+import { LC500_CONTRACT } from '@primmel/sst-runtime/twin-contract'
+import { VirtualClock } from '@primmel/sst-runtime/time'
+import { SimulatedInstrument } from '@primmel/sst-runtime/instrument'
+import { getScenario } from '@primmel/sst-runtime/scenario'
 import { fetchGroundTruth, fetchIndication, gql, isUnauthorized, setWorldToken, clearWorldToken, worldToken } from './api.js'
 import { dialSvg, needleAngleDeg } from './dial.js'
-import { LC500_PAIRED_DIAL } from '@sim/core/instrument'
-import { pointerPositionKg } from '@sim/core/physics/stages/dial'
+import { LC500_PAIRED_DIAL } from '@primmel/sst-runtime/instrument'
+import { pointerPositionKg } from '@primmel/sst-runtime/physics/stages/dial'
 
 const run = promisify(execFile)
 const BENCH_DIR = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -24,9 +24,9 @@ let close: (() => Promise<void>) | undefined
 afterEach(async () => { await close?.(); close = undefined })
 
 describe('@sim/bench (spec §9/§10)', () => {
-  it('vite build produces the servable SPA', async () => {
+  it('astro build produces the servable SPA', async () => {
     if (!existsSync(DIST)) {
-      await run('npx', ['vite', 'build'], { cwd: BENCH_DIR, timeout: 120000 })
+      await run('npx', ['astro', 'build'], { cwd: BENCH_DIR, timeout: 120000 })
     }
     expect(existsSync(join(DIST, 'index.html'))).toBe(true)
   }, 130000)

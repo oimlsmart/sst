@@ -1,0 +1,11 @@
+# ACME RS-180 — oscillator-drift sample. Carrier drifts beyond class limit.
+sample_name: oscillator-drift
+serial_number: RS180-002
+kind_scenario: oscillator-drift
+description: Excessive oscillator drift — fails carrier-frequency stability.
+custody:
+  - { at: "2024-03-10", event: "manufactured", location: "ACME Sunnyvale" }
+  - { at: "2024-05-22", event: "type-test",    location: "NIST Gaithersburg", note: "Drift test failed at 60 °C." }
+overrides:
+  oscillator_stability_ppm: 200        # 4× the class-1 limit
+fidelity: {}

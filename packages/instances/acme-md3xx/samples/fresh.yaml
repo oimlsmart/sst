@@ -1,0 +1,9 @@
+sample_name: fresh
+serial_number: MD300-001
+kind_scenario: fresh
+description: All coefficients inside R 129-1 limits — passes the type test.
+custody:
+  - { at: "2024-04-12", event: "manufactured", location: "ACME Lyon" }
+  - { at: "2024-05-30", event: "calibrated",   location: "LNE Trappes" }
+overrides: {}
+fidelity: {}

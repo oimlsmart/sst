@@ -1,0 +1,23 @@
+# Binds each /world Mutation declared in world-kind.sdl.graphql to a
+# handler method on the instance's behavior.js exports.
+#
+# At load time, the runtime:
+#   1. parses this file
+#   2. imports the instance's behavior.js
+#   3. verifies every mutation has a matching handler method
+#   4. wires them into the composed /world schema
+
+mutations:
+  placeLoad:
+    handler: applyMass
+  removeLoad:
+    handler: removeMass
+  setFidelity:
+    handler: setTwinFidelity
+  fidelityReset:
+    handler: resetTwinFidelity
+  setThermalHysteresis:
+    handler: setThermalHysteresis
+
+# The handler signature is fixed by the kind's interface.d.ts:
+#   (ctx: WorldContext, args: Record<string, unknown>) => void

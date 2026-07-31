@@ -1,0 +1,10 @@
+sample_name: optics-contamination
+serial_number: CGM200-003
+kind_scenario: optics-contamination
+description: Optics contamination degrades NDIR sensitivity for CO channel.
+custody:
+  - { at: "2024-02-20", event: "manufactured", location: "ACME Karlsruhe" }
+  - { at: "2024-08-01", event: "service", note: " Dust deposition on the cuvette windows." }
+overrides:
+  optics_contamination_effect_CO: 2.0
+fidelity: {}

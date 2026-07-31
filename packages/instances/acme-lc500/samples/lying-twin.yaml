@@ -1,0 +1,12 @@
+# ACME LC-500 — lying-twin sample. Honest physics, dishonest twin.
+sample_name: lying-twin
+serial_number: LC500-005
+kind_scenario: lying-twin
+description: Honest physics; the served indication carries a firmware-mapping offset.
+custody:
+  - { at: "2024-05-04", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2024-08-12", event: "firmware-updated", note: "Mapping bug introduced post-update." }
+overrides: {}
+fidelity:
+  served_offset_kg: 0.25
+  served_lag_s: 0

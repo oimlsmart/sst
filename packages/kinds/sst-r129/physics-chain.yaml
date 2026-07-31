@@ -1,0 +1,37 @@
+# R 129 multi-dimensional dimensioner physics stage composition.
+#
+#   object on conveyor (L, W, H)
+#     → [1] OPTICAL SCANNING   light-section / laser-line / camera
+#     → [2] GEOMETRY            silhouette → axis projections
+#     → [3] COMPUTATION        length × width × height → volume → weight
+#     → [4] CONDITIONING       per stack (digital / analog)
+#     → indication (cm, cm³, kg)
+
+stages:
+  - key: r129/optical-scanning
+    position: 1
+    description: Image acquisition (light-section silhouette or laser-line).
+    consumes: { object: object, conveyor_speed_m_s: float, ambient_lx: float, environment: climate }
+    produces: { silhouette: object, valid: boolean }
+    notes: Ambient light and EMI degrade the silhouette.
+
+  - key: r129/geometry
+    position: 2
+    description: Projects the silhouette into per-axis dimensions.
+    consumes: { silhouette: object, scanner_tilt_deg: float, encoder_slip_frac: float }
+    produces: { length_cm: float, width_cm: float, height_cm: float }
+    notes: Scanner tilt and belt-encoder slip introduce bias.
+
+  - key: r129/computation
+    position: 3
+    description: Computes volume and dimensional weight from the axes.
+    consumes: { length_cm: float, width_cm: float, height_cm: float, thermal_residual_frac: float }
+    produces: { volume_cm3: float, dim_weight_kg: float }
+    notes: Thermal residual (post-temperature-cycle) shifts the calibration.
+
+  - key: r129/conditioning-digital
+    position: 4
+    description: "Digital stack: filter, quantize to scale interval."
+    consumes: { length_cm: float, width_cm: float, height_cm: float, volume_cm3: float, dt_s: float }
+    produces: { indication: object, faults: "string[]" }
+    applies_to_stacks: [digital]

@@ -1,0 +1,8 @@
+# Placeholder for the ACME MD-300 3D model.
+#
+# Real artifact: glTF 2.0 binary — a conveyor dimensioner with:
+#   - a "belt" node (the conveyor) — moves with belt speed
+#   - a "feeder" node (the object feeder) — click drops a parcel
+#   - a "scanner" node (the scan head) — tilts
+#   - a "lamp" node (the illumination) — drag adjusts brightness
+#   - an "object" node (a generic parcel) — appears when fed

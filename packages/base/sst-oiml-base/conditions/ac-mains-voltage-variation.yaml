@@ -1,0 +1,14 @@
+id: ac-mains-voltage-variation
+title: AC mains voltage variation
+kind: steady
+classification: influence
+iec_standard: [IEC TR 61000-2-1, IEC 61000-4-1]
+d11_table: 20
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Steady AC mains voltage deviation from nominal. Influence: shifts the
+  indication via the supply-voltage coefficient. Below the lower limit
+  (-15%), instruments may undervolt and fault.
+severity_levels:
+  - { level: 1, upper_pct_of_unom: 10, lower_pct_of_unom: -15, preferred: true }

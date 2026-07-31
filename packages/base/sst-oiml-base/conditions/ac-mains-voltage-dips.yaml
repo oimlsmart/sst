@@ -1,0 +1,14 @@
+id: ac-mains-voltage-dips
+title: AC mains voltage dips and interruptions
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-11, IEC 61000-4-1]
+d11_table: 23
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Voltage reductions on the AC mains (0%, 40%, 70%, 80% of nominal for
+  0.5-300 cycles). Disturbance: a dip deeper than the instrument's
+  ride-through latches a fault; shallow dips cause indication glitches.
+severity_levels:
+  - { level: 2, residual_voltage_pct: [0, 40, 70, 80], duration_cycles: [0.5, 1, 5, 10, 25, 50, 300], preferred: true }

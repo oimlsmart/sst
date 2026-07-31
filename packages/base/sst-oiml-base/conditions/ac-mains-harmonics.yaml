@@ -1,0 +1,17 @@
+id: ac-mains-harmonics
+title: AC mains harmonics
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-13, IEC 61000-4-1]
+d11_table: 24
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Harmonic distortion superimposed on the AC mains waveform. Disturbance:
+  induces indication glitches via non-linear demodulation in the
+  power-supply front-end.
+severity_levels:
+  - { level: 1, harmonic_percent: 2 }
+  - { level: 2, harmonic_percent: 5, preferred: true }
+  - { level: 3, harmonic_percent: 10 }
+harmonics_tested: [2, 3, 5, 7, 9, 11, 13]

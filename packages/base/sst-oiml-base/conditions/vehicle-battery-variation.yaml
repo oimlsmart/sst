@@ -1,0 +1,20 @@
+id: vehicle-battery-variation
+title: Road vehicle battery voltage variation
+kind: steady
+classification: influence
+iec_standard: [ISO 16750-2]
+d11_table: 37
+d11_section: "8.7"
+applicability: [vehicle-powered]
+description: >
+  Steady battery-voltage deviation per ISO 16750-2 codes (A-H). Influence
+  for codes within the operating range; disturbance outside.
+severity_levels:
+  - { code: A, voltage_range_v: [6, 16] }                       # 12 V nominal
+  - { code: B, voltage_range_v: [9, 16] }
+  - { code: C, voltage_range_v: [9, 32] }
+  - { code: D, voltage_range_v: [6, 32] }
+  - { code: E, voltage_range_v: [10, 32] }                      # 24 V nominal
+  - { code: F, voltage_range_v: [16, 36] }
+  - { code: G, voltage_range_v: [22, 36] }
+  - { code: H, voltage_range_v: [12, 36], preferred: true }

@@ -1,0 +1,41 @@
+# R 91 characteristic parameter formulas.
+
+parameters:
+  carrier_freq_GHz:
+    unit: GHz
+    scope: family
+    derive: from_band(carrier_band)   # X ~10, K ~24.125, Ka ~34
+  speed_interval_kmh:
+    unit: km_per_h
+    scope: family
+    typical: 1
+    definition: The radar's resolution interval (R 91-1 §6.1).
+  min_speed_kmh:
+    unit: km_per_h
+    scope: family
+    typical: 20
+  max_speed_kmh:
+    unit: km_per_h
+    scope: family
+    typical: 180
+  beam_width_deg:
+    unit: deg
+    scope: family
+    typical: 5
+  side_lobe_level_db:
+    unit: dB
+    scope: family
+    typical: -20
+  antenna_gain_dB:
+    unit: dB
+    scope: family
+    typical: 25
+  emitted_power_mW:
+    unit: mW
+    scope: family
+    typical: 10
+  install_angle_deg:
+    unit: deg
+    scope: instance
+    typical: 20
+    description: The angle between the radar axis and the target's path.

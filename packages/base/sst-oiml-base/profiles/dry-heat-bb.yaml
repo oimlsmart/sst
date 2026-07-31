@@ -1,0 +1,22 @@
+id: dry-heat-bb
+title: Dry heat steady (BB) — ramp + hold
+condition: dry-heat
+iecs: [IEC 60068-2-2]
+total_duration_h: 4                # 1 h ramp + 2 h hold + 1 h cool-down
+loop: false
+keyframes:
+  - { at_h: 0, temperature_degC: 25 }       # reference
+  - { at_h: 1, temperature_degC: 40 }       # 1 h ramp at ≤ 1 °C/min — pick level by editing
+  - { at_h: 3, temperature_degC: 40 }       # 2 h hold
+  - { at_h: 4, temperature_degC: 25 }       # return
+constraints:
+  max_ramp_degC_per_min: 1
+  absolute_humidity_max_g_per_m3: 20
+level_target_degC:
+  level_1: 30
+  level_2: 35
+  level_3: 40
+  level_4: 45
+  level_5: 50
+  level_6: 55
+  level_7: 60

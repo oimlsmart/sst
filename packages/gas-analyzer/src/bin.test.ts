@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { spawn, type ChildProcess } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { createTwinDriver } from '@primmel/sst-runtime/twin/driver'
+import { GAS_ANALYZER_CONTRACT } from '@primmel/sst-runtime/twin-contract'
 
 const BIN = join(dirname(fileURLToPath(import.meta.url)), 'bin.ts')
 const TSX = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'node_modules', '.bin', 'tsx')
@@ -36,11 +38,11 @@ describe('sim-gas-analyzer (standalone boot — the declared-contract posture)',
     const { url, child, output } = await boot()
     try {
       expect(output).toContain('DECLARED contract')
-      const ind = await gql(url, '/twin', `{ indicationCo { value unit servedAt } state }`) as {
-        indicationCo: { unit: string }; state: string
-      }
-      expect(ind.indicationCo.unit).toBe('ppm')
-      expect(ind.state).toBe('warming')
+      // Typed TwinDriver — methods derived from GAS_ANALYZER_CONTRACT.
+      const driver = createTwinDriver(GAS_ANALYZER_CONTRACT, `${url}/twin`)
+      const [ind, st] = await Promise.all([driver.indicationCo(), driver.state()])
+      expect(ind.unit).toBe('ppm')
+      expect(st).toBe('warming')
       await gql(url, '/world', `mutation { setGasConcentration(component: "co", ppm: 800) { groundTruth { bench { coPpm } } } }`)
       const gt = await gql(url, '/world', `{ groundTruth { bench { coPpm } } }`) as { groundTruth: { bench: { coPpm: number } } }
       expect(gt.groundTruth.bench.coPpm).toBe(800)
@@ -55,13 +57,14 @@ describe('sim-gas-analyzer (standalone boot — the declared-contract posture)',
     const driftOf = async (scenario: string): Promise<number> => {
       const { url, child } = await boot(['--scenario', scenario])
       try {
+        const driver = createTwinDriver(GAS_ANALYZER_CONTRACT, `${url}/twin`)
         await gql(url, '/world', `mutation { advanceTime(seconds: 3900) { clock } }`) // warm-up
         await gql(url, '/world', `mutation { setGasConcentration(component: "co", ppm: 100) { clock } }`)
         await gql(url, '/world', `mutation { advanceTime(seconds: 300) { clock } }`)
-        const a = await gql(url, '/twin', `{ indicationCo { value } }`) as { indicationCo: { value: number } }
+        const a = await driver.indicationCo()
         await gql(url, '/world', `mutation { advanceTime(seconds: 604800) { clock } }`) // 7 days
-        const b = await gql(url, '/twin', `{ indicationCo { value } }`) as { indicationCo: { value: number } }
-        return Math.abs(b.indicationCo.value - a.indicationCo.value)
+        const b = await driver.indicationCo()
+        return Math.abs(b.value - a.value)
       } finally {
         child.kill('SIGTERM')
       }

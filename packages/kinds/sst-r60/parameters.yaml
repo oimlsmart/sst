@@ -1,0 +1,64 @@
+# R 60 characteristic parameter formulas.
+# Source: smart/data/r60/model/attributes.yaml.
+
+parameters:
+  e_max:
+    unit: kg
+    scope: model
+    definition: Maximum measuring capacity (rated load).
+  e_min:
+    unit: kg
+    scope: model
+    definition: Minimum dead load (the load possibly present at zero).
+  n_lc:
+    dimensionless: true
+    scope: group
+    definition: Number of verification intervals (capacity / v_min).
+  v_min:
+    unit: kg
+    scope: group
+    derive: (self.e_max - self.e_min) / self.y
+    definition: Minimum verification interval — the smallest load change the cell resolves.
+  dr:
+    unit: kg
+    scope: group
+    definition: Resolution (the actual scale interval the cell reports).
+  "y":                            # quoted — y is a YAML keyword
+    dimensionless: true
+    scope: group
+    definition: Maximum number of intervals across all measuring ranges.
+    typical: 6000..20000
+  z:
+    dimensionless: true
+    scope: group
+    definition: Maximum intervals per measuring range.
+    typical: 6000..10000
+  p_lc:
+    dimensionless: true
+    scope: family
+    default: 0.7
+    range: [0.3, 0.8]
+    definition: Apportionment factor for the load-cell portion of MPE (vs the indicator).
+  t_min:
+    unit: degC
+    scope: family
+    typical: -10
+  t_max:
+    unit: degC
+    scope: family
+    typical: 40
+  rated_output:
+    unit: mV_per_V
+    scope: family
+    typical: 2.0
+  input_impedance:
+    unit: ohm
+    scope: family
+    typical: "350 ± 3.5"
+  safe_overload:
+    unit: percent
+    scope: family
+    typical: 150
+
+# The SSOT carries the formulas; the sim applies them to derive v_min,
+# n_lc, and the MPE per load. The MPE envelope is in mpe.yaml.

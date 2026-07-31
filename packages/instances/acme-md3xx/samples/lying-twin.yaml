@@ -1,0 +1,10 @@
+sample_name: lying-twin
+serial_number: MD300-004
+kind_scenario: lying-twin
+description: Honest physics; the served dimensions carry a mapping offset.
+custody:
+  - { at: "2024-04-12", event: "manufactured", location: "ACME Lyon" }
+overrides: {}
+fidelity:
+  served_offset_kg: 0.5                  # cm offset
+  served_lag_s: 0

@@ -1,0 +1,42 @@
+# R 144 /world surface — mutations (kind handlers) + GroundTruth (instrument.groundTruth()).
+
+extend type Mutation {
+  setGasConcentration(component: String!, ppm: Float!): WorldState!
+  setNo2Fraction(fraction: Float!): WorldState!
+  setInterferents(co2PercentVol: Float, h2oPercentVol: Float): WorldState!
+  setSampleFlow(lMin: Float!): WorldState!
+  setOpticsContamination(fraction: Float!): WorldState!
+  setSourceAgingRate(perDay: Float!): WorldState!
+  setSampleLineLeak(fraction: Float!): WorldState!
+  zeroCalibration: WorldState!
+  spanCalibration(spanGasPpm: Float!): WorldState!
+  runSelfCheck: WorldState!
+}
+
+type GasBench {
+  coPpm: Float!
+  noxPpm: Float!
+  no2Fraction: Float!
+  co2PercentVol: Float!
+  h2oPercentVol: Float!
+  flowLPerMin: Float!
+  sampleLineLeakFraction: Float!
+}
+type ChannelTruth {
+  rawSignal: Float!
+  zeroRefRaw: Float!
+  spanRefPerPpm: Float!
+  zeroDriftPpm: Float!
+  spanDriftFraction: Float!
+  contamination: Float!
+  agingDriftAU: Float!
+}
+type GasChannels { co: ChannelTruth!, nox: ChannelTruth! }
+
+extend type GroundTruth {
+  clockS: Float!
+  environment: Environment!
+  bench: GasBench!
+  channels: GasChannels!
+  faultLatched: Boolean!
+}

@@ -1,0 +1,10 @@
+# ACME RS-180 — interference-capture sample. Poor side-lobe rejection.
+sample_name: interference-capture
+serial_number: RS180-003
+kind_scenario: interference-capture
+description: A co-channel interferer captures the estimator — wrong readings.
+custody:
+  - { at: "2024-04-05", event: "manufactured", location: "ACME Sunnyvale" }
+overrides:
+  side_lobe_level_db: -5               # 15 dB worse than typical
+fidelity: {}

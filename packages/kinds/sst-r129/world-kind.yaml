@@ -1,0 +1,14 @@
+# R 129 mutation → handler-method binding.
+
+mutations:
+  setConveyorSpeed:   { handler: setConveyorSpeed }
+  feedObject:         { handler: feedObject }
+  clearObject:        { handler: clearObject }
+  setAmbientLight:    { handler: setAmbientLight }
+  setEmi:             { handler: setEmi }
+  setBeamOccluded:    { handler: setBeamOccluded }
+  setEncoderSlip:     { handler: setEncoderSlip }
+  setScannerTilt:     { handler: setScannerTilt }
+  setThermalResidual: { handler: setThermalResidual }
+  driveFeed:          { handler: driveFeed }
+  stopFeed:           { handler: stopFeed }

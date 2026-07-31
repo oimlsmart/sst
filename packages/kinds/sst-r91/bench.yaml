@@ -1,0 +1,41 @@
+# Bench UI metadata for R 91 radar speed meters.
+
+hud_cells:
+  - { key: clock,           label: clock,    channel: world, format: "t = {:.0f} s",      source: groundTruth.clockS }
+  - { key: temperature,     label: temp,     channel: world, format: "{:.1f} °C",         source: groundTruth.environment.temperatureDegC }
+  - { key: rain_rate,       label: rain,     channel: world, format: "{:.1f} mm/h",       source: groundTruth.rainRateMmH }
+  - { key: oscillator_ppm,  label: osc,      channel: world, format: "{:+.1f} ppm",       source: groundTruth.oscillatorErrorPpm }
+  - { key: target_speed,    label: target,   channel: world, format: "{:.1f} km/h",       source: groundTruth.target.speedKmh }
+  - { key: target_range,    label: range,    channel: world, format: "{:.0f} m",          source: groundTruth.target.rangeM }
+
+indication_card:
+  channel: twin
+  source: indication.value
+  unit_source: indication.unit
+  title: "/twin · indication"
+  subtitle: "the radar's reported speed"
+
+graph:
+  x_axis: { source: groundTruth.clockS, label: "virtual time →", unit: s }
+  y_axis: { auto_scale: true, min: 0, max: 200, label: speed, unit: kmh }
+  lines:
+    actual:    { source: groundTruth.target.speedKmh, channel: world, color: world }
+    indicated: { source: indication.value,            channel: twin,  color: twin }
+  mpe_band:
+    source: r91/mpe-from-speed
+    color: twin_soft
+
+console_grammar:
+  commands:
+    set:  { template: "set <param> <value>", targets: [target, rain, vibration, emi, oscillator, antenna] }
+
+scene_3d:
+  model: instance.model
+  deformations:
+    - node_substring: "antenna"
+      rotate_by: "groundTruth.antennaMisalignment"
+      description: "the antenna node tilts with misalignment"
+    - node_substring: "target"
+      visible_when: "groundTruth.target.rangeM > 0"
+      translate_by: "[0, 0, groundTruth.target.rangeM]"
+      description: "the target appears in the radar beam"

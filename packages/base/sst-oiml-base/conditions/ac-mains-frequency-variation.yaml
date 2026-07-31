@@ -1,0 +1,13 @@
+id: ac-mains-frequency-variation
+title: AC mains frequency variation
+kind: steady
+classification: influence
+iec_standard: [IEC 61000-4-1]
+d11_table: 21
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Steady AC mains frequency deviation. Influence: affects instruments
+  with synchronous references or mains-derived timing.
+severity_levels:
+  - { level: 1, delta_pct_of_fnom: 2, preferred: true }

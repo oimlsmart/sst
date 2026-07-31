@@ -1,11 +1,11 @@
 // instrument.ts — the reference CGM instrument definition (R 144
 // territory): a dual-component continuous gas monitor — CO by NDIR
 // (Beer–Lambert absorption), NOx by chemiluminescence. The definition
-// data itself lives in @sim/core's gas scenario registry
+// data itself lives in @primmel/sst-runtime's gas scenario registry
 // (GAS_ANALYZER_GOOD + the named presets); this module names it as the
 // package's own and carries the package metadata (the lc500 precedent).
-import { GAS_ANALYZER_GOOD, type GasAnalyzerDefinition } from '@sim/core/gas-instrument'
-import { GAS_SCENARIOS, getGasScenario, type GasScenario } from '@sim/core/gas-scenario'
+import { GAS_ANALYZER_GOOD, type GasAnalyzerDefinition } from '@primmel/sst-runtime/gas-instrument'
+import { GAS_SCENARIOS, getGasScenario, type GasScenario } from '@primmel/sst-runtime/gas-scenario'
 
 export const GAS_ANALYZER_INSTRUMENT: GasAnalyzerDefinition = GAS_ANALYZER_GOOD
 export const GAS_ANALYZER_SCENARIOS: Record<string, GasScenario> = GAS_SCENARIOS

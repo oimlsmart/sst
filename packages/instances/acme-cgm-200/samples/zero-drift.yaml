@@ -1,0 +1,10 @@
+sample_name: zero-drift
+serial_number: CGM200-002
+kind_scenario: zero-drift
+description: Zero drift exceeds class limit — fails stability test.
+custody:
+  - { at: "2024-02-20", event: "manufactured", location: "ACME Karlsruhe" }
+  - { at: "2024-06-12", event: "field-service", note: "Zero recal required every 5 days." }
+overrides:
+  zero_drift_per_day_ppm: 0.5          # at class limit
+fidelity: {}

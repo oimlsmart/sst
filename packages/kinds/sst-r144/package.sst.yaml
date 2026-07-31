@@ -1,0 +1,20 @@
+sst_version: "1.0"
+tier: oiml-kind
+id: primmel-sst-r144
+title: "OIML R 144 — continuous gas monitors"
+maps_to: oiml-r144
+base: primmel-sst-oiml-base
+active_domain: gas-concentration
+oiml_recommendation:
+  id: oiml-r144
+  edition: "2018"
+  parts: [oiml-r144-1, oiml-r144-2]
+description: >
+  Continuous gas monitors (CO by NDIR, NOx by chemiluminescence; gas
+  bench, drift classes, cross-sensitivity, zero/span calibration).
+  Carries classification axes (measured components, detection
+  principle, sample method), the active-domain /world vocabulary
+  (setGasConcentration, setSampleFlow, zeroCalibration, …), the
+  physics-stage template (sampling → transduction → conditioning), and
+  the TypeScript contract every R 144 instance's behavior.js must
+  satisfy.

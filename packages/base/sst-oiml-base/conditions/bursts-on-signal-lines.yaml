@@ -1,0 +1,17 @@
+id: bursts-on-signal-lines
+title: Electrical fast transients (bursts) on signal/data lines
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-4, IEC 61000-4-1]
+d11_table: 28
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Repetitive fast transient bursts coupled onto signal/data leads.
+  Disturbance: indication glitches; the operational state must recover.
+severity_levels:
+  - { level: 1, peak_kv: 0.25, repetition_khz: 5 }
+  - { level: 2, peak_kv: 0.5, repetition_khz: 5, preferred: true }
+  - { level: 3, peak_kv: 1.0, repetition_khz: 5, preferred: true }
+  - { level: 4, peak_kv: 2.0, repetition_khz: 5 }
+coupling: [ capacitive_clamp ]

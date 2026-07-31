@@ -1,0 +1,9 @@
+# Placeholder for the ACME RS-180 3D model.
+#
+# Real artifact: glTF 2.0 binary (.glb) — a stationary radar head with:
+#   - a "head" node (the antenna) — tilts with misalignment
+#   - a "target" node (a vehicle silhouette) — moves with target speed
+#   - an "oscillator" node (a dial) — rotates with drift
+#   - a "rain-button" node (a status indicator) — click toggles rain
+#
+# Pipeline: Blender → glTF export → .glb

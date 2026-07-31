@@ -1,0 +1,19 @@
+id: mains-power-frequency-em-field
+title: Mains-power-frequency magnetic field
+kind: steady
+classification: disturbance
+iec_standard: [IEC 61000-4-8, IEC 61000-4-1]
+d11_table: 30
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Continuous magnetic field at mains frequency (50/60 Hz). Disturbance:
+  induces interference in CRTs, inductive pickups, low-level analog
+  circuits. Severity is the field strength in A/m.
+severity_levels:
+  - { level: 1, continuous_a_per_m: 1 }
+  - { level: 2, continuous_a_per_m: 3 }
+  - { level: 3, continuous_a_per_m: 10 }
+  - { level: 4, continuous_a_per_m: 30, preferred: true }
+  - { level: 5, continuous_a_per_m: 100, preferred: true, short_a_per_m: 1000 }
+frequency_hz: [50, 60]

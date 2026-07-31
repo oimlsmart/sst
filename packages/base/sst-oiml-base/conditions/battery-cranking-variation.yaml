@@ -1,0 +1,19 @@
+id: battery-cranking-variation
+title: Battery cranking voltage variation
+kind: transient
+classification: disturbance
+iec_standard: [ISO 16750-2]
+d11_table: 40
+d11_section: "8.7"
+applicability: [vehicle-powered]
+description: >
+  Voltage profile during engine cranking — short dip (Ua), brief recovery
+  (Us, tf), then return (t8). Disturbance: instruments must tolerate the
+  profile without faulting.
+severity_levels:
+  - { profile: I,  Us_v: 8,   Ua_v: 4.5, t8_s: 10, tf_s: 0.005 }
+  - { profile: II, Us_v: 8,   Ua_v: 6.0, t8_s: 10, tf_s: 0.005 }
+  - { profile: III, Us_v: 9.5, Ua_v: 7.0, t8_s: 10, tf_s: 0.005 }
+  - { profile: IV, Us_v: 10,  Ua_v: 8.0, t8_s: 10, tf_s: 0.005, preferred: true }
+notes: >
+  Profiles per ISO 16750-2; 12 V nominal. Multiply by 2 for 24 V systems.

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { VirtualClock } from '@sim/core/time'
+import { VirtualClock } from '@primmel/sst-runtime/time'
 import { speedAt, validateSpeedKeyframes, SpeedProfilePlayer } from './driver.js'
 
 const PROFILE = [

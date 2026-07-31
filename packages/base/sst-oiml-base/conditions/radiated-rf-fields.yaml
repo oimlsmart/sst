@@ -1,0 +1,19 @@
+id: radiated-rf-fields
+title: Radiated RF electromagnetic fields
+kind: transient
+classification: disturbance
+iec_standard: [IEC 61000-4-3, IEC 61000-4-1]
+d11_table: 32
+d11_section: "8.7"
+applicability: [electronic]
+description: >
+  Radiated RF field exposure across 80-6000 MHz, amplitude-modulated
+  (80% AM, 1 kHz). Disturbance: induces indication glitches via
+  non-linear demodulation in the instrument's analog front-end.
+severity_levels:
+  - { level: 1, field_strength_v_m: 1 }
+  - { level: 2, field_strength_v_m: 3 }
+  - { level: 3, field_strength_v_m: 10, preferred: true }
+  - { level: 4, field_strength_v_m: 30 }
+modulation: "80% AM, 1 kHz"
+frequency_range_mhz: [80, 6000]

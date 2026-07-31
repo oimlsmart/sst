@@ -4,17 +4,20 @@
   "private": true,
   "type": "module",
   "description": "The simulated R 144 reference continuous gas monitor (CO + NOx) — sim-instruments instrument #2",
-  "bin": { "sim-gas-analyzer": "./src/bin.ts" },
+  "bin": {
+    "sim-gas-analyzer": "./src/bin.ts"
+  },
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "start": "tsx src/bin.ts"
   },
   "dependencies": {
-    "@sim/core": "*"
+    "@primmel/sst-runtime": "*",
+    "@primmel/sst-runtime": "*"
   },
   "devDependencies": {
     "tsx": "^4.19.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.1.10"
   }
 }
