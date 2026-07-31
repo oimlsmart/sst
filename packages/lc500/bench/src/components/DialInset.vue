@@ -2,7 +2,7 @@
   DialInset.vue — the paired analogue-passive indicator (spec §14). A
   passive indicator has no twin interface: the dial is a RENDERING of
   reality, never a served value — the reading enters evidence through a
-  human observer. The dial spec is declared once in @sim/core
+  human observer. The dial spec is declared once in @primmel/sst-runtime
   (LC500_PAIRED_DIAL) and consumed by the model and this renderer.
 -->
 <template>
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import { mountDial, type DialPane } from '../dial.js'
-import { LC500_PAIRED_DIAL } from '@sim/core/instrument'
+import { LC500_PAIRED_DIAL } from '@primmel/sst-runtime/instrument'
 import { bench } from '../lib/store.js'
 
 const scaleRef = ref<HTMLDivElement | null>(null)

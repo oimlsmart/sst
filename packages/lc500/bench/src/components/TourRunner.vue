@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { bench, nextTourStep, endTour, type TourStep } from '../lib/store.js'
-import { LC500_TOUR } from '@sim/core/console/tour'
+import { LC500_TOUR } from '@primmel/sst-runtime/console/tour'
 
 // The bench is load-cell-shaped; LC500_TOUR is the canonical tour. When
 // other console-shipping families land they'll pass their own steps.

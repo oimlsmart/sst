@@ -91,8 +91,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { parseCommand } from '@sim/core/console/grammar'
-import { execute, promptOf, type ConsoleIo, type ConsoleState } from '@sim/core/console/client'
+import { parseCommand } from '@primmel/sst-runtime/console/grammar'
+import { execute, promptOf, type ConsoleIo, type ConsoleState } from '@primmel/sst-runtime/console/client'
 import { gql, isUnauthorized, setWorldToken, clearWorldToken } from '../api.js'
 import { complete, completeApplyPrefix, type Completion } from '../lib/autocomplete.js'
 import { bench, startTour, type TourStep } from '../lib/store.js'
