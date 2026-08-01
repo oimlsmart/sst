@@ -141,29 +141,23 @@ var SamplingLine = class {
   // ── The signal chain (called on each clock advance) ──────────────────
   #tick(dt) {
     const now = this.#clock.now();
-    const transportDelayS = this.#computeTransportDelayS();
-    if (this.#flowLPerMin < this.#minimumFlowLPerMin) this.#faulted = true;
-    this.#queue.push({ t: now, comp: { ...this.#inlet } });
-    let transported;
-    if (this.#faulted) {
-      transported = { ...this.#ambient };
-      this.#queue.length = 0;
-    } else {
-      while (this.#queue.length > 1 && this.#queue[0].t < now - transportDelayS) {
-        this.#queue.shift();
-      }
-      transported = this.#queue[0] ? { ...this.#queue[0].comp } : { ...this.#inlet };
+    if (this.#flowLPerMin < this.#minimumFlowLPerMin) {
+      this.#faulted = true;
+    } else if (this.#faulted && this.#flowLPerMin >= this.#minimumFlowLPerMin) {
+      this.#faulted = false;
     }
-    const diluted = this.#blend(transported, this.#ambient, this.#leakFraction);
     let target;
     if (this.#faulted) {
       const decay = 1 - Math.exp(-this.#stagnationRatePerS * dt);
       target = this.#blend(this.#outlet, this.#ambient, decay);
-    } else if (this.#responseTauS > 0) {
-      const a = 1 - Math.exp(-dt / this.#responseTauS);
-      target = this.#blend(this.#outlet, diluted, a);
     } else {
-      target = diluted;
+      const diluted = this.#blend(this.#inlet, this.#ambient, this.#leakFraction);
+      if (this.#responseTauS > 0 && dt < this.#responseTauS * 100) {
+        const a = 1 - Math.exp(-dt / this.#responseTauS);
+        target = this.#blend(this.#outlet, diluted, a);
+      } else {
+        target = diluted;
+      }
     }
     this.#outlet = target;
     this.#servedAt = now;

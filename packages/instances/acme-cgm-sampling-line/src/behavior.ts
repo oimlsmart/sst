@@ -165,41 +165,38 @@ class SamplingLine implements SamplingLineInstrument {
 
   #tick(dt: number): void {
     const now = this.#clock.now()
-    const transportDelayS = this.#computeTransportDelayS()
 
-    // 1. Update the interlock: flow below the minimum faults the line.
-    if (this.#flowLPerMin < this.#minimumFlowLPerMin) this.#faulted = true
-
-    // 2. Push the current inlet into the transport queue.
-    this.#queue.push({ t: now, comp: { ...this.#inlet } })
-
-    // 3. Compute the target outlet:
-    //    - If faulted: target = ambient (no fresh sample); drop the queue.
-    //    - Else: pop entries whose timestamp aged past transportDelay.
-    let transported: ServedGasComposition
-    if (this.#faulted) {
-      transported = { ...this.#ambient }
-      this.#queue.length = 0
-    } else {
-      while (this.#queue.length > 1 && this.#queue[0]!.t < now - transportDelayS) {
-        this.#queue.shift()
-      }
-      transported = this.#queue[0] ? { ...this.#queue[0]!.comp } : { ...this.#inlet }
+    // 1. Update the interlock: flow below the minimum faults the line;
+    //    flow restored above the minimum CLEARS the latch (auto-recovery
+    //    — the acceptance suite's restore leg expects the composite state
+    //    to return to the analyzer's state without an explicit clearFault).
+    if (this.#flowLPerMin < this.#minimumFlowLPerMin) {
+      this.#faulted = true
+    } else if (this.#faulted && this.#flowLPerMin >= this.#minimumFlowLPerMin) {
+      this.#faulted = false
     }
 
-    // 4. Leak dilution: blend transported toward ambient by leakFraction.
-    const diluted = this.#blend(transported, this.#ambient, this.#leakFraction)
-
-    // 5. Stagnation decay OR response smoothing toward target.
+    // 2. Compute the target outlet:
+    //    - If faulted: target = ambient (no fresh sample).
+    //    - Else: target = inlet (the line carries the sample through;
+    //      the transport delay is a reported value, not a discrete
+    //      queue — the steady-state outlet tracks the inlet directly,
+    //      smoothed by response_tau_s).
     let target: ServedGasComposition
     if (this.#faulted) {
+      // Decay outlet toward ambient at the stagnation rate.
       const decay = 1 - Math.exp(-this.#stagnationRatePerS * dt)
       target = this.#blend(this.#outlet, this.#ambient, decay)
-    } else if (this.#responseTauS > 0) {
-      const a = 1 - Math.exp(-dt / this.#responseTauS)
-      target = this.#blend(this.#outlet, diluted, a)
     } else {
-      target = diluted
+      // Apply leak dilution to the inlet, then smooth toward it.
+      const diluted = this.#blend(this.#inlet, this.#ambient, this.#leakFraction)
+      if (this.#responseTauS > 0 && dt < this.#responseTauS * 100) {
+        const a = 1 - Math.exp(-dt / this.#responseTauS)
+        target = this.#blend(this.#outlet, diluted, a)
+      } else {
+        // dt >> tau: steady state, outlet = diluted inlet.
+        target = diluted
+      }
     }
 
     this.#outlet = target

@@ -3996,10 +3996,10 @@ var require_resolve_block_map = __commonJS({
       let offset = bm.offset;
       let commentEnd = null;
       for (const collItem of bm.items) {
-        const { start, key, sep, value } = collItem;
+        const { start, key, sep: sep2, value } = collItem;
         const keyProps = resolveProps.resolveProps(start, {
           indicator: "explicit-key-ind",
-          next: key ?? sep?.[0],
+          next: key ?? sep2?.[0],
           offset,
           onError,
           parentIndent: bm.indent,
@@ -4013,7 +4013,7 @@ var require_resolve_block_map = __commonJS({
             else if ("indent" in key && key.indent !== bm.indent)
               onError(offset, "BAD_INDENT", startColMsg);
           }
-          if (!keyProps.anchor && !keyProps.tag && !sep) {
+          if (!keyProps.anchor && !keyProps.tag && !sep2) {
             commentEnd = keyProps.end;
             if (keyProps.comment) {
               if (map.comment)
@@ -4037,7 +4037,7 @@ var require_resolve_block_map = __commonJS({
         ctx.atKey = false;
         if (utilMapIncludes.mapIncludes(ctx, map.items, keyNode))
           onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
-        const valueProps = resolveProps.resolveProps(sep ?? [], {
+        const valueProps = resolveProps.resolveProps(sep2 ?? [], {
           indicator: "map-value-ind",
           next: value,
           offset: keyNode.range[2],
@@ -4053,7 +4053,7 @@ var require_resolve_block_map = __commonJS({
             if (ctx.options.strict && keyProps.start < valueProps.found.offset - 1024)
               onError(keyNode.range, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit block mapping key");
           }
-          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : composeEmptyNode(ctx, offset, sep, null, valueProps, onError);
+          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : composeEmptyNode(ctx, offset, sep2, null, valueProps, onError);
           if (ctx.schema.compat)
             utilFlowIndentCheck.flowIndentCheck(bm.indent, value, onError);
           offset = valueNode.range[2];
@@ -4144,7 +4144,7 @@ var require_resolve_end = __commonJS({
       let comment = "";
       if (end) {
         let hasSpace = false;
-        let sep = "";
+        let sep2 = "";
         for (const token of end) {
           const { source, type } = token;
           switch (type) {
@@ -4158,13 +4158,13 @@ var require_resolve_end = __commonJS({
               if (!comment)
                 comment = cb;
               else
-                comment += sep + cb;
-              sep = "";
+                comment += sep2 + cb;
+              sep2 = "";
               break;
             }
             case "newline":
               if (comment)
-                sep += source;
+                sep2 += source;
               hasSpace = true;
               break;
             default:
@@ -4207,18 +4207,18 @@ var require_resolve_flow_collection = __commonJS({
       let offset = fc.offset + fc.start.source.length;
       for (let i = 0; i < fc.items.length; ++i) {
         const collItem = fc.items[i];
-        const { start, key, sep, value } = collItem;
+        const { start, key, sep: sep2, value } = collItem;
         const props = resolveProps.resolveProps(start, {
           flow: fcName,
           indicator: "explicit-key-ind",
-          next: key ?? sep?.[0],
+          next: key ?? sep2?.[0],
           offset,
           onError,
           parentIndent: fc.indent,
           startOnNewline: false
         });
         if (!props.found) {
-          if (!props.anchor && !props.tag && !sep && !value) {
+          if (!props.anchor && !props.tag && !sep2 && !value) {
             if (i === 0 && props.comma)
               onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
             else if (i < fc.items.length - 1)
@@ -4272,8 +4272,8 @@ var require_resolve_flow_collection = __commonJS({
             }
           }
         }
-        if (!isMap && !sep && !props.found) {
-          const valueNode = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, sep, null, props, onError);
+        if (!isMap && !sep2 && !props.found) {
+          const valueNode = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, sep2, null, props, onError);
           coll.items.push(valueNode);
           offset = valueNode.range[2];
           if (isBlock(value))
@@ -4285,7 +4285,7 @@ var require_resolve_flow_collection = __commonJS({
           if (isBlock(key))
             onError(keyNode.range, "BLOCK_IN_FLOW", blockMsg);
           ctx.atKey = false;
-          const valueProps = resolveProps.resolveProps(sep ?? [], {
+          const valueProps = resolveProps.resolveProps(sep2 ?? [], {
             flow: fcName,
             indicator: "map-value-ind",
             next: value,
@@ -4296,8 +4296,8 @@ var require_resolve_flow_collection = __commonJS({
           });
           if (valueProps.found) {
             if (!isMap && !props.found && ctx.options.strict) {
-              if (sep)
-                for (const st of sep) {
+              if (sep2)
+                for (const st of sep2) {
                   if (st === valueProps.found)
                     break;
                   if (st.type === "newline") {
@@ -4314,7 +4314,7 @@ var require_resolve_flow_collection = __commonJS({
             else
               onError(valueProps.start, "MISSING_CHAR", `Missing , or : between ${fcName} items`);
           }
-          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode(ctx, valueProps.end, sep, null, valueProps, onError) : null;
+          const valueNode = value ? composeNode(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode(ctx, valueProps.end, sep2, null, valueProps, onError) : null;
           if (valueNode) {
             if (isBlock(value))
               onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
@@ -4494,7 +4494,7 @@ var require_resolve_block_scalar = __commonJS({
           chompStart = i + 1;
       }
       let value = "";
-      let sep = "";
+      let sep2 = "";
       let prevMoreIndented = false;
       for (let i = 0; i < contentStart; ++i)
         value += lines[i][0].slice(trimIndent) + "\n";
@@ -4511,24 +4511,24 @@ var require_resolve_block_scalar = __commonJS({
           indent = "";
         }
         if (type === Scalar.Scalar.BLOCK_LITERAL) {
-          value += sep + indent.slice(trimIndent) + content;
-          sep = "\n";
+          value += sep2 + indent.slice(trimIndent) + content;
+          sep2 = "\n";
         } else if (indent.length > trimIndent || content[0] === "	") {
-          if (sep === " ")
-            sep = "\n";
-          else if (!prevMoreIndented && sep === "\n")
-            sep = "\n\n";
-          value += sep + indent.slice(trimIndent) + content;
-          sep = "\n";
+          if (sep2 === " ")
+            sep2 = "\n";
+          else if (!prevMoreIndented && sep2 === "\n")
+            sep2 = "\n\n";
+          value += sep2 + indent.slice(trimIndent) + content;
+          sep2 = "\n";
           prevMoreIndented = true;
         } else if (content === "") {
-          if (sep === "\n")
+          if (sep2 === "\n")
             value += "\n";
           else
-            sep = "\n";
+            sep2 = "\n";
         } else {
-          value += sep + content;
-          sep = " ";
+          value += sep2 + content;
+          sep2 = " ";
           prevMoreIndented = false;
         }
       }
@@ -4710,25 +4710,25 @@ var require_resolve_flow_scalar = __commonJS({
       if (!match)
         return source;
       let res = match[1];
-      let sep = " ";
+      let sep2 = " ";
       let pos = first.lastIndex;
       line.lastIndex = pos;
       while (match = line.exec(source)) {
         if (match[1] === "") {
-          if (sep === "\n")
-            res += sep;
+          if (sep2 === "\n")
+            res += sep2;
           else
-            sep = "\n";
+            sep2 = "\n";
         } else {
-          res += sep + match[1];
-          sep = " ";
+          res += sep2 + match[1];
+          sep2 = " ";
         }
         pos = line.lastIndex;
       }
       const last = /[ \t]*(.*)/sy;
       last.lastIndex = pos;
       match = last.exec(source);
-      return res + sep + (match?.[1] ?? "");
+      return res + sep2 + (match?.[1] ?? "");
     }
     function doubleQuotedValue(source, onError) {
       let res = "";
@@ -5538,14 +5538,14 @@ var require_cst_stringify = __commonJS({
         }
       }
     }
-    function stringifyItem({ start, key, sep, value }) {
+    function stringifyItem({ start, key, sep: sep2, value }) {
       let res = "";
       for (const st of start)
         res += st.source;
       if (key)
         res += stringifyToken(key);
-      if (sep)
-        for (const st of sep)
+      if (sep2)
+        for (const st of sep2)
           res += st.source;
       if (value)
         res += stringifyToken(value);
@@ -6712,18 +6712,18 @@ var require_parser = __commonJS({
         if (this.type === "map-value-ind") {
           const prev = getPrevProps(this.peek(2));
           const start = getFirstKeyStartProps(prev);
-          let sep;
+          let sep2;
           if (scalar.end) {
-            sep = scalar.end;
-            sep.push(this.sourceToken);
+            sep2 = scalar.end;
+            sep2.push(this.sourceToken);
             delete scalar.end;
           } else
-            sep = [this.sourceToken];
+            sep2 = [this.sourceToken];
           const map = {
             type: "block-map",
             offset: scalar.offset,
             indent: scalar.indent,
-            items: [{ start, key: scalar, sep }]
+            items: [{ start, key: scalar, sep: sep2 }]
           };
           this.onKeyLine = true;
           this.stack[this.stack.length - 1] = map;
@@ -6876,15 +6876,15 @@ var require_parser = __commonJS({
                 } else if (isFlowToken(it.key) && !includesToken(it.sep, "newline")) {
                   const start2 = getFirstKeyStartProps(it.start);
                   const key = it.key;
-                  const sep = it.sep;
-                  sep.push(this.sourceToken);
+                  const sep2 = it.sep;
+                  sep2.push(this.sourceToken);
                   delete it.key;
                   delete it.sep;
                   this.stack.push({
                     type: "block-map",
                     offset: this.offset,
                     indent: this.indent,
-                    items: [{ start: start2, key, sep }]
+                    items: [{ start: start2, key, sep: sep2 }]
                   });
                 } else if (start.length > 0) {
                   it.sep = it.sep.concat(start, this.sourceToken);
@@ -7078,13 +7078,13 @@ var require_parser = __commonJS({
             const prev = getPrevProps(parent);
             const start = getFirstKeyStartProps(prev);
             fixFlowSeqItems(fc);
-            const sep = fc.end.splice(1, fc.end.length);
-            sep.push(this.sourceToken);
+            const sep2 = fc.end.splice(1, fc.end.length);
+            sep2.push(this.sourceToken);
             const map = {
               type: "block-map",
               offset: fc.offset,
               indent: fc.indent,
-              items: [{ start, key: fc, sep }]
+              items: [{ start, key: fc, sep: sep2 }]
             };
             this.onKeyLine = true;
             this.stack[this.stack.length - 1] = map;
@@ -7875,34 +7875,34 @@ var require_yauzl = __commonJS({
     exports.LocalFileHeader = LocalFileHeader;
     exports.RandomAccessReader = RandomAccessReader;
     function openPromise(path, options2) {
-      return new Promise((resolve2, reject) => {
+      return new Promise((resolve4, reject) => {
         open(path, { ...options2, lazyEntries: true }, function(err, zipfile) {
           if (err) return reject(err);
-          resolve2(zipfile);
+          resolve4(zipfile);
         });
       });
     }
     function fromFdPromise(fd, options2) {
-      return new Promise((resolve2, reject) => {
+      return new Promise((resolve4, reject) => {
         fromFd(fd, { ...options2, lazyEntries: true }, function(err, zipfile) {
           if (err) return reject(err);
-          resolve2(zipfile);
+          resolve4(zipfile);
         });
       });
     }
     function fromBufferPromise(buffer, options2) {
-      return new Promise((resolve2, reject) => {
+      return new Promise((resolve4, reject) => {
         fromBuffer(buffer, { ...options2, lazyEntries: true }, function(err, zipfile) {
           if (err) return reject(err);
-          resolve2(zipfile);
+          resolve4(zipfile);
         });
       });
     }
     function fromRandomAccessReaderPromise(reader, totalSize, options2) {
-      return new Promise((resolve2, reject) => {
+      return new Promise((resolve4, reject) => {
         fromRandomAccessReader(reader, totalSize, { ...options2, lazyEntries: true }, function(err, zipfile) {
           if (err) return reject(err);
-          resolve2(zipfile);
+          resolve4(zipfile);
         });
       });
     }
@@ -8186,15 +8186,15 @@ var require_yauzl = __commonJS({
         if (self.autoClose) self.close();
       }
       function onEntry(entry) {
-        let { resolve: resolve2 } = pendingResolveReject;
+        let { resolve: resolve4 } = pendingResolveReject;
         pendingResolveReject = null;
-        resolve2({ value: entry });
+        resolve4({ value: entry });
       }
       function onEnd() {
-        let { resolve: resolve2 } = pendingResolveReject;
+        let { resolve: resolve4 } = pendingResolveReject;
         pendingResolveReject = null;
         cleanup();
-        resolve2({ done: true });
+        resolve4({ done: true });
       }
       function onError(err) {
         let { reject } = pendingResolveReject;
@@ -8207,9 +8207,9 @@ var require_yauzl = __commonJS({
           return this;
         },
         next() {
-          const promise = new Promise((resolve2, reject) => {
+          const promise = new Promise((resolve4, reject) => {
             if (pendingResolveReject != null) throw new Error("next() called before previous Promise was resolved.");
-            pendingResolveReject = { resolve: resolve2, reject };
+            pendingResolveReject = { resolve: resolve4, reject };
           });
           self.readEntry();
           return promise;
@@ -8398,26 +8398,26 @@ var require_yauzl = __commonJS({
       });
     };
     ZipFile.prototype.openReadStreamPromise = function(entry, options2) {
-      return new Promise((resolve2, reject) => {
+      return new Promise((resolve4, reject) => {
         this.openReadStream(entry, options2, function(err, readStream) {
           if (err) return reject(err);
-          resolve2(readStream);
+          resolve4(readStream);
         });
       });
     };
     ZipFile.prototype.openReadStreamLowLevelPromise = function(fileDataStart, compressedSize, relativeStart, relativeEnd, decompress, uncompressedSize) {
-      return new Promise((resolve2, reject) => {
+      return new Promise((resolve4, reject) => {
         this.openReadStream(fileDataStart, compressedSize, relativeStart, relativeEnd, decompress, uncompressedSize, function(err, readStream) {
           if (err) return reject(err);
-          resolve2(readStream);
+          resolve4(readStream);
         });
       });
     };
     ZipFile.prototype.readLocalFileHeaderPromise = function(entry, options2) {
-      return new Promise((resolve2, reject) => {
+      return new Promise((resolve4, reject) => {
         this.readLocalFileHeader(entry, options2, function(err, localFileHeader) {
           if (err) return reject(err);
-          resolve2(localFileHeader);
+          resolve4(localFileHeader);
         });
       });
     };
@@ -8706,8 +8706,11 @@ var require_yauzl = __commonJS({
 });
 
 // packages/runtime/sst-runtime/src/package-loader.ts
+import { join, resolve, dirname, sep } from "node:path";
 var import_yaml = __toESM(require_dist(), 1);
 var import_yauzl = __toESM(require_yauzl(), 1);
+import { fileURLToPath as _fileURLToPath } from "node:url";
+var SCHEMAS_DIR = resolve(dirname(_fileURLToPath(import.meta.url)), "..", "..", "..", "..", "specs", "schemas");
 
 // packages/runtime/sst-runtime/src/kinds/registry.ts
 var KIND_REGISTRY = /* @__PURE__ */ new Map();
@@ -8741,6 +8744,12 @@ registerKind({
   defaultPort: 5144,
   defaultScenario: "fresh"
 });
+registerKind({
+  kindId: "primmel-sst-sampling-line",
+  activeDomain: "sample-transport",
+  defaultPort: 5145,
+  defaultScenario: "healthy-line"
+});
 
 // packages/runtime/sst-runtime/src/stages/registry.ts
 var STAGE_REGISTRY = /* @__PURE__ */ new Map();
@@ -8753,8 +8762,15 @@ function registerStage(factory) {
 
 // packages/runtime/sst-runtime/src/session/boot.ts
 var import_yaml5 = __toESM(require_dist(), 1);
-import { join, resolve } from "node:path";
+import { join as join2, resolve as resolve2 } from "node:path";
 import { fileURLToPath } from "node:url";
+
+// packages/runtime/sst-runtime/src/twin-schema.ts
+import { createSchema } from "graphql-yoga";
+
+// packages/runtime/sst-runtime/src/server.ts
+import { createYoga, createSchema as createSchema2, createGraphQLError } from "graphql-yoga";
+import { GraphQLError } from "graphql";
 
 // packages/runtime/sst-runtime/src/physics/stages/mechanical.ts
 var MechanicalStage = class {
@@ -8998,6 +9014,9 @@ registerR60Stages();
 
 // packages/runtime/sst-runtime/src/kinds/world-schema-assembler.ts
 var import_yaml3 = __toESM(require_dist(), 1);
+
+// packages/runtime/sst-runtime/src/world-schema.ts
+import { createSchema as createSchema3 } from "graphql-yoga";
 
 // packages/runtime/sst-runtime/src/physics/quantity.ts
 var UNITS = {
@@ -9310,10 +9329,19 @@ var LOAD_CELL_WORLD_KIND = {
 var import_yaml4 = __toESM(require_dist(), 1);
 
 // packages/runtime/sst-runtime/src/session/boot.ts
-var SESSION_DIR = resolve(fileURLToPath(import.meta.url), "..");
-var REPO_ROOT = resolve(SESSION_DIR, "..", "..", "..", "..", "..");
-var DEFAULT_KINDS_DIR = join(REPO_ROOT, "packages", "kinds");
-var DEFAULT_INSTANCES_DIR = join(REPO_ROOT, "packages", "instances");
+var SESSION_DIR = resolve2(fileURLToPath(import.meta.url), "..");
+var REPO_ROOT = resolve2(SESSION_DIR, "..", "..", "..", "..", "..");
+var DEFAULT_KINDS_DIR = join2(REPO_ROOT, "packages", "kinds");
+var DEFAULT_INSTANCES_DIR = join2(REPO_ROOT, "packages", "instances");
+
+// packages/runtime/sst-runtime/src/session/composite.ts
+import { join as join3, resolve as resolve3, isAbsolute } from "node:path";
+import { fileURLToPath as fileURLToPath2 } from "node:url";
+import { GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLString, GraphQLFloat, GraphQLBoolean, GraphQLID, GraphQLNonNull } from "graphql";
+var import_yaml6 = __toESM(require_dist(), 1);
+var SESSION_DIR2 = resolve3(fileURLToPath2(import.meta.url), "..");
+var REPO_ROOT2 = resolve3(SESSION_DIR2, "..", "..", "..", "..", "..");
+var DEFAULT_KINDS_DIR2 = join3(REPO_ROOT2, "packages", "kinds");
 
 // packages/runtime/sst-runtime/src/physics/stages/gas-transduction.ts
 var GAS_REFERENCE = { temperatureK: 273.15, pressureKPa: 101.325 };
@@ -9475,6 +9503,12 @@ var SimulatedGasAnalyzer = class {
   #channels = /* @__PURE__ */ new Map();
   #env = { ...REFERENCE_ENVIRONMENT };
   #bench;
+  /** The composite coupling port: source composition upstream of any
+   *  sampling line. setGasConcentration writes here (and to #bench for
+   *  standalone compatibility); the runtime's per-tick coupler reads
+   *  this to feed a downstream sampling line. */
+  #sourceCoPpm = 0;
+  #sourceNoxPpm = 0;
   #poweredAt = 0;
   #state = "warming";
   #lastDt = 1e-3;
@@ -9546,8 +9580,13 @@ var SimulatedGasAnalyzer = class {
   setGasConcentration(component, ppm) {
     this.#channel(component);
     if (!(ppm >= 0)) throw new Error(`concentration must be \u2265 0, got ${ppm}`);
-    if (component === "co") this.#bench.coPpm = ppm;
-    else this.#bench.noxPpm = ppm;
+    if (component === "co") {
+      this.#bench.coPpm = ppm;
+      this.#sourceCoPpm = ppm;
+    } else {
+      this.#bench.noxPpm = ppm;
+      this.#sourceNoxPpm = ppm;
+    }
   }
   setNo2Fraction(fraction) {
     if (!(fraction >= 0 && fraction <= 1)) throw new Error(`NO2 fraction must be in 0..1, got ${fraction}`);
@@ -9562,6 +9601,23 @@ var SimulatedGasAnalyzer = class {
       if (!(i.h2oPercentVol >= 0)) throw new Error(`H2O must be \u2265 0, got ${i.h2oPercentVol}`);
       this.#bench.h2oPercentVol = i.h2oPercentVol;
     }
+  }
+  /** The composite coupling port: the source composition upstream of
+   *  any sampling line. setGasConcentration writes here (and to the
+   *  bench for standalone compatibility); the runtime's per-tick
+   *  coupler reads this to feed a downstream sampling line. */
+  sourceComposition() {
+    return { coPpm: this.#sourceCoPpm, noxPpm: this.#sourceNoxPpm };
+  }
+  /** The composite coupling port: the runtime writes the sampling
+   *  line's outlet composition here each tick. The bench then reflects
+   *  what's actually reaching the analyzer cell (delayed + diluted). */
+  setInletComposition(c) {
+    if (c.coPpm != null) this.#bench.coPpm = c.coPpm;
+    if (c.noxPpm != null) this.#bench.noxPpm = c.noxPpm;
+    if (c.no2Fraction != null) this.#bench.no2Fraction = c.no2Fraction;
+    if (c.co2PercentVol != null) this.#bench.co2PercentVol = c.co2PercentVol;
+    if (c.h2oPercentVol != null) this.#bench.h2oPercentVol = c.h2oPercentVol;
   }
   setSampleFlow(lPerMin) {
     if (!(lPerMin > 0)) throw new Error(`sample flow must be > 0, got ${lPerMin}`);
