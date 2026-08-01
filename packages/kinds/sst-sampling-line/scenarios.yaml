@@ -1,0 +1,37 @@
+# Sampling-line damage patterns (kind-level scenarios the instance's
+# samples/*.yaml override).
+#
+# Each scenario names the variables that shift a sampling line out of
+# the healthy state. The instance packages carry per-sample overrides.
+
+scenarios:
+  - name: healthy-line
+    description: A clean line with nominal flow, no leak, no fault.
+    coefficients:
+      nominal_transport_delay_s: 10
+      stagnation_rate_per_s: 0.01
+      response_tau_s: 0.5
+
+  - name: restricted-filter
+    description: >
+      A clogged intake filter that drops the achievable flow rate. Below
+      the minimum, the line faults (the interlock the composite state
+      rule reads).
+    coefficients:
+      nominal_transport_delay_s: 30
+      stagnation_rate_per_s: 0.01
+      response_tau_s: 0.5
+    initial_state:
+      flow_l_per_min: 0.3
+
+  - name: leaking-probe
+    description: >
+      A pinhole leak in the probe that dilutes the sample toward ambient.
+      The line still flows, but the analyzer sees a fraction of source
+      blended with ambient.
+    coefficients:
+      nominal_transport_delay_s: 10
+      stagnation_rate_per_s: 0.01
+      response_tau_s: 0.5
+    initial_state:
+      leak_fraction: 0.3

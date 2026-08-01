@@ -1,0 +1,17 @@
+# Sampling-line bench metadata — the kind-driven bench reads this to
+# render the sampling line's HUD + graph axes when the line is booted
+# standalone (the composite session embeds the analyzer's bench).
+
+hud:
+  cells:
+    - { label: "Sample flow", target: sampleFlow, format: "{value} {unit}" }
+    - { label: "Line temp", target: gasTemperature, format: "{value} {unit}" }
+    - { label: "Line pressure", target: linePressure, format: "{value} {unit}" }
+    - { label: "Transport delay", target: transportDelay, format: "{value} {unit}" }
+    - { label: "State", target: operationalState, format: "{value}" }
+
+graph:
+  x_axis: { label: "Time (s)", source: clock }
+  series:
+    - { label: "CO at outlet", source: outletComposition.coPpm, color: "#c0392b" }
+    - { label: "CO at inlet", source: inletComposition.coPpm, color: "#7f8c8d" }

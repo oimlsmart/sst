@@ -1,0 +1,7 @@
+# Sampling-line MPE envelope — empty.
+#
+# The sampling line is not a measuring instrument in the OIML sense (it
+# carries and conditions the sample; it doesn't measure a quantity). It
+# has no MPE envelope. The metrological limits belong to the analyzer
+# the line feeds.
+classes: {}

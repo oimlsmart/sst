@@ -1,0 +1,31 @@
+sst_version: "1.0"
+tier: primmel-instance
+id: acme-cgm-sampling-line
+title: "ACME CGM-200 sampling line (extractive probe + pump + conditioning)"
+kind: primmel-sst-sampling-line
+version: "2024.1"
+maps_to: acme-cgm-system/sample-line
+manufacturer:
+  id: mfr-acme
+  name: ACME Instruments
+  country: US
+classification:
+  construction: heated-line
+  active_components: [probe, pump, filter, condenser]
+design_parameters:
+  line_volume_l:           { value: 0.05,  unit: L }            # 50 mL internal volume
+  nominal_flow_l_min:      { value: 1.5,   unit: l_per_min }    # matches the analyzer's sample_flow_l_min
+  minimum_flow_l_min:      { value: 0.5,   unit: l_per_min }    # the interlock threshold (R 144-1 §5.5.2)
+  ambient_co_ppm:          { value: 0.4,   unit: ppm }          # typical ambient CO
+  ambient_nox_ppm:         { value: 0.02,  unit: ppm }
+  ambient_co2_percent:     { value: 0.04,  unit: percent }      # 400 ppmv CO2
+  ambient_h2o_percent:     { value: 1.2,   unit: percent }      # 50% RH at 20°C
+coefficients: coefficients.yaml
+behavior: behavior.js
+samples:
+  - samples/healthy.yaml
+  - samples/restricted.yaml
+  - samples/leaking.yaml
+provenance:
+  certificate: "R144/2024-DE-12-117/SAMPLE-LINE"
+  first_issued: "2024-02-08"

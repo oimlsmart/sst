@@ -1,0 +1,58 @@
+{
+  "format": "sim/baked-twin-contract",
+  "version": 1,
+  "bakedAt": "2026-08-01T08:30:44.417Z",
+  "source": "packages/kinds/sst-sampling-line/scripts/bake.ts (inline)",
+  "contract": {
+    "instrumentId": "sampling-line",
+    "serves": [
+      {
+        "target": "sample_flow",
+        "via": "get_sample_flow",
+        "freshWithinS": 5
+      },
+      {
+        "target": "line_pressure",
+        "via": "get_line_pressure",
+        "freshWithinS": 5
+      },
+      {
+        "target": "gas_temperature",
+        "via": "get_gas_temperature",
+        "freshWithinS": 5
+      },
+      {
+        "target": "transport_delay",
+        "via": "get_transport_delay",
+        "freshWithinS": 5
+      },
+      {
+        "target": "state",
+        "via": "watch_state",
+        "freshWithinS": 1
+      }
+    ],
+    "operations": [
+      {
+        "id": "get_sample_flow",
+        "kind": "query"
+      },
+      {
+        "id": "get_line_pressure",
+        "kind": "query"
+      },
+      {
+        "id": "get_gas_temperature",
+        "kind": "query"
+      },
+      {
+        "id": "get_transport_delay",
+        "kind": "query"
+      },
+      {
+        "id": "watch_state",
+        "kind": "watch"
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+# ACME CGM-200 sampling-line physics coefficients.
+# These are sim-owned — not in the SSOT (the sampling line is not a
+# measuring instrument; its coefficients are the manufacturer's physical
+# model of the line's transport + dilution + stagnation behavior).
+
+# Stage 1 — transport (the line's residence time at nominal flow)
+transport:
+  nominal_transport_delay_s: 10.0       # 0.05 L / (1.5 L/min / 60 s/min) = 2 s theoretical
+                                        # real line: 10 s with filter + pump response
+  line_volume_l: 0.05                   # 50 mL internal volume (matches design parameter)
+  minimum_flow_l_per_min: 0.5           # below this, the interlock faults
+
+# Stage 2 — dilution (leak blends outlet toward ambient)
+dilution:
+  default_leak_fraction: 0.0            # healthy line: no leak
+
+# Stage 3 — stagnation (when faulted, the outlet decays toward ambient)
+stagnation:
+  rate_per_s: 0.05                      # ~20 s to decay to ambient (1-e^-1)
+  response_tau_s: 0.5                   # smoothing at the outlet face
+
+# Pressure model (linear drop along the line)
+pressure:
+  inlet_kpa: 101.325
+  drop_per_l_per_min_kpa: 2.0           # 2 kPa drop per L/min of flow

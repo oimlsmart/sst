@@ -1,0 +1,18 @@
+# Sampling-line characteristic parameters (formulas + typical values).
+# v_min etc. don't apply (the line doesn't have an MPE); these are the
+# design-parameter formulas the instance package's manifest carries.
+
+parameters:
+  line_volume_l:
+    formula: "(π × (inner_diameter_mm/2)² × length_m) / 1000"
+    unit: L
+    description: The geometric internal volume of the line.
+  transport_delay_s:
+    formula: line_volume_l / nominal_flow_l_per_min × 60
+    unit: s
+    description: The residence time of a slug of gas in the line at nominal flow.
+  minimum_flow_l_per_min:
+    source: r144-1 §5.5.2
+    description: >
+      The declared lower bound of the gas flow rate window the analyzer's
+      checking facility supervises; below this the line faults.

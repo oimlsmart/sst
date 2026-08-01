@@ -1,0 +1,35 @@
+# sst-sampling-line /world surface — mutations (kind handlers) + GroundTruth.
+# The sampling line's world is small: pump speed, line temperature, leak
+# simulation, and direct inlet-composition injection (for standalone unit
+# tests; the composite runtime drives inlet per-tick instead).
+
+extend type Mutation {
+  setFlowRate(lPerMin: Float!): WorldState!
+  setLineTemperature(degC: Float!): WorldState!
+  introduceLeak(fraction: Float!): WorldState!
+  setInletComposition(coPpm: Float, noxPpm: Float, no2Fraction: Float, co2PercentVol: Float, h2oPercentVol: Float): WorldState!
+}
+
+type SamplingLineState {
+  flowLPerMin: Float!
+  lineTemperatureDegC: Float!
+  leakFraction: Float!
+  transportDelayS: Float!
+  faulted: Boolean!
+}
+
+extend type GroundTruth {
+  clockS: Float!
+  environment: Environment!
+  line: SamplingLineState!
+  inletComposition: GasCompositionTruth!
+  outletComposition: GasCompositionTruth!
+}
+
+type GasCompositionTruth {
+  coPpm: Float!
+  noxPpm: Float!
+  no2Fraction: Float!
+  co2PercentVol: Float!
+  h2oPercentVol: Float!
+}

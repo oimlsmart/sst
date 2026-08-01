@@ -1,0 +1,7 @@
+# Sampling-line mutation → handler-method binding.
+
+mutations:
+  setFlowRate:           { handler: setFlowRate }
+  setLineTemperature:    { handler: setLineTemperature }
+  introduceLeak:         { handler: introduceLeak }
+  setInletComposition:   { handler: setInletComposition }

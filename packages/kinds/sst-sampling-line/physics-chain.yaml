@@ -1,0 +1,41 @@
+# Sampling-line physics-stage composition.
+#
+#   inlet composition (gas mixture)
+#     → [1] TRANSPORT        volume/flow = delay; gas in line at t means
+#                            outlet at t + delay
+#     → [2] DILUTION         leak pulls outlet toward ambient (linear blend)
+#     → [3] STAGNATION       when flow < min, outlet decays toward ambient
+#                            at the stagnation rate (the interlock fault path)
+#     → outlet composition (gas mixture at the line's downstream port)
+#
+# The sampling line serves flow/pressure/temperature/transport-delay as
+# scalar registers; the coupling port (outlet_composition) is the gas
+# mixture the runtime feeds to a downstream analyzer in a composite.
+
+stages:
+  - key: sampling-line/transport
+    position: 1
+    description: >
+      Transport delay: the gas mixture entering the line at time t exits at
+      t + transportDelayS where transportDelayS = lineVolumeL / flowLPerMin.
+      Below the minimum flow, the line faults and the outlet stagnates.
+    consumes: { inlet_composition: object, flow_l_per_min: float, line_volume_l: float }
+    produces: { transported_composition: object, transport_delay_s: float }
+
+  - key: sampling-line/dilution
+    position: 2
+    description: >
+      Leak dilution: the outlet composition blends toward ambient by the
+      leak fraction (a linear mix; leak=0 means no dilution, leak=1 means
+      pure ambient at the outlet).
+    consumes: { transported_composition: object, leak_fraction: float, ambient_composition: object }
+    produces: { diluted_composition: object }
+
+  - key: sampling-line/stagnation
+    position: 3
+    description: >
+      Stagnation fault path: when the line is faulted (flow below minimum),
+      the outlet decays toward ambient at the stagnation rate per second.
+      The fault latch holds until flow is restored AND clearFault() runs.
+    consumes: { diluted_composition: object, faulted: boolean, ambient_composition: object, dt_s: float }
+    produces: { outlet_composition: object }

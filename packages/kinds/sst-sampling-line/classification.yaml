@@ -1,0 +1,10 @@
+# Sampling-line classification axes. The sampling line is not a measuring
+# instrument in the OIML sense; classification is structural.
+
+classification_axes:
+  construction:
+    description: The physical layout of the line.
+    values: [heated-line, unheated-line, dilution-extractive]
+  active_components:
+    description: The line's active components.
+    values: [probe, pump, filter, condenser]

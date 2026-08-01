@@ -1,0 +1,3 @@
+# ACME CGM-200 sampling line — 3D artifact placeholder.
+# Replace with the real glTF binary once the manufacturer ships the model.
+# The runtime's glTF loader gracefully handles a placeholder file.

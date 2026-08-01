@@ -1,0 +1,9 @@
+# healthy — the ACME CGM-200 sampling line in its certified condition.
+sample_name: healthy
+serial_number: CGM200-SL-0001
+kind_scenario: healthy-line
+description: A clean line with nominal flow, no leak, no fault.
+custody:
+  - { at: "2024-02-08", event: "manufactured", location: "ACME Darmstadt" }
+overrides: {}
+fidelity: {}

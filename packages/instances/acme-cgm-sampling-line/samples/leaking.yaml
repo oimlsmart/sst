@@ -1,0 +1,12 @@
+# leaking — a pinhole leak in the probe (30% of the sample is replaced by
+# ambient before reaching the analyzer).
+sample_name: leaking
+serial_number: CGM200-SL-0001
+kind_scenario: leaking-probe
+description: A pinhole leak; 30% of sample replaced by ambient.
+custody:
+  - { at: "2024-02-08", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2026-04-15", event: "field-incident", location: "Plant 3 stack" }
+overrides:
+  leak_fraction: 0.3
+fidelity: {}

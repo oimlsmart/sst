@@ -1,0 +1,22 @@
+sst_version: "1.0"
+tier: oiml-kind
+id: primmel-sst-sampling-line
+title: "OIML R 144 (§2.1) — extractive sampling-line subsystem"
+maps_to: oiml-r144-annex
+base: primmel-sst-oiml-base
+active_domain: sample-transport
+oiml_recommendation:
+  id: oiml-r144
+  edition: "2018"
+  parts: [oiml-r144-1]
+  annex: "§2.1 extractive"
+description: >
+  The sampling-line subsystem of an extractive continuous gas
+  monitoring system (R 144-1 §2.1): the probe, pump, and conditioning
+  line that transports the sample from the source to the analyzer. Not
+  a measuring instrument in the OIML sense — it carries and conditions
+  the sample. Its twin serves the flow, pressure, temperature, and
+  transport-delay registers the analyzer's self-check supervises
+  (R 144-1 §5.5.2), and declares the coupling port (outlet_composition)
+  the runtime wires to the downstream analyzer's inlet_composition in
+  a composite session.

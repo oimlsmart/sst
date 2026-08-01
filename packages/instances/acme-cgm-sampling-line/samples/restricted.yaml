@@ -1,0 +1,13 @@
+# restricted — a clogged intake filter dropping the achievable flow.
+# In this state, the line can sustain only 0.3 L/min (below the 0.5
+# interlock threshold). The composite state rule reads this as fault.
+sample_name: restricted
+serial_number: CGM200-SL-0001
+kind_scenario: restricted-filter
+description: A clogged intake filter; flow drops below the interlock threshold.
+custody:
+  - { at: "2024-02-08", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2026-04-15", event: "field-incident", location: "Plant 3 stack" }
+overrides:
+  flow_l_per_min: 0.3
+fidelity: {}
