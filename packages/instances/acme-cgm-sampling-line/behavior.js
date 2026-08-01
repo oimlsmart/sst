@@ -1,3 +1,5 @@
+import { createRequire as _cr } from 'module'; const require = _cr(import.meta.url);
+
 // src/behavior.ts
 var DEFAULT_AMBIENT = {
   coPpm: 0.4,

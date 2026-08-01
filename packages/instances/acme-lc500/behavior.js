@@ -1,3 +1,4 @@
+import { createRequire as _cr } from 'module'; const require = _cr(import.meta.url);
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -7853,7 +7854,7 @@ var ComposedInstrument = class {
   }
   // ── Signal chain (called on each tick) ───────────────────────────────
   tick(dtS) {
-    if (this.#state === "warming" && this.#clock.now() - this.#poweredAt >= 5 * this.#warmUpTauS) this.#state = "ready";
+    this.#settleWarmUp();
     let rawIndicationKg;
     if (this.#dataDriven) {
       const out = this.#dataDriven.tick(
@@ -7882,7 +7883,11 @@ var ComposedInstrument = class {
     return this.#servedAt;
   }
   operationalState() {
+    this.#settleWarmUp();
     return this.#faulted ? "fault" : this.#state;
+  }
+  #settleWarmUp() {
+    if (this.#state === "warming" && this.#clock.now() - this.#poweredAt >= 5 * this.#warmUpTauS) this.#state = "ready";
   }
   environment() {
     return this.#env;

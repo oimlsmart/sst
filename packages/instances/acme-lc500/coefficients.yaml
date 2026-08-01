@@ -7,7 +7,11 @@
 mechanical:
   compliance_kg_per_mm: 2.0e-6           # datasheet rated deflection
   hysteresis_class: 0.45                  # R 60 hysteresis class
-  creep_coefficient: 3.0e-4               # good-cell baseline
+  creep_coefficient: 2.0e-5               # good-cell baseline — well inside the class
+                                          # allowance (0.021 kg at a 450 kg dwell: creep
+                                          # ≈ 0.009 kg). Re-tuned for the elastic-fraction
+                                          # creep law (the composer's gap-3 fix): the
+                                          # coefficient multiplies the applied load in kg.
   creep_tau_s: 300
   resonant_hz: 250
   off_center_sensitivity: 0.001
