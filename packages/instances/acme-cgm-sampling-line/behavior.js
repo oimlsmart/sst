@@ -1,6 +1,4 @@
-import { createRequire as _cr } from 'module'; const require = _cr(import.meta.url);
-
-// packages/instances/acme-cgm-sampling-line/src/behavior.ts
+// src/behavior.ts
 var DEFAULT_AMBIENT = {
   coPpm: 0.4,
   noxPpm: 0.02,

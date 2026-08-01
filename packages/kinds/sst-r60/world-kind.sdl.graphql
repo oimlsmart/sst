@@ -29,4 +29,9 @@ extend type GroundTruth {
   strainMm: Float!
   spanDriftFraction: Float!
   thermalOffsetMVperV: Float!
+  # The simulated clock at the reading (seconds; world time, never wall).
+  clockS: Float!
+  # The environment the physics ran under (the D 11 conditions — set
+  # via setEnvironment, read back here; TODO.integration/06 gap 1).
+  environment: Environment!
 }
