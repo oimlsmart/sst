@@ -1,0 +1,13 @@
+{
+  "name": "oiml-sst-instruments",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/base", "packages/kinds/*", "packages/instances/*", "packages/lc500", "packages/gas-analyzer", "packages/md", "packages/r91"],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "dependencies": {
+    "@primmel/sst-runtime": "github:primmel/sst"
+  }
+}
