@@ -1,7 +1,7 @@
 {
   "format": "sim/baked-twin-contract",
   "version": 1,
-  "bakedAt": "2026-07-28T18:55:32.765Z",
+  "bakedAt": "2026-08-01T08:14:30.993Z",
   "source": "/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-rs180",
   "contract": {
     "instrumentId": "acme-rs180",
@@ -9,7 +9,7 @@
       {
         "target": "indication",
         "via": "get_indication",
-        "freshWithinS": 1
+        "freshWithinS": 5
       },
       {
         "target": "state",

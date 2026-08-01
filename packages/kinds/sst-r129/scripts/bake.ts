@@ -8,7 +8,7 @@ import { parseTwinContract } from '@primmel/sst-runtime/twin-contract-prl'
 import { bakeTwinContract } from '@primmel/sst-runtime/twin-bake'
 
 const PKG = process.argv[2] ?? '/Users/mulgogi/src/oimlsmart/smart/primmel-packages/acme-md3xx'
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'md.twin.json')
+const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'twin', 'r129.twin.json')
 
 const contract = await parseTwinContract(PKG)
 await bakeTwinContract(contract, OUT, PKG)
