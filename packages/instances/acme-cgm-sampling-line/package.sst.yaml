@@ -21,6 +21,7 @@ design_parameters:
   ambient_co2_percent:     { value: 0.04,  unit: percent }      # 400 ppmv CO2
   ambient_h2o_percent:     { value: 1.2,   unit: percent }      # 50% RH at 20°C
 coefficients: coefficients.yaml
+model: model.glb.placeholder
 behavior: behavior.js
 samples:
   - samples/healthy.yaml

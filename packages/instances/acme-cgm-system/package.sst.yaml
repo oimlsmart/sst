@@ -1,0 +1,53 @@
+sst_version: "1.0"
+tier: primmel-instance
+id: acme-cgm-system
+title: "ACME CGM-200 gas analytical system (composite)"
+maps_to: acme-cgm-system
+manufacturer:
+  id: mfr-acme
+  name: ACME Instruments
+  country: US
+version: "2024.1"
+description: >
+  The ACME CGM-200 gas analytical SYSTEM as a hierarchical composite: an
+  analyzer component (the acme-cgm-200 R 144 instance) plus a sampling-line
+  component (the acme-cgm-sampling-line instance). The composite's twin
+  serves the R 144 governed projection registers, decomposed to its
+  components per specs/13 §1; the runtime couples the sampling line's
+  outlet composition to the analyzer's inlet each tick.
+composition:
+  # The authoritative semantics live in the Primmel package
+  # (smart/primmel-packages/acme-cgm-system/payload/composition.yaml);
+  # this manifest is the SST projection. The smart-side acceptance
+  # parses the Primmel package with the real kernel and asserts the
+  # booted session's register set ≡ the Primmel decomposition.
+  source_of_truth: primmel:acme-cgm-system@2026
+  components:
+    analyzer:
+      instance: ../acme-cgm-200
+    sampling_line:
+      instance: ../acme-cgm-sampling-line
+  decomposition:
+    indicationCo:          analyzer.indication_co
+    indicationNox:         analyzer.indication_nox
+    state:                 analyzer.state
+    environmentalContext:  analyzer.environmental_context
+    sampleFlow:            sampling_line.sample_flow
+    linePressure:          sampling_line.line_pressure
+    sampleTemperature:     sampling_line.gas_temperature
+    transportDelay:        sampling_line.transport_delay
+    operationalState:      <computed>.state_rule
+  state_rule: any_fault_else_analyzer
+  state_rule_args:
+    named_component: analyzer
+  # Per-tick couplings: the analyzer's source (set by the user via
+  # setGasConcentration) feeds the sampling line's inlet; the line's
+  # outlet composition feeds the analyzer's inlet (cell) composition.
+  couplings:
+    - from: analyzer.source_composition
+      to:   sampling_line.inlet_composition
+    - from: sampling_line.outlet_composition
+      to:   analyzer.inlet_composition
+provenance:
+  certificate: "R144/2024-DE-12-117"
+  first_issued: "2024-02-08"
