@@ -1,0 +1,34 @@
+---
+import { Base, MinisiteNav, DocsSidebar } from '@oimlsmart/site-shell'
+import { getCollection } from 'astro:content'
+import '../../styles/app.css'
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Story', href: '/story' },
+  { label: 'Docs', href: '/docs' },
+  { label: 'Demo', href: '/demo' },
+]
+const allDocs = await getCollection('docs')
+const chapters = allDocs.filter(d => d.id.startsWith('sst/') && true)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+const overview = allDocs.find(d => d.id === 'oiml-rec/overview')
+---
+
+<Base title="SST documentation" description="The SST for Measuring Instruments documentation.">
+  <MinisiteNav sections={NAV} base="/sst" />
+  <div class="max-w-7xl mx-auto px-6 py-10 grid gap-10 lg:grid-cols-[16rem_1fr]">
+    <aside><DocsSidebar order={['sst']} labels={{ 'sst': 'SST Documentation' }} hrefBase="/sst/docs/" /></aside>
+    <main class="docs-body">
+      <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">SMART Recommendations · Docs</p>
+      <h1 class="font-serif text-3xl font-semibold text-ink mb-6">The SST documentation</h1>
+      {overview && <p class="text-ink-soft mb-6">{overview.data.description ?? 'The authoring corpus: method, subjects, requirements, tests, forms, packaging, walkthroughs.'} Start with the overview, then the chapters in order.</p>}
+      <ul class="mt-4 space-y-3">
+        {overview && <li><a class="text-accent font-medium" href="/recs/docs/oiml-rec/overview">Overview — the corpus map</a></li>}
+        {chapters.map(d => (
+          <li><a class="text-accent font-medium" href={`/recs/docs/${d.id}`}>{d.data.shortTitle ?? d.data.title ?? d.id.split('/').pop()}</a>{d.data.description ? <span class="text-ink-soft"> — {d.data.description}</span> : null}</li>
+        ))}
+      </ul>
+    </main>
+  </div>
+</Base>

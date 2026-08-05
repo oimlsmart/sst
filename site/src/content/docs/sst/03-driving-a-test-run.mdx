@@ -1,0 +1,53 @@
+---
+title: 'Driving a Test Run Against a Sim'
+shortTitle: 'Driving a Test Run'
+description: 'The rehearsal path: prepare the test, drive the world through the method, record the readings, read the verdict.'
+eyebrow: 'SST Docs · 03'
+order: 3
+---
+
+> *In this page:* the full rehearsal against a sim, from the test
+> request to the recorded evidence, and what the platform records at
+> each step.
+
+---
+
+## 1. The shape of a run
+
+A test run against a sim mirrors the physical run exactly: the
+operator holds a test request (from the platform or standalone), the
+sim stands in for the instrument, and the readings land as evidence in
+the run’s record. The point is that the method transfers: the same
+steps, the same waits, the same judgment, with the physics answering
+instead of the bench.
+
+## 2. The steps, concretely
+
+1. **Prepare.** The operator selects the registered sample and starts
+   the run. The platform creates the run against the test’s form.
+2. **Drive.** The guided run (or the console) walks the method: set
+   the chamber to 20 °C, stabilize, place the 10 kg minimum dead load,
+   read the indication; cycle to the minimum rated temperature,
+   stabilize, read again; to the maximum; back to reference. Each
+   instruction is issued in order; each reading is taken from the twin.
+3. **Record.** Each reading lands as evidence in the run: the value,
+   the unit, the serve time, and the conditions log (the simulated
+   serve provenance, plainly declared).
+4. **Judge.** The run’s verdict computes from the recorded evidence
+   against the test’s acceptance rule (the MDLO change per 5 °C against
+   the apportionment limit).
+
+## 3. What the record shows afterwards
+
+The recorded run reads like a physical one, with one honest mark: the
+evidence provenance names the simulated channel. The evaluator sees
+the values, the conditions, the sign-off, and the verdict, and sees
+that the instrument was simulated. In training that mark is the whole
+point: the workflow is real, the physics is declared.
+
+## 4. Multiple runs and additional tests
+
+The lab operator runs the same test on several samples, and adds tests
+beyond the requested set when the Recommendation offers them. The sim
+supports both: each run is its own record against its own sample, and
+the added test follows the same prepare-drive-record-judge path.

@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import "@oimlsmart/site-shell/tokens.css";
+@source "../../node_modules/@oimlsmart/site-shell/src/**/*.{astro,vue}";
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+}
+
+@layer components {
+  .docs-body { max-width: 46rem; }
+  .docs-body h2 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem; font-weight: 600;
+    margin-top: 2.5rem; margin-bottom: 0.75rem;
+  }
+  .docs-body h3 {
+    font-family: var(--font-serif);
+    font-size: 1.1875rem; font-weight: 600;
+    margin-top: 1.75rem; margin-bottom: 0.5rem;
+  }
+  .docs-body p { line-height: 1.7; margin-bottom: 1rem; }
+  .docs-body ul, .docs-body ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+  .docs-body ul { list-style: disc; }
+  .docs-body ol { list-style: decimal; }
+  .docs-body li { line-height: 1.7; margin-bottom: 0.375rem; }
+  .docs-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  .docs-body code {
+    font-family: var(--font-mono); font-size: 0.85em;
+    background: var(--accent-soft); padding: 0.1em 0.3em; border-radius: 3px;
+  }
+  .docs-body pre {
+    background: var(--paper-raised); border: 1px solid var(--rule);
+    border-radius: 6px; padding: 1rem; overflow-x: auto; margin-bottom: 1.25rem;
+  }
+  .docs-body pre code { background: transparent; padding: 0; font-size: 0.8125rem; }
+  .docs-body table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; }
+  .docs-body th, .docs-body td { padding: 0.5rem 0.75rem; border: 1px solid var(--rule); text-align: left; font-size: 0.875rem; }
+  .docs-body th { background: var(--paper-raised); font-weight: 600; }
+  .docs-body blockquote {
+    border-left: 3px solid var(--accent); padding-left: 1rem;
+    margin: 1.25rem 0; color: var(--ink-soft); font-style: italic;
+  }
+}

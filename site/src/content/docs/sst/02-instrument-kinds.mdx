@@ -1,0 +1,59 @@
+---
+title: 'The Instrument Kinds and the Physics Model'
+shortTitle: 'Kinds and Physics'
+description: 'The instrument families the library carries and how the physics stages compose their indications.'
+eyebrow: 'SST Docs · 02'
+order: 2
+---
+
+> *In this page:* the kinds in the library, the physics-stage pattern,
+> and the configurable realism (creep, drift, per-channel response).
+
+---
+
+## 1. The kinds
+
+The instrument library carries one kind per instrument family, each
+with its classification axes, its physics stages, its twin contract,
+and its active domain (the actuation vocabulary of its world):
+
+| Kind | Family | Domain |
+|---|---|---|
+| `sst-r60` | Load cells (R 60) | mass |
+| `sst-r91` | Radar speed meters (R 91) | speed |
+| `sst-r129` | Dimensional instruments (R 129) | dimensions |
+| `sst-r144` | Continuous gas analyzers (R 144) | gas-concentration |
+| `sst-sampling-line` | The extractive sampling subsystem (R 144 §2.1) | flow |
+
+## 2. The physics stages
+
+An indication is computed through the kind’s physics chain, and the
+environment acts at each stage. The load cell’s chain is the clearest
+example: mechanical deflection under load, transduction to the
+electrical signal, conditioning to the indicated value. Creep accrues
+under sustained load; a temperature cycle shifts the zero and the span
+by a small, configurable amount, so the same load reads slightly
+differently afterward — the behavior a tester sees on a real bench.
+
+The gas analyzer’s chain works per measurand channel: each declared
+component (CO, NO, NO₂) responds with its own characteristics, and the
+sampling line’s transport acts on the delivered composition (delay,
+conditioning) where the composite session wires the line to the
+analyzer.
+
+## 3. The twin contract
+
+Each kind declares its twin contract: the channels it serves (its
+indication shape, its environmental context, its operations) and the
+baked artifact the runtime loads. The contract is baked from the
+kind’s package, and the bake is freshness-gated in CI: a kind edited
+without a re-bake fails the check.
+
+## 4. The instances
+
+An instance is a named example device built on a kind: the ACME
+LC-500 load cell, the ACME RS-180 radar, the ACME MD-3xx dimensional
+instrument, the ACME CGM-200 gas analyzer, and the composite CGM
+system (sampling line plus analyzer in one session). Each instance
+carries its coefficients, its samples (the named starting conditions:
+fresh, drifted, faulted), and its console scenario vocabulary.
