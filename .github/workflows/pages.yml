@@ -26,6 +26,16 @@ jobs:
         working-directory: site
       - run: npm run build
         working-directory: site
+
+      - name: Verify the page and the canonical logo asset
+        run: |
+          set -euo pipefail
+          test -f dist/index.html
+          grep -q "https://www.oimlsmart.org/img/components/" dist/index.html
+          url=$(grep -o 'https://www.oimlsmart.org/img/components/[a-z-]*-light.svg' dist/index.html | head -1)
+          code=$(curl -s -o /dev/null -w '%{http_code}' -L "$url")
+          echo "canonical logo: $url → HTTP $code"
+          [ "$code" = "200" ]
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
