@@ -1,0 +1,106 @@
+---
+/**
+ * The SST minisite (/sst): the Simulated SMART Twin for Measuring
+ * Instruments — simulated instruments with metrologically real physics,
+ * so test programs run without hardware. Style: the OIML SMART writing
+ * guide.
+ */
+const kinds = [
+  { name: 'Load cells', desc: 'The ACME LC-500 family: strain-gauge physics with creep, hysteresis, and temperature response.' },
+  { name: 'Gas analyzers', desc: 'The continuous emissions line: measurement channels with drift and environmental response.' },
+  { name: 'Belt scales', desc: 'Dynamic weighing in motion: the quarry belt-scale line with flow integration.' },
+  { name: 'Dimensional instruments', desc: 'Multi-dimensional measurement for logistics instruments.' },
+]
+
+const capabilities = [
+  { name: 'The twin endpoint', desc: 'The sim serves the same twin interface a certified SMART instrument would. The platform cannot tell the difference by construction.' },
+  { name: 'The practice channel', desc: 'A separate interface applies the physical world: place a load, set the temperature, wait, read the indication.' },
+  { name: 'The console', desc: 'An interactive shell drives the instrument directly, so a learner can operate the physics by hand.' },
+]
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SST for Measuring Instruments — OIML SMART</title>
+    <meta name="description" content="OIML SST for Measuring Instruments — the Simulated SMART Twin: simulated instruments with metrologically real physics, no hardware required." />
+    <style>
+      :root {
+        --paper: #faf7f2; --ink: #1a2332; --ink-soft: #4a5568; --accent: #004996;
+        --rule: #d9d4c7; --paper-soft: #f3efe7;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root { --paper: #14181f; --ink: #e8e6e1; --ink-soft: #a8b0bc; --accent: #6ba3e8; --rule: #2c3542; --paper-soft: #1c222c; }
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; }
+      main { max-width: 56rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+      h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 500; letter-spacing: -0.025em; line-height: 1.05; margin: 1.5rem 0 1rem; }
+      h2 { font-size: 1.5rem; font-weight: 600; margin: 2.5rem 0 0.75rem; }
+      p { color: var(--ink-soft); max-width: 42rem; }
+      .lede { font-size: 1.125rem; }
+      .brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--ink); font-size: 0.9375rem; }
+      .brand:hover { color: var(--accent); }
+      ul { color: var(--ink-soft); }
+      li { margin: 0.375rem 0; }
+      a { color: var(--accent); }
+      code { font-family: ui-monospace, monospace; font-size: 0.875em; background: var(--paper-soft); padding: 0.1em 0.35em; border-radius: 4px; }
+      footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: 0.8125rem; color: var(--ink-soft); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="brand" href="https://www.oimlsmart.org/">← OIML SMART</a>
+      <picture>
+        <source srcset="/sst/img/components/sst-dark.svg" media="(prefers-color-scheme: dark)" />
+        <img src="/sst/img/components/sst-light.svg" alt="The SST for Measuring Instruments logo." width="140" />
+      </picture>
+      <h1>SST for Measuring Instruments</h1>
+      <p class="lede">
+        The Simulated SMART Twin is a full-fidelity stand-in for a physical instrument. It serves the
+        same twin interface a real device would serve, and it adds a practice channel for the physics
+        a laboratory would apply. The whole certification chain can be rehearsed before anyone touches
+        hardware.
+      </p>
+
+      <h2>Purpose</h2>
+      <p>
+        A certification workflow is learned and tested against a real instrument. A simulated SMART
+        twin provides that instrument: a software device whose answers follow the physics of the
+        Recommendation it models. Laboratories practice test programs, the platform is validated
+        against metrologically meaningful behavior, and instructors teach the chain without a bench.
+      </p>
+
+      <h2>The instrument kinds</h2>
+      <ul>
+        {kinds.map(k => (
+          <li><strong>{k.name}.</strong> {k.desc}</li>
+        ))}
+      </ul>
+
+      <h2>What a sim provides</h2>
+      <ul>
+        {capabilities.map(c => (
+          <li><strong>{c.name}.</strong> {c.desc}</li>
+        ))}
+      </ul>
+
+      <h2>Running a sim</h2>
+      <p>
+        A sim runs anywhere Node.js runs. The instrument library in this repository holds the kinds
+        and the ACME instances; the kind-agnostic runtime lives in the Primmel platform. One command
+        boots an instrument on a port:
+      </p>
+      <p><code>npx tsx packages/runtime/sst-runtime/src/bin.ts run packages/instances/acme-lc500 5397</code></p>
+      <p>
+        The sim then answers its twin endpoint, and the OIML-CS SMART platform binds to it the same
+        way it would bind a certified physical instrument.
+      </p>
+
+      <footer>
+        Part of <a href="https://www.oimlsmart.org/">OIML SMART</a>. Developed under the OIML SMART program by Ribose.
+      </footer>
+    </main>
+  </body>
+</html>
