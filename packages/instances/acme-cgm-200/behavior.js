@@ -1,4 +1,3 @@
-import { createRequire as _cr } from 'module'; const require = _cr(import.meta.url);
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -8746,7 +8745,7 @@ registerKind({
 });
 registerKind({
   kindId: "primmel-sst-sampling-line",
-  activeDomain: "sample-transport",
+  activeDomain: "flow",
   defaultPort: 5145,
   defaultScenario: "healthy-line"
 });

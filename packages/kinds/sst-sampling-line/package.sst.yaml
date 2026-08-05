@@ -4,7 +4,7 @@ id: primmel-sst-sampling-line
 title: "OIML R 144 (§2.1) — extractive sampling-line subsystem"
 maps_to: oiml-r144-annex
 base: primmel-sst-oiml-base
-active_domain: sample-transport
+active_domain: flow
 oiml_recommendation:
   id: oiml-r144
   edition: "2018"
