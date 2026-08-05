@@ -1,0 +1,46 @@
+---
+import { Base, MinisiteNav } from '@oimlsmart/site-shell'
+import '../styles/app.css'
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Story', href: '/story' },
+  { label: 'Docs', href: '/docs' },
+  { label: 'Demo', href: '/demo' },
+]
+---
+
+<Base title="The SST demo" description="Boot a simulated instrument and drive a scenario.">
+  <MinisiteNav sections={NAV} base="/sst" />
+  <main class="max-w-3xl mx-auto px-6 py-14 docs-body">
+    <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">SST for Measuring Instruments · Demo</p>
+    <h1 class="font-serif text-3xl font-semibold text-ink mb-6">The SST demo</h1>
+
+    <p>One command boots an instrument with every surface open:</p>
+
+    <pre><code>npx tsx packages/runtime/sst-runtime/src/bin.ts run packages/instances/acme-lc500 5290</code></pre>
+
+    <p>Then the surfaces answer on the same port: <code>/twin</code> (the SMART twin surface), <code>/world</code> (the simulation driver, GraphiQL in a browser), and the console with <code>--console</code>.</p>
+
+    <h2>A scripted scenario</h2>
+    <p>The load-cell rehearsal, in console lines:</p>
+
+    <pre><code>{`enable
+place load 40
+show ground-truth
+set environment temperature 60 humidity 100
+advance 5m
+set environment temperature 20 humidity 50
+advance 5m
+place load 40
+show indication
+exit`}</code></pre>
+
+    <p>The indication after the temperature cycle differs from the first, by a configurable amount — the drift a real cell shows, so the rehearsal is honest about what a tester will see on the bench.</p>
+
+    <h2>Drive it from your own client</h2>
+    <p>Everything the console does is GraphQL against <code>/world</code>, and every read is GraphQL against <code>/twin</code>. CORS is open for browser clients in the dev posture. The OIML-CS SMART platform binds the same endpoints when it drives a test run.</p>
+
+    <p>The standalone commands, the instrument kinds, and the physics model are in <a href="/sst/docs/" class="text-accent">the SST documentation</a>.</p>
+  </main>
+</Base>

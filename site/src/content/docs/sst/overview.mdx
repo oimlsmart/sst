@@ -1,0 +1,59 @@
+---
+title: 'The SST Overview'
+shortTitle: 'Overview'
+description: 'What a Simulated SMART Twin is, and what it is for: training, integration, and honest rehearsal without hardware.'
+eyebrow: 'SST Docs · 00'
+order: 0
+---
+
+> *In this page:* what the Simulated SMART Twin is, the two repositories
+> it lives in, and the three things it is for.
+
+---
+
+## 1. What an SST is
+
+A Simulated SMART Twin is a faithful, scriptable simulation of a SMART
+Measuring Instrument. Faithful means the twin surface is identical: the
+sim answers the same GraphQL a physical SMART instrument answers, with
+the same IS/HAS/DOES channels, the same serve-time and freshness rules,
+and the same degradation to indeterminate when the value cannot prove
+itself. Scriptable means the world behind the twin is driven openly:
+loads are placed and removed, the chamber's temperature and humidity
+change, time advances in steps.
+
+An SST is plainly marked as simulation. Its ground truth is a declared
+probe channel (`sim_ground_truth`), never confused with a physical
+reference, and its twin says what it is.
+
+## 2. The two repositories
+
+The SST is split the way the whole SMART program is split: machinery
+apart from content.
+
+- **Primmel SST (the framework).** The runtime, the twin and world
+  drivers, the console grammar, the shell, the bench. Everything that
+  does not care what the instrument measures.
+- **OIML SST (the instrument library).** The kinds (the physics of each
+  instrument family) and the instances (the named example devices that
+  use them): the load cell, the radar speed meter, the dimensional
+  instrument, the gas analyzer, and the sampling-line subsystem.
+
+A new instrument kind is a package in the library; the framework does
+not change. The library validates and boots against the framework in
+CI, so a physics regression in a kind fails the gate, not a user.
+
+## 3. What it is for
+
+- **Training.** A tester rehearses the full certification workflow on
+  the sim: prepare the test, drive the chamber and the load through the
+  method, record the readings, read the verdicts. The OIML-CS SMART
+  platform's guided runs drive the same sims step by step.
+- **Integration.** A developer binds a client to the twin endpoint
+  without a lab: the SMART platform, a monitoring engine, or their own
+  software talks to the sim exactly as it will talk to the physical
+  instrument.
+- **Honest rehearsal.** The physics is realistic enough to matter:
+  creep, temperature drift, per-channel response, and the small
+  differences a temperature cycle leaves behind, configurable by the
+  user.

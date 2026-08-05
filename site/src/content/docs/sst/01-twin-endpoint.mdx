@@ -1,0 +1,59 @@
+---
+title: 'The Twin Endpoint and the Platform Binding'
+shortTitle: 'The Twin Endpoint'
+description: 'What the /twin endpoint serves, and how the OIML-CS SMART platform binds it to drive test runs.'
+eyebrow: 'SST Docs · 01'
+order: 1
+---
+
+> *In this page:* the twin endpoint’s channels, the world endpoint
+> beside it, and how the SMART platform binds an endpoint to perform
+> tests.
+
+---
+
+## 1. The twin endpoint
+
+Every booted sim serves `/twin`: the SMART twin surface, as GraphQL.
+The channels match the SMART Measuring Instrument’s own:
+
+- **IS**: the instrument’s identity — kind, model, serial, the type it
+  claims.
+- **HAS**: its registers — the environmental context (temperature,
+  humidity, pressure), configuration, declared characteristics.
+- **DOES**: its behavior — the indication process with serve time, and
+  the declared operations (zero, span, self-test), each with its
+  preconditions.
+
+Every served value carries its provenance and serve time; the same
+freshness rules apply as on a physical instrument.
+
+## 2. The world endpoint
+
+Beside the twin sits `/world`: the simulation’s driver, also GraphQL.
+The world is where the rehearsal happens: `placeLoad(massKg:)`,
+`removeLoad`, `setEnvironment(conditions:)`, `advanceTime(seconds:)`,
+`scenario(name:)`. The world answers with the ground truth (the
+simulation’s own state), which is what the twin’s indication is
+computed from. In a browser, both endpoints serve GraphiQL for
+exploration; CORS is open for browser clients in the dev posture.
+
+## 3. Binding the endpoint in the SMART platform
+
+The OIML-CS SMART platform binds a twin endpoint the way it would bind
+a physical SMART instrument:
+
+1. **Choose the Recommendation.** The platform’s workflow runs on a
+   Recommendation’s model (today: R 60, R 91, R 129, R 144).
+2. **Enter the endpoint.** The operator gives the platform the twin
+   endpoint URL. The platform validates the binding: the endpoint
+   answers the expected channels for the chosen Recommendation.
+3. **Drive the test.** The guided run walks the test method step by
+   step: the platform instructs the operator (set the chamber, place
+   the load, wait), reads the twin’s indication at each point, and
+   records the readings as evidence into the test run.
+4. **Judge.** The recorded evidence feeds the verdict chain exactly as
+   physical readings would.
+
+The binding is deliberately identical for a simulated and a physical
+endpoint; the operator is told which they are driving.

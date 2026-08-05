@@ -19,6 +19,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout the shell package (the chrome SSOT)
+        uses: actions/checkout@v4
+        with:
+          repository: oimlsmart/site-shell
+          path: vendor/site-shell
       - uses: actions/setup-node@v4
         with:
           node-version: 24

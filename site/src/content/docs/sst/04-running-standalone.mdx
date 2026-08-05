@@ -1,0 +1,59 @@
+---
+title: 'Running a Sim Standalone'
+shortTitle: 'Running Standalone'
+description: 'One command boots an instrument with every surface open: twin, world, console, bench. No platform checkout required.'
+eyebrow: 'SST Docs · 04'
+order: 4
+---
+
+> *In this page:* the standalone boot, the surfaces on the port, the
+> console session, and the CORS posture for browser clients.
+
+---
+
+## 1. The boot
+
+From the framework checkout:
+
+```
+npx tsx packages/runtime/sst-runtime/src/bin.ts run <instance-package> <port>
+```
+
+For the load cell example:
+
+```
+npx tsx packages/runtime/sst-runtime/src/bin.ts run packages/instances/acme-lc500 5290
+```
+
+The instrument boots from its package (the baked twin contract, the
+coefficients, the samples) and answers on the port. No platform
+checkout, no database, no hardware.
+
+## 2. The surfaces on the port
+
+- `/twin` — the SMART twin surface (GraphQL; GraphiQL in a browser).
+- `/world` — the simulation driver (GraphQL; GraphiQL in a browser).
+- `/` — the bench shell (the terminal and the instrument bench).
+
+With `--console`, the IOS-style console session runs on the same
+process: `enable`, `place load 40`, `show ground-truth`,
+`set environment temperature 60 humidity 100`, `advance 5m`,
+`show clock`, `exit`. The console grammar is per kind where the kind
+declares one; the load cell’s grammar covers actuation, environment,
+time, and the twin reads.
+
+## 3. The CORS posture
+
+Browser clients are welcome in the dev posture: both GraphQL endpoints
+answer cross-origin from a local page (the platform’s guided runs use
+this). The `/world` channel is unguarded on localhost; the boot prints
+a warning, and `SIM_WORLD_TOKEN` gates it for any non-local deployment.
+The twin surface stays read-oriented; the world is the actuation
+channel.
+
+## 4. CI proof
+
+The standalone boot is not a claim: the framework and instrument CI
+boot every instance and probe its surfaces (the instrument-boot matrix
+in both repositories). A regression in a kind’s physics or in the
+boot path fails the gate before it ships.

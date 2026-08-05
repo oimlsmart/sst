@@ -1,0 +1,32 @@
+---
+import { Base, MinisiteNav, DocsSidebar } from '@oimlsmart/site-shell'
+import { getCollection, render } from 'astro:content'
+import '../../styles/app.css'
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Story', href: '/story' },
+  { label: 'Docs', href: '/docs' },
+  { label: 'Demo', href: '/demo' },
+]
+
+export async function getStaticPaths() {
+  const allDocs = await getCollection('docs')
+  return allDocs.map(d => ({ params: { slug: d.id }, props: { doc: d } }))
+}
+
+const { doc } = Astro.props
+const { Content } = await render(doc)
+---
+
+<Base title={doc.data.title ?? doc.id} description={doc.data.description}>
+  <MinisiteNav sections={NAV} base="/sst" />
+  <div class="max-w-7xl mx-auto px-6 py-10 grid gap-10 lg:grid-cols-[16rem_1fr]">
+    <aside><DocsSidebar order={['sst']} labels={{ 'sst': 'SST Documentation' }} hrefBase="/sst/docs/" /></aside>
+    <main class="docs-body">
+      {doc.data.eyebrow && <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">{doc.data.eyebrow}</p>}
+      <h1 class="font-serif text-3xl font-semibold text-ink mb-6">{doc.data.shortTitle ?? doc.data.title ?? doc.id.split('/').pop()}</h1>
+      <Content />
+    </main>
+  </div>
+</Base>

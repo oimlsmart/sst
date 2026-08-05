@@ -1,0 +1,31 @@
+---
+import { Base, MinisiteNav } from '@oimlsmart/site-shell'
+import '../styles/app.css'
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Story', href: '/story' },
+  { label: 'Docs', href: '/docs' },
+  { label: 'Demo', href: '/demo' },
+]
+---
+
+<Base title="The story" description="From one simulator to the framework/instrument split.">
+  <MinisiteNav sections={NAV} base="/sst" />
+  <main class="max-w-3xl mx-auto px-6 py-14 docs-body">
+    <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">SST for Measuring Instruments · Story</p>
+    <h1 class="font-serif text-3xl font-semibold text-ink mb-6">From one simulator to the framework/instrument split</h1>
+
+    <p>The SST began as one monorepo: a simulated load cell with its physics, its console, and its bench, built to let a tester rehearse a certification run without touching hardware. It answered the question every new SMART program faces first: how does anyone learn to drive a machine-readable Recommendation safely?</p>
+
+    <p>The split came when the second and third instrument kinds arrived. The radar speed meter, the dimensional instrument, the gas analyzer do not share the load cell's physics, but they share everything else: the twin surface, the world channel, the console grammar, the session machinery, the bench. The split makes that explicit. The framework (Primmel SST) carries the machinery: the runtime, the twin and world drivers, the console, the shell. The instrument library (OIML SST) carries the kinds and the instances: the physics of each instrument family and the named example devices.</p>
+
+    <h2>What the split buys</h2>
+    <p>A new instrument kind is a package, not a fork: its classification axes, its physics stages, its twin contract, and the instances that use them. The framework releases independently, and the instruments validate against it. The same shape the SMART program uses everywhere — one machinery, many contents — applied to simulation itself.</p>
+
+    <h2>Honesty about simulation</h2>
+    <p>A simulated twin is plainly marked: its ground truth is a declared probe channel (simulated, never confused with a physical reference). The physics is realistic enough to rehearse against, with configurable drift, and the twin surface is identical to the physical one, so the rehearsal transfers.</p>
+
+    <p class="mt-8"><a href="/sst/docs/" class="text-accent font-medium">The SST documentation walks each surface →</a></p>
+  </main>
+</Base>
