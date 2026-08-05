@@ -24,13 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { path: x/oimlsmart/sst-instruments }
 
       - name: Checkout the shell package (the chrome SSOT)
         uses: actions/checkout@v4
         with:
           repository: oimlsmart/site-shell
           path: vendor/site-shell
-        with: { path: x/oimlsmart/sst-instruments }
       - uses: actions/checkout@v4
         with: { repository: primmel/sst, path: x/primmel/sst }
       - uses: actions/checkout@v4
