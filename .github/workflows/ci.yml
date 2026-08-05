@@ -36,7 +36,7 @@ jobs:
       - name: validate every package
         working-directory: x/oimlsmart/sst-instruments
         run: |
-          for p in packages/base packages/kinds/* packages/instances/*; do
+          for p in packages/base/* packages/kinds/* packages/instances/*; do
             echo "── $p"
             npx tsx ../../primmel/sst/packages/runtime/sst-runtime/src/bin.ts validate "$p"
           done
@@ -65,7 +65,7 @@ jobs:
       - name: boot ${{ matrix.instance }} and probe the twin surface
         working-directory: x/primmel/sst
         run: |
-          npx tsx packages/runtime/sst-runtime/src/bin.ts run ../oimlsmart/sst-instruments/packages/instances/${{ matrix.instance }} 5290 &
+          npx tsx packages/runtime/sst-runtime/src/bin.ts run ../../oimlsmart/sst-instruments/packages/instances/${{ matrix.instance }} 5290 &
           SIM_PID=$!
           trap 'kill $SIM_PID 2>/dev/null || true' EXIT
           for i in $(seq 1 30); do
