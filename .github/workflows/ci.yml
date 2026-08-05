@@ -1,0 +1,101 @@
+name: ci
+
+# The instrument library CI (TODO.FULL/07). The packages here are
+# package.sst.yaml packages, not npm workspaces — the gates are the
+# framework's own machinery: `sst-runtime validate` per package, every
+# instance booted under the sst-runtime, and the baked twin contract kept
+# fresh. The framework is checked out at x/primmel/sst so the
+# file:../../primmel/sst dependency in package.json resolves.
+
+on:
+  push: { branches: [v2] }
+  pull_request: {}
+  schedule: [cron: '41 3 * * 1']  # weekly, Monday 03:41 UTC (off-peak)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    # Structure validation: every package in the library loads and
+    # validates under the framework's loader (a malformed package.sst.yaml
+    # fails this job).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: x/oimlsmart/sst-instruments }
+      - uses: actions/checkout@v4
+        with: { repository: primmel/sst, path: x/primmel/sst }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: x/primmel/sst/package-lock.json }
+      - run: npm ci
+        working-directory: x/primmel/sst
+      - name: validate every package
+        working-directory: x/oimlsmart/sst-instruments
+        run: |
+          for p in packages/base packages/kinds/* packages/instances/*; do
+            echo "── $p"
+            npx tsx ../../primmel/sst/packages/runtime/sst-runtime/src/bin.ts validate "$p"
+          done
+
+  instance-boot:
+    # Every instance package boots under the framework's sst-runtime and
+    # answers its twin surface — a physics regression in a kind fails the
+    # boot or the probe.
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        instance: [acme-lc500, acme-cgm-200, acme-cgm-system, acme-md3xx, acme-rs180]
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: x/oimlsmart/sst-instruments }
+      - uses: actions/checkout@v4
+        with: { repository: primmel/sst, path: x/primmel/sst }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: x/primmel/sst/package-lock.json }
+      - run: npm ci
+        working-directory: x/primmel/sst
+      - run: npm ci
+        working-directory: x/oimlsmart/sst-instruments
+      - name: boot ${{ matrix.instance }} and probe the twin surface
+        working-directory: x/primmel/sst
+        run: |
+          npx tsx packages/runtime/sst-runtime/src/bin.ts run ../oimlsmart/sst-instruments/packages/instances/${{ matrix.instance }} 5290 &
+          SIM_PID=$!
+          trap 'kill $SIM_PID 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5290/ 2>/dev/null || true)
+            [ "$code" = "200" ] && break; sleep 1
+          done
+          [ "$code" = "200" ] || { echo "${{ matrix.instance }} did not boot"; exit 1; }
+          curl -s http://localhost:5290/twin -H 'accept: text/html' | grep -qi graphiql
+          echo "${{ matrix.instance }} boots and serves the twin surface"
+
+  bake-freshness:
+    # Guards the committed baked twin contract against drift — runs only
+    # where the source PRL package is present (the private smart checkout;
+    # skipped on public CI, same doctrine as the archived repo).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: x/oimlsmart/sst-instruments }
+      - uses: actions/checkout@v4
+        with: { repository: primmel/sst, path: x/primmel/sst }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: x/primmel/sst/package-lock.json }
+      - run: npm ci
+        working-directory: x/primmel/sst
+      - run: npm ci
+        working-directory: x/oimlsmart/sst-instruments
+      - name: re-bake and diff (skipped without the source package)
+        working-directory: x/oimlsmart/sst-instruments
+        run: |
+          if [ ! -d "$SIM_ACME_LC500" ]; then
+            echo "source PRL package not present (SIM_ACME_LC500 unset) — the freshness check runs where the smart checkout lives"
+            exit 0
+          fi
+          npx tsx packages/kinds/sst-r60/scripts/bake.ts "$SIM_ACME_LC500"
+          git diff --exit-code packages/kinds/sst-r60/twin/r60.twin.json || { echo "baked contract is stale — re-bake and commit"; exit 1; }
+        env:
+          SIM_ACME_LC500: ${{ vars.SIM_ACME_LC500 }}

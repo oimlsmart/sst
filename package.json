@@ -5,15 +5,10 @@
   "workspaces": [
     "packages/base",
     "packages/kinds/*",
-    "packages/instances/*",
-    "packages/lc500",
-    "packages/gas-analyzer",
-    "packages/md",
-    "packages/r91"
+    "packages/instances/*"
   ],
   "scripts": {
-    "test": "npm run test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "validate": "for p in packages/base/* packages/kinds/* packages/instances/*; do echo \"── $p\"; npx tsx ../../primmel/sst/packages/runtime/sst-runtime/src/bin.ts validate \"$p\" || exit 1; done"
   },
   "dependencies": {
     "@primmel/sst-runtime": "file:../../primmel/sst/packages/runtime/sst-runtime"
