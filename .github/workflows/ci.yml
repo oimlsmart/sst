@@ -39,12 +39,18 @@ jobs:
         with: { node-version: 22, cache: npm, cache-dependency-path: x/primmel/sst/package-lock.json }
       - run: npm ci
         working-directory: x/primmel/sst
+      # The library's own install links the framework through the
+      # declared file: dependency (node_modules/@primmel/sst-runtime) —
+      # the validate step resolves the runtime there, not via a
+      # checkout-path assumption.
+      - run: npm ci
+        working-directory: x/oimlsmart/sst-instruments
       - name: validate every package
         working-directory: x/oimlsmart/sst-instruments
         run: |
           for p in packages/base/* packages/kinds/* packages/instances/*; do
             echo "── $p"
-            npx tsx ../../primmel/sst/packages/runtime/sst-runtime/src/bin.ts validate "$p"
+            npx tsx node_modules/@primmel/sst-runtime/src/bin.ts validate "$p"
           done
 
   instance-boot:

@@ -8,9 +8,12 @@
     "packages/instances/*"
   ],
   "scripts": {
-    "validate": "for p in packages/base/* packages/kinds/* packages/instances/*; do echo \"── $p\"; npx tsx ../../primmel/sst/packages/runtime/sst-runtime/src/bin.ts validate \"$p\" || exit 1; done"
+    "validate": "for p in packages/base/* packages/kinds/* packages/instances/*; do echo \"── $p\"; npx tsx node_modules/@primmel/sst-runtime/src/bin.ts validate \"$p\" || exit 1; done"
   },
   "dependencies": {
     "@primmel/sst-runtime": "file:../../primmel/sst/packages/runtime/sst-runtime"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0"
   }
 }
