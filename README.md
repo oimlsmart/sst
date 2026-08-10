@@ -28,26 +28,32 @@ one sample, one chain of custody), and a bundled `behavior.js`
 
 ## Using it
 
-The runtime boots packages by path (the sibling checkout layout:
-`primmel/sst` next to this repo; or point `SST_LIBRARY_PATH` here):
+The runtime boots packages by path — a `run <instance>` boot resolves
+the instrument library from the instance's own tree (an instance lives
+IN its library), so no checkout layout is assumed. For library-wide
+operations (the test suites, `list-kinds`) declare the position:
+`SST_LIBRARY_PATH` points at this repo's checkout.
 
 ```bash
-# from primmel/sst:
+# from your primmel/sst checkout — any layout works (the instance
+# carries its library with it):
 npx tsx packages/runtime/sst-runtime/src/bin.ts run \
-  ../sst-instruments/packages/instances/acme-lc500 5290
+  /path/to/this-repo/packages/instances/acme-lc500 5290
 
 # a physics variant is a boot-time sample:
 npx tsx packages/runtime/sst-runtime/src/bin.ts run \
-  ../sst-instruments/packages/instances/acme-lc500 5290 creep-fail
+  /path/to/this-repo/packages/instances/acme-lc500 5290 creep-fail
 
 # the composite (analyzer + sampling line, one /twin):
 npx tsx packages/runtime/sst-runtime/src/bin.ts run \
-  ../sst-instruments/packages/instances/acme-cgm-system 5291
+  /path/to/this-repo/packages/instances/acme-cgm-system 5291
 ```
 
-The dependency on the runtime is a sibling `file:` link
-(`@primmel/sst-runtime` in `package.json`) during development; the
-npm tag follows at release.
+`npm install` in this repo links the runtime through the declared
+`file:` dependency (`@primmel/sst-runtime` in `package.json`) — the
+framework checkout sits at the sibling position the dependency names
+(`../primmel/sst`, matching the CI checkout positions); the npm tag
+follows at release.
 
 ## The samples and the physics
 
