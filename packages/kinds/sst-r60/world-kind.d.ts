@@ -14,6 +14,12 @@ import type { WorldState } from '@primmel/sst-runtime/world/types'
 export interface R60WorldMutations {
   placeLoad(args: { massKg: number }): Promise<WorldState>
   removeLoad(): Promise<WorldState>
+  /** The load application device (R 60-2, 2.7.2 — the force-generating
+   *  system): ramp toward the nominal setpoint; the cell feels the
+   *  machine's realized load. */
+  ladApply(args: { loadKg: number; rateKgPerS?: number }): Promise<WorldState>
+  ladRelease(args?: { rateKgPerS?: number }): Promise<WorldState>
+  ladConfigure(args: { capacityKg?: number; classFraction?: number; repeatabilityFraction?: number; defaultRateKgPerS?: number }): Promise<WorldState>
   setFidelity(args: { servedOffsetKg?: number; servedLagS?: number }): Promise<WorldState>
   fidelityReset(): Promise<WorldState>
   setThermalHysteresis(args: { perDegC: number; tauS?: number }): Promise<WorldState>
