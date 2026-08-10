@@ -8,7 +8,13 @@
     "packages/instances/*"
   ],
   "scripts": {
-    "validate": "for p in packages/base/* packages/kinds/* packages/instances/*; do echo \"── $p\"; npx tsx node_modules/@primmel/sst-runtime/src/bin.ts validate \"$p\" || exit 1; done"
+    "validate": "for p in packages/base/* packages/kinds/* packages/instances/*; do echo \"── $p\"; npx tsx node_modules/@primmel/sst-runtime/src/bin.ts validate \"$p\" || exit 1; done",
+    "start": "npm run start:lc500",
+    "start:lc500": "npx tsx node_modules/@primmel/sst-runtime/src/bin.ts run packages/instances/acme-lc500 5290",
+    "start:rs180": "npx tsx node_modules/@primmel/sst-runtime/src/bin.ts run packages/instances/acme-rs180 5291",
+    "start:md3xx": "npx tsx node_modules/@primmel/sst-runtime/src/bin.ts run packages/instances/acme-md3xx 5292",
+    "start:cgm200": "npx tsx node_modules/@primmel/sst-runtime/src/bin.ts run packages/instances/acme-cgm-200 5293",
+    "start:cgm-system": "npx tsx node_modules/@primmel/sst-runtime/src/bin.ts run packages/instances/acme-cgm-system 5294"
   },
   "dependencies": {
     "@primmel/sst-runtime": "file:../../primmel/sst/packages/runtime/sst-runtime"
