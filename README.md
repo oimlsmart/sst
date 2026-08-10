@@ -28,26 +28,28 @@ one sample, one chain of custody), and a bundled `behavior.js`
 
 ## Using it
 
-The runtime boots packages by path — a `run <instance>` boot resolves
-the instrument library from the instance's own tree (an instance lives
-IN its library), so no checkout layout is assumed. For library-wide
-operations (the test suites, `list-kinds`) declare the position:
-`SST_LIBRARY_PATH` points at this repo's checkout.
+Boot an instance with the npm scripts (the runtime CLI resolves the
+library from the instance's own tree — no checkout layout assumed):
 
 ```bash
-# from your primmel/sst checkout — any layout works (the instance
-# carries its library with it):
-npx tsx packages/runtime/sst-runtime/src/bin.ts run \
-  /path/to/this-repo/packages/instances/acme-lc500 5290
+npm start                 # the ACME LC-500 load cell on :5290
+npm start -- creep-fail   # a physics variant is a boot-time sample
+npm start -- --console    # the IOS-style console (enable, lad apply 400 at 50, show lad)
 
-# a physics variant is a boot-time sample:
-npx tsx packages/runtime/sst-runtime/src/bin.ts run \
-  /path/to/this-repo/packages/instances/acme-lc500 5290 creep-fail
+npm run start:rs180       # the R 91 radar speed meter on :5291
+npm run start:md3xx       # the R 129 dimensional instrument on :5292
+npm run start:cgm200      # the R 144 gas analyzer on :5293
+npm run start:cgm-system  # the composite (analyzer + sampling line) on :5294
 
-# the composite (analyzer + sampling line, one /twin):
-npx tsx packages/runtime/sst-runtime/src/bin.ts run \
-  /path/to/this-repo/packages/instances/acme-cgm-system 5291
+npm run validate          # validate every package (12)
 ```
+
+Once booted: `POST :<port>/twin` is the instrument's legal view (what
+certification software reads); `POST :<port>/world` is simulated reality
+(GraphiQL in a browser) — `ladApply`, `setEnvironment`, `advanceTime`,
+`groundTruth { lad { … } }`. For library-wide operations (the test
+suites, `list-kinds`) declare the position: `SST_LIBRARY_PATH` points at
+this repo's checkout.
 
 `npm install` in this repo links the runtime through the declared
 `file:` dependency (`@primmel/sst-runtime` in `package.json`) — the
