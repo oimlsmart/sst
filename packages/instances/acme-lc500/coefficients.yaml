@@ -58,3 +58,12 @@ paired_dial:
 fidelity:
   served_offset_kg: 0
   served_lag_s: 0
+
+# The bench's load application device (R 60-2, 2.7.2 — the force-generating
+# system the cell is tested WITH; never a free weight): a 10 kN-class
+# deadweight force standard machine, ISO 376 class 0.5 analog. Top-level
+# flat keys — the boot flattener carries top-level numerics as-is.
+lad_capacity_kg: 1000               # 10 kN — covers the 500 kg cell + overload
+lad_class_fraction: 0.0005          # ±0.05 % systematic bound (class 0.5)
+lad_repeatability_fraction: 0.0002  # 0.02 % per-application repeatability
+lad_default_rate_kg_per_s: 25       # the shock-free ramp (R 60-2, 2.7.3.3)

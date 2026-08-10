@@ -18,6 +18,9 @@ import type { R60Behavior } from './interface.d.ts'
 export const handlers: R60Behavior['handlers'] = {
   applyMass:            (ctx: WorldContext<R60Instrument>, args: { massKg: number }) => { ctx.instrument.placeMass(args.massKg) },
   removeMass:           (ctx: WorldContext<R60Instrument>) => { ctx.instrument.removeMass() },
+  ladApplyLoad:         (ctx: WorldContext<R60Instrument>, args: { loadKg: number; rateKgPerS?: number }) => { ctx.instrument.ladApply(args.loadKg, args.rateKgPerS) },
+  ladReleaseLoad:       (ctx: WorldContext<R60Instrument>, args: { rateKgPerS?: number }) => { ctx.instrument.ladRelease(args.rateKgPerS) },
+  ladConfigureDevice:   (ctx: WorldContext<R60Instrument>, args: { capacityKg?: number; classFraction?: number; repeatabilityFraction?: number; defaultRateKgPerS?: number }) => { ctx.instrument.configureLad(args) },
   setTwinFidelity:      (ctx: WorldContext<R60Instrument>, args: { servedOffsetKg?: number; servedLagS?: number }) => { ctx.instrument.setFidelity(args) },
   resetTwinFidelity:    (ctx: WorldContext<R60Instrument>) => { ctx.instrument.resetFidelity() },
   setThermalHysteresis: (ctx: WorldContext<R60Instrument>, args: { perDegC: number; tauS?: number }) => { ctx.instrument.setThermalHysteresis(args.perDegC, args.tauS) },

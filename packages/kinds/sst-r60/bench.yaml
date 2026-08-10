@@ -8,6 +8,11 @@ hud_cells:
     channel: world
     format: "{:.2f} kg"
     source: groundTruth.appliedLoadKg
+  - key: ladActualKg
+    label: machine
+    channel: world
+    format: "{:.2f} kg"
+    source: groundTruth.lad.actualKg
   - key: clock
     label: clock
     channel: world
@@ -54,7 +59,9 @@ console_grammar:
   commands:
     place:   { template: "place load <kg>",  handler: applyMass }
     remove:  { template: "remove load",      handler: removeMass }
-    show:    { targets: [indication, ground-truth, state, environment, clock, scenarios, fidelity] }
+    lad-apply:   { template: "lad apply <kg> [at <kg/s>]", handler: ladApplyLoad }
+    lad-release: { template: "lad release [at <kg/s>]",    handler: ladReleaseLoad }
+    show:    { targets: [indication, ground-truth, state, environment, clock, scenarios, fidelity, lad] }
 
 dial:
   # The paired analogue-passive indicator (spec §14) — optional per
