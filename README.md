@@ -51,9 +51,9 @@ npx tsx packages/runtime/sst-runtime/src/bin.ts run \
 
 `npm install` in this repo links the runtime through the declared
 `file:` dependency (`@primmel/sst-runtime` in `package.json`) — the
-framework checkout sits at the sibling position the dependency names
-(`../primmel/sst`, matching the CI checkout positions); the npm tag
-follows at release.
+framework checkout sits at the position the dependency names
+(`../../primmel/sst` from this repo's root, matching the CI checkout
+positions); the npm tag follows at release.
 
 ## The samples and the physics
 
