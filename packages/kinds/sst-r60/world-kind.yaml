@@ -12,6 +12,12 @@ mutations:
     handler: applyMass
   removeLoad:
     handler: removeMass
+  ladApply:
+    handler: ladApplyLoad
+  ladRelease:
+    handler: ladReleaseLoad
+  ladConfigure:
+    handler: ladConfigureDevice
   setFidelity:
     handler: setTwinFidelity
   fidelityReset:

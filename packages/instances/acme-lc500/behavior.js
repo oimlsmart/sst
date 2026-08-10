@@ -7709,6 +7709,109 @@ function registerR60Stages() {
 }
 registerR60Stages();
 
+// ../../../../../primmel/sst/packages/runtime/sst-runtime/src/physics/devices/load-application-device.ts
+var LoadApplicationDevice = class {
+  #spec;
+  /** Seeded uniform RNG (the harness's determinism source). */
+  #rng;
+  /** The machine's calibration state: systematic relative error, drawn
+   *  once, constant across applications (re-drawn only by recalibrate()). */
+  #calError;
+  /** The per-application repeatability offset (kg), drawn at each apply(). */
+  #repOffsetKg = 0;
+  #engaged = false;
+  #phase = "idle";
+  #targetKg = 0;
+  #nominalKg = 0;
+  #rateKgPerS;
+  constructor(spec, rng) {
+    if (spec.capacityKg <= 0) throw new Error("[lad] capacityKg must be positive");
+    if (spec.classFraction < 0 || spec.repeatabilityFraction < 0) {
+      throw new Error("[lad] error fractions must be non-negative");
+    }
+    if (spec.defaultRateKgPerS <= 0) throw new Error("[lad] defaultRateKgPerS must be positive");
+    this.#spec = { ...spec };
+    this.#rng = rng;
+    this.#calError = (rng() * 2 - 1) * spec.classFraction;
+    this.#rateKgPerS = spec.defaultRateKgPerS;
+  }
+  /** Engage the device and ramp toward the nominal target load. A target
+   *  beyond the machine's capacity is refused (the machine cannot realize
+   *  it — the protocol must pick a machine that covers D_max). */
+  apply(targetKg, rateKgPerS) {
+    if (!Number.isFinite(targetKg) || targetKg < 0) throw new Error("[lad] target load must be a non-negative number");
+    if (targetKg > this.#spec.capacityKg) {
+      throw new Error(`[lad] target ${targetKg} kg exceeds the machine's capacity ${this.#spec.capacityKg} kg`);
+    }
+    this.#engaged = true;
+    this.#targetKg = targetKg;
+    this.#rateKgPerS = rateKgPerS && rateKgPerS > 0 ? rateKgPerS : this.#spec.defaultRateKgPerS;
+    this.#repOffsetKg = this.#gauss() * this.#spec.repeatabilityFraction * targetKg;
+    this.#phase = "applying";
+  }
+  /** Ramp back to the dead load (target 0). */
+  release(rateKgPerS) {
+    this.#engaged = true;
+    this.#targetKg = 0;
+    this.#rateKgPerS = rateKgPerS && rateKgPerS > 0 ? rateKgPerS : this.#spec.defaultRateKgPerS;
+    this.#repOffsetKg = 0;
+    this.#phase = "releasing";
+  }
+  /** Disengage the device (the direct placeMass path takes over). The
+   *  calibration state survives — it is the machine's identity. */
+  disengage() {
+    this.#engaged = false;
+    this.#phase = "idle";
+    this.#targetKg = 0;
+    this.#nominalKg = 0;
+    this.#repOffsetKg = 0;
+  }
+  /** A new calibration state (the machine was recalibrated between
+   *  engagements): re-draw the systematic error within the class bound. */
+  recalibrate() {
+    this.#calError = (this.#rng() * 2 - 1) * this.#spec.classFraction;
+  }
+  /** Advance the ramp by dtS seconds of virtual time. */
+  advance(dtS) {
+    if (!this.#engaged || this.#phase !== "applying" && this.#phase !== "releasing") return;
+    const step = this.#rateKgPerS * dtS;
+    const delta = this.#targetKg - this.#nominalKg;
+    if (Math.abs(delta) <= step) {
+      this.#nominalKg = this.#targetKg;
+      this.#phase = this.#targetKg === 0 ? "idle" : "holding";
+      return;
+    }
+    this.#nominalKg += Math.sign(delta) * step;
+  }
+  /** The load the instrument physically feels: the ramped nominal
+   *  position scaled by the machine's systematic error, plus the
+   *  per-application repeatability offset. */
+  actualKg() {
+    if (!this.#engaged) return 0;
+    return this.#nominalKg * (1 + this.#calError) + this.#repOffsetKg;
+  }
+  state() {
+    return {
+      engaged: this.#engaged,
+      phase: this.#phase,
+      targetKg: this.#targetKg,
+      nominalKg: this.#nominalKg,
+      actualKg: this.actualKg(),
+      rateKgPerS: this.#rateKgPerS,
+      capacityKg: this.#spec.capacityKg,
+      classFraction: this.#spec.classFraction,
+      repeatabilityFraction: this.#spec.repeatabilityFraction,
+      calErrorFraction: this.#calError
+    };
+  }
+  /** Box-Muller on the seeded uniform RNG (deterministic per harness seed). */
+  #gauss() {
+    const u = Math.max(this.#rng(), Number.EPSILON);
+    const v = this.#rng();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+};
+
 // ../../../../../primmel/sst/packages/runtime/sst-runtime/src/stages/composer.ts
 var ComposedInstrument = class {
   #mech;
@@ -7728,6 +7831,14 @@ var ComposedInstrument = class {
   #lastIndication = { value: 0, unit: "kg", kind: "mass" };
   #servedAt = 0;
   #dataDriven = null;
+  // The bench's load application device (R 60-2, 2.7.2 — the
+  // force-generating system; see physics/devices/load-application-device.ts).
+  // Null until configured (coefficients lad_* or configureLad()); while
+  // engaged it OWNS #appliedLoadKg through its ramp.
+  #lad = null;
+  #rng;
+  /** The instance's raw coefficients, kept for the LAD's lad_* defaults. */
+  #ladCoefficients;
   // The warm-up arc (TODO.integration/06 gap 2): the cell powers on at
   // 'warming' and settles to 'ready' at 5 × warm_up_tau_s — the same
   // law as SimulatedInstrument (instrument.ts:95).
@@ -7738,10 +7849,15 @@ var ComposedInstrument = class {
     this.#clock = clock;
     this.#poweredAt = clock.now();
     this.#warmUpTauS = config.coefficients["warm_up_tau_s"] ?? 60;
+    this.#rng = mulberry32(seed + 7);
+    this.#ladCoefficients = config.coefficients;
     this.#fidelity = {
       servedOffsetKg: config.fidelity?.servedOffsetKg ?? 0,
       servedLagS: config.fidelity?.servedLagS ?? 0
     };
+    if (typeof config.coefficients["lad_capacity_kg"] === "number") {
+      this.configureLad({});
+    }
     clock.onAdvance((dt) => this.tick(dt));
     if (config.physicsChain) {
       this.#dataDriven = new DataDrivenComposer(
@@ -7805,10 +7921,47 @@ var ComposedInstrument = class {
   }
   // ── WorldInstrument interface ────────────────────────────────────────
   placeMass(massKg) {
+    this.#lad?.disengage();
     this.#appliedLoadKg = massKg;
   }
   removeMass() {
+    this.#lad?.disengage();
     this.#appliedLoadKg = 0;
+  }
+  // ── The load application device (R 60-2, 2.7.2) ─────────────────────
+  // The laboratory's force-generating system: ramps the load at a
+  // controlled rate (no shock, 2.7.3.3), realizes it with the machine's
+  // systematic class error + per-application repeatability, and OWNS the
+  // applied load while engaged. The direct placeMass/removeMass path
+  // (idealized deadweight placement) disengages it.
+  /** Create or reconfigure the device. Explicit spec fields win over the
+   *  instance's coefficient defaults (lad_capacity_kg,
+   *  lad_class_fraction, lad_repeatability_fraction,
+   *  lad_default_rate_kg_per_s), which win over the built-in defaults
+   *  (3× the cell's capacity, ISO 376 class 0.5 analog, 0.02 %, 25 kg/s). */
+  configureLad(spec) {
+    const c = this.#ladCoefficients;
+    const merged = {
+      capacityKg: spec.capacityKg ?? c["lad_capacity_kg"] ?? 3 * (c["capacity_kg"] ?? 500),
+      classFraction: spec.classFraction ?? c["lad_class_fraction"] ?? 5e-4,
+      repeatabilityFraction: spec.repeatabilityFraction ?? c["lad_repeatability_fraction"] ?? 2e-4,
+      defaultRateKgPerS: spec.defaultRateKgPerS ?? c["lad_default_rate_kg_per_s"] ?? 25
+    };
+    this.#lad = new LoadApplicationDevice(merged, this.#rng);
+  }
+  /** Ramp toward the nominal target load (kg). */
+  ladApply(targetKg, rateKgPerS) {
+    if (!this.#lad) this.configureLad({});
+    this.#lad.apply(targetKg, rateKgPerS);
+  }
+  /** Ramp back to the dead load. */
+  ladRelease(rateKgPerS) {
+    if (!this.#lad) this.configureLad({});
+    this.#lad.release(rateKgPerS);
+  }
+  /** The device's state (null when the bench has no device configured). */
+  ladState() {
+    return this.#lad ? this.#lad.state() : null;
   }
   setEnvironment(e) {
     this.#env = { ...this.#env, ...e };
@@ -7846,6 +7999,7 @@ var ComposedInstrument = class {
   }
   reset() {
     this.#appliedLoadKg = 0;
+    this.#lad?.disengage();
     this.#env = { temperatureDegC: 20, humidityPercentRh: 50, pressureKPa: 101.325 };
     this.#lastIndication = { value: 0, unit: "kg", kind: "mass" };
     this.#servedAt = 0;
@@ -7855,6 +8009,13 @@ var ComposedInstrument = class {
   // ── Signal chain (called on each tick) ───────────────────────────────
   tick(dtS) {
     this.#settleWarmUp();
+    if (this.#lad) {
+      const ladState = this.#lad.state();
+      if (ladState.engaged) {
+        this.#lad.advance(dtS);
+        this.#appliedLoadKg = this.#lad.actualKg();
+      }
+    }
     let rawIndicationKg;
     if (this.#dataDriven) {
       const out = this.#dataDriven.tick(
@@ -7912,7 +8073,9 @@ var ComposedInstrument = class {
       spanDriftFraction: 0,
       thermalOffsetMVperV,
       environment: this.#env,
-      clockS: this.#clock.now()
+      clockS: this.#clock.now(),
+      // The bench's force machine (null when the instance declares none).
+      lad: this.ladState()
     };
   }
 };
@@ -7945,6 +8108,15 @@ var handlers = {
   },
   removeMass: (ctx) => {
     ctx.instrument.removeMass();
+  },
+  ladApplyLoad: (ctx, a) => {
+    ctx.instrument.ladApply(a.loadKg, a.rateKgPerS);
+  },
+  ladReleaseLoad: (ctx, a) => {
+    ctx.instrument.ladRelease(a.rateKgPerS);
+  },
+  ladConfigureDevice: (ctx, a) => {
+    ctx.instrument.configureLad(a);
   },
   setTwinFidelity: (ctx, a) => {
     ctx.instrument.setFidelity(a);
@@ -7979,7 +8151,11 @@ function toSnakeCoefficients(c) {
     warmUpTauS: "warm_up_tau_s",
     spanDriftPerDay: "span_drift_per_day",
     creepCoefficient: "creep_coefficient",
-    creepTauS: "creep_tau_s"
+    creepTauS: "creep_tau_s",
+    ladCapacityKg: "lad_capacity_kg",
+    ladClassFraction: "lad_class_fraction",
+    ladRepeatabilityFraction: "lad_repeatability_fraction",
+    ladDefaultRateKgPerS: "lad_default_rate_kg_per_s"
   };
   for (const [camel, snake] of Object.entries(map)) {
     if (typeof c[camel] === "number" && out[snake] == null) out[snake] = c[camel];

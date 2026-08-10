@@ -10,6 +10,7 @@
 import type { VirtualClock } from '@primmel/sst-runtime'
 import type { Qty } from '@primmel/sst-runtime'
 import type { Environment, FidelityKnobs, WorldContext } from '@primmel/sst-runtime'
+import type { LadSpec, LadState } from '@primmel/sst-runtime'
 import type { SceneContext } from '@primmel/sst-runtime/scene/context'
 import type { GltfScene } from '@primmel/sst-runtime/scene/gltf'
 
@@ -25,6 +26,12 @@ export interface R60Instrument {
   // The kind-specific actuation API (consumed by the handlers below)
   placeMass(massKg: number): void
   removeMass(): void
+  // The load application device (R 60-2, 2.7.2 — the force-generating
+  // system): the bench's force machine, a peer of the cell under test.
+  configureLad(spec: Partial<LadSpec>): void
+  ladApply(targetKg: number, rateKgPerS?: number): void
+  ladRelease(rateKgPerS?: number): void
+  ladState(): LadState | null
   setFidelity(knobs: Partial<FidelityKnobs>): void
   resetFidelity(): void
   setThermalHysteresis(perDegC: number, tauS?: number): void
@@ -91,6 +98,13 @@ export interface R60Coefficients {
   offCenterSensitivity: number
   // Optional paired analogue-passive indicator (spec §14)
   pairedDial?: { capacityKg: number; graduationKg: number; unit: string }
+  // Optional bench load application device defaults (R 60-2, 2.7.2 —
+  // the force-generating system the cell is tested WITH; see
+  // physics/devices/load-application-device.ts in the runtime)
+  ladCapacityKg?: number
+  ladClassFraction?: number
+  ladRepeatabilityFraction?: number
+  ladDefaultRateKgPerS?: number
 }
 
 /** The default export shape every R 60 instance's behavior.js must
@@ -104,6 +118,9 @@ export interface R60Behavior {
   handlers: {
     applyMass:            (ctx: WorldContext<R60Instrument>, args: { massKg: number }) => void
     removeMass:           (ctx: WorldContext<R60Instrument>) => void
+    ladApplyLoad:         (ctx: WorldContext<R60Instrument>, args: { loadKg: number; rateKgPerS?: number }) => void
+    ladReleaseLoad:       (ctx: WorldContext<R60Instrument>, args: { rateKgPerS?: number }) => void
+    ladConfigureDevice:   (ctx: WorldContext<R60Instrument>, args: Partial<LadSpec>) => void
     setTwinFidelity:      (ctx: WorldContext<R60Instrument>, args: { servedOffsetKg?: number; servedLagS?: number }) => void
     resetTwinFidelity:    (ctx: WorldContext<R60Instrument>) => void
     setThermalHysteresis: (ctx: WorldContext<R60Instrument>, args: { perDegC: number; tauS?: number }) => void

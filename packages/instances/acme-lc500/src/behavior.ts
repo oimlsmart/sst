@@ -40,6 +40,9 @@ export const create = (def: R60Definition & { physicsChain?: PhysicsChainDecl; c
 export const handlers: R60Behavior['handlers'] = {
   applyMass:            (ctx, args) => { ctx.instrument.placeMass(args.massKg) },
   removeMass:           (ctx)      => { ctx.instrument.removeMass() },
+  ladApplyLoad:         (ctx, a)   => { ctx.instrument.ladApply(a.loadKg, a.rateKgPerS) },
+  ladReleaseLoad:       (ctx, a)   => { ctx.instrument.ladRelease(a.rateKgPerS) },
+  ladConfigureDevice:   (ctx, a)   => { ctx.instrument.configureLad(a) },
   setTwinFidelity:      (ctx, a)   => { ctx.instrument.setFidelity(a) },
   resetTwinFidelity:    (ctx)      => { ctx.instrument.resetFidelity() },
   setThermalHysteresis: (ctx, a)   => { ctx.instrument.setThermalHysteresis(a.perDegC, a.tauS) },
@@ -70,6 +73,10 @@ function toSnakeCoefficients(c: Record<string, number>): Record<string, number> 
     spanDriftPerDay: 'span_drift_per_day',
     creepCoefficient: 'creep_coefficient',
     creepTauS: 'creep_tau_s',
+    ladCapacityKg: 'lad_capacity_kg',
+    ladClassFraction: 'lad_class_fraction',
+    ladRepeatabilityFraction: 'lad_repeatability_fraction',
+    ladDefaultRateKgPerS: 'lad_default_rate_kg_per_s',
   }
   for (const [camel, snake] of Object.entries(map)) {
     if (typeof c[camel] === 'number' && out[snake] == null) out[snake] = c[camel]!

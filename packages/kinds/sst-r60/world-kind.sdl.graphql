@@ -3,12 +3,28 @@
 # SDL field → handler via world-kind.yaml.
 
 extend type Mutation {
-  """Apply a load (in kg) to the cell. The mass becomes the ground-truth
-  applied_load_kg; the indication responds through the physics chain."""
+  """Apply a load (in kg) to the cell directly — the idealized deadweight
+  placement (instantaneous, error-free). The machine-driven path is
+  ladApply: R 60-2, 2.7.2's force-generating system."""
   placeLoad(massKg: Float!): WorldState!
 
   """Remove the applied load (return to dead load)."""
   removeLoad: WorldState!
+
+  """Drive the bench's load application device (the force-generating
+  system of R 60-2, 2.7.2): ramp toward the NOMINAL target load at the
+  declared rate (shock-free, R 60-2, 2.7.3.3). The cell feels the
+  machine's REALIZED load — nominal scaled by the machine's calibration
+  state plus the per-application repeatability."""
+  ladApply(loadKg: Float!, rateKgPerS: Float): WorldState!
+
+  """Ramp the load application device back to the dead load."""
+  ladRelease(rateKgPerS: Float): WorldState!
+
+  """Configure the load application device (capacity, class bound,
+  repeatability, default rate). Absent args fall back to the instance's
+  lad_* coefficients, then the built-in defaults."""
+  ladConfigure(capacityKg: Float, classFraction: Float, repeatabilityFraction: Float, defaultRateKgPerS: Float): WorldState!
 
   """Inject a twin-fidelity offset/lag (a firmware-mapping fault; spec §8.1).
   The ground truth is unaffected — only the SERVED value drifts."""
@@ -20,6 +36,22 @@ extend type Mutation {
   """Configure the post-cycle thermal-hysteresis residual (the memory of
   a temperature cycle that didn't quite return)."""
   setThermalHysteresis(perDegC: Float!, tauS: Float): WorldState!
+}
+
+"""The bench's load application device state (the force machine):
+the nominal setpoint the operator demanded, the ramp's current position,
+and the realized load the cell physically feels."""
+type LoadDeviceState {
+  engaged: Boolean!
+  phase: String!
+  targetKg: Float!
+  nominalKg: Float!
+  actualKg: Float!
+  rateKgPerS: Float!
+  capacityKg: Float!
+  classFraction: Float!
+  repeatabilityFraction: Float!
+  calErrorFraction: Float!
 }
 
 # The GroundTruth type extension this kind contributes (added to the
@@ -34,4 +66,7 @@ extend type GroundTruth {
   # The environment the physics ran under (the D 11 conditions — set
   # via setEnvironment, read back here; TODO.integration/06 gap 1).
   environment: Environment!
+  # The bench's load application device (null when the instance declares
+  # no machine — the direct placeLoad path then carries the loading).
+  lad: LoadDeviceState
 }
