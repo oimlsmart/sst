@@ -18,6 +18,14 @@ mutations:
     handler: ladReleaseLoad
   ladConfigure:
     handler: ladConfigureDevice
+  chamberSet:
+    handler: chamberSetClimate
+  chamberOff:
+    handler: chamberSwitchOff
+  chamberConfigure:
+    handler: chamberConfigureDevice
+  indicatorConfigure:
+    handler: indicatorConfigureDevice
   setFidelity:
     handler: setTwinFidelity
   fidelityReset:

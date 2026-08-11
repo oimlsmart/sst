@@ -20,6 +20,13 @@ export interface R60WorldMutations {
   ladApply(args: { loadKg: number; rateKgPerS?: number }): Promise<WorldState>
   ladRelease(args?: { rateKgPerS?: number }): Promise<WorldState>
   ladConfigure(args: { capacityKg?: number; classFraction?: number; repeatabilityFraction?: number; defaultRateKgPerS?: number }): Promise<WorldState>
+  /** The climatic chamber (R 60-3, 4.10.3/4.10.4): ramp/soak/hold; the
+   *  cell soaks after the air per its own thermal constants. */
+  chamberSet(args: { temperatureDegC: number; humidityPercentRh?: number }): Promise<WorldState>
+  chamberOff(): Promise<WorldState>
+  chamberConfigure(args: { tempRampDegCPerMin?: number; tempStabilityDegC?: number; tempOvershootDegC?: number; humidityControl?: boolean; humidityRampPercentRhPerMin?: number; humidityStabilityPercentRh?: number }): Promise<WorldState>
+  /** The bench's indicating instrument (analogue-passive pairings only). */
+  indicatorConfigure(args: { gainErrorFraction?: number; offsetKg?: number; scaleIntervalKg?: number; noiseSigmaKg?: number }): Promise<WorldState>
   setFidelity(args: { servedOffsetKg?: number; servedLagS?: number }): Promise<WorldState>
   fidelityReset(): Promise<WorldState>
   setThermalHysteresis(args: { perDegC: number; tauS?: number }): Promise<WorldState>

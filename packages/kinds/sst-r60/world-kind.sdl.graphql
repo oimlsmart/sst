@@ -26,6 +26,26 @@ extend type Mutation {
   lad_* coefficients, then the built-in defaults."""
   ladConfigure(capacityKg: Float, classFraction: Float, repeatabilityFraction: Float, defaultRateKgPerS: Float): WorldState!
 
+  """Ramp the bench's climatic chamber toward the setpoints (R 60-3,
+  4.10.3/4.10.4): the air moves at the chamber's rated rate, overshoots
+  slightly on approach, and holds with its temporal stability — the cell
+  soaks after the air per its own thermal constants. Humidity only when
+  the chamber controls it. The direct setEnvironment path disengages."""
+  chamberSet(temperatureDegC: Float!, humidityPercentRh: Float): WorldState!
+
+  """Switch the chamber off (the climate drifts back to the lab ambient)."""
+  chamberOff: WorldState!
+
+  """Configure the chamber (ramp rate, stability, overshoot, humidity
+  control). Absent args fall back to the instance's chamber_*
+  coefficients, then the built-in defaults."""
+  chamberConfigure(tempRampDegCPerMin: Float, tempStabilityDegC: Float, tempOvershootDegC: Float, humidityControl: Boolean, humidityRampPercentRhPerMin: Float, humidityStabilityPercentRh: Float): WorldState!
+
+  """Configure the bench's indicating instrument (R 60-2, 2.7.2's second
+  half — active only for analogue-passive stacks, where the LAB's
+  indicator forms the reading from the cell's bridge signal)."""
+  indicatorConfigure(gainErrorFraction: Float, offsetKg: Float, scaleIntervalKg: Float, noiseSigmaKg: Float): WorldState!
+
   """Inject a twin-fidelity offset/lag (a firmware-mapping fault; spec §8.1).
   The ground truth is unaffected — only the SERVED value drifts."""
   setFidelity(servedOffsetKg: Float, servedLagS: Float): WorldState!
@@ -54,6 +74,32 @@ type LoadDeviceState {
   calErrorFraction: Float!
 }
 
+"""The bench's climatic chamber state (R 60-3, 4.10.3/4.10.4): the
+setpoints the operator demanded and the realized climate the cell soaks
+in."""
+type ChamberDeviceState {
+  engaged: Boolean!
+  phase: String!
+  setpointTempDegC: Float!
+  actualTempDegC: Float!
+  setpointHumidityPercentRh: Float
+  actualHumidityPercentRh: Float
+  tempRampDegCPerMin: Float!
+  tempStabilityDegC: Float!
+  humidityControl: Boolean!
+}
+
+"""The bench's indicating instrument state (R 60-2, 2.7.2): present only
+for analogue-passive pairings — the LAB's indicator forms the reading."""
+type IndicatorDeviceState {
+  present: Boolean!
+  kgPerMVperV: Float!
+  gainErrorFraction: Float!
+  offsetKg: Float!
+  scaleIntervalKg: Float!
+  readingKg: Float!
+}
+
 # The GroundTruth type extension this kind contributes (added to the
 # base's GroundTruth via the runtime's schema composition).
 extend type GroundTruth {
@@ -69,4 +115,10 @@ extend type GroundTruth {
   # The bench's load application device (null when the instance declares
   # no machine — the direct placeLoad path then carries the loading).
   lad: LoadDeviceState
+  # The bench's climatic chamber (null likewise; while engaged it owns
+  # the temperature, and the humidity when humidity-controlled).
+  chamber: ChamberDeviceState
+  # The bench's indicating instrument (null unless the instance is an
+  # analogue-passive pairing that declares one).
+  indicator: IndicatorDeviceState
 }

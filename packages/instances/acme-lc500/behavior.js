@@ -7683,7 +7683,7 @@ function makeR60Conditioning(stack) {
       return {
         process(inputs, ctx) {
           const out = stage.process(inputs["bridge_mV_per_V"] ?? 0, ctx.dtS, ctx.env, kgPerMVperV);
-          return { indication_kg: out.indicationKg };
+          return { ...inputs, indication_kg: out.indicationKg };
         }
       };
     }
@@ -7812,6 +7812,160 @@ var LoadApplicationDevice = class {
   }
 };
 
+// ../../../../../primmel/sst/packages/runtime/sst-runtime/src/physics/devices/climatic-chamber.ts
+var ClimaticChamber = class {
+  #spec;
+  /** Seeded uniform RNG (the harness's determinism source). */
+  #rng;
+  #engaged = false;
+  #phase = "off";
+  #setpointTemp = 20;
+  #setpointRh = null;
+  #actualTemp = 20;
+  #actualRh = null;
+  /** The overshoot still to decay (signed °C), set on arrival at a
+   *  setpoint and decaying exponentially into the hold. */
+  #overshootDegC = 0;
+  /** The hold-noise phase (a slow wander, not white noise). */
+  #noiseT = 0;
+  constructor(spec, rng) {
+    if (spec.tempRampDegCPerMin <= 0) throw new Error("[chamber] tempRampDegCPerMin must be positive");
+    if (spec.tempStabilityDegC < 0 || spec.humidityStabilityPercentRh < 0) {
+      throw new Error("[chamber] stabilities must be non-negative");
+    }
+    this.#spec = { ...spec };
+    this.#rng = rng;
+  }
+  /** Engage and drive toward the setpoints (temperature always; humidity
+   *  only when the chamber has humidity control and a value is given).
+   *  Starts from the CURRENT actuals (the lab ambient on first engage). */
+  set(tempDegC, humidityPercentRh) {
+    if (!Number.isFinite(tempDegC)) throw new Error("[chamber] temperature setpoint must be a number");
+    this.#engaged = true;
+    this.#setpointTemp = tempDegC;
+    if (this.#spec.humidityControl && humidityPercentRh !== void 0) {
+      this.#setpointRh = humidityPercentRh;
+      this.#actualRh ??= 50;
+    } else {
+      this.#setpointRh = null;
+    }
+    this.#phase = "ramping";
+  }
+  /** Switch the chamber off: the climate drifts back toward the lab
+   *  ambient (20 °C / 50 %RH) at the same rated ramp. */
+  off() {
+    this.#engaged = false;
+    this.#phase = "off";
+    this.#setpointTemp = 20;
+    this.#setpointRh = this.#spec.humidityControl ? 50 : null;
+  }
+  /** Advance the chamber by dtS seconds of virtual time. */
+  advance(dtS) {
+    if (this.#phase === "off" && this.#actualTemp === this.#setpointTemp) return;
+    const tempStep = this.#spec.tempRampDegCPerMin / 60 * dtS;
+    const delta = this.#setpointTemp - this.#actualTemp;
+    if (Math.abs(delta) > Math.abs(tempStep)) {
+      this.#actualTemp += Math.sign(delta) * tempStep;
+      if (this.#engaged) this.#phase = "ramping";
+    } else {
+      if (this.#phase === "ramping" && this.#engaged && Math.abs(delta) > 1e-9) {
+        this.#overshootDegC = Math.sign(delta) * this.#spec.tempOvershootDegC;
+        this.#phase = "soaking";
+      }
+      this.#actualTemp = this.#setpointTemp;
+      if (this.#phase === "ramping") this.#phase = this.#engaged ? "soaking" : "off";
+    }
+    if (this.#phase === "soaking") {
+      this.#overshootDegC *= Math.exp(-dtS / 300);
+      if (Math.abs(this.#overshootDegC) < this.#spec.tempStabilityDegC / 4) {
+        this.#overshootDegC = 0;
+        this.#phase = this.#engaged ? "holding" : "off";
+      }
+    }
+    if (this.#setpointRh !== null && this.#actualRh !== null) {
+      const rhStep = this.#spec.humidityRampPercentRhPerMin / 60 * dtS;
+      const dRh = this.#setpointRh - this.#actualRh;
+      this.#actualRh = Math.abs(dRh) <= rhStep ? this.#setpointRh : this.#actualRh + Math.sign(dRh) * rhStep;
+    }
+    this.#noiseT += dtS;
+  }
+  /** The realized temperature the instrument's environment feels: the
+   *  ramp position, plus the decaying overshoot, plus the hold-noise
+   *  wander bounded by the temporal stability. */
+  actualTemperatureDegC() {
+    if (this.#phase === "off") return this.#actualTemp;
+    return this.#actualTemp + this.#overshootDegC + this.#wander(this.#spec.tempStabilityDegC);
+  }
+  /** The realized humidity (null when the chamber has no humidity
+   *  control — the direct environment path owns it). */
+  actualHumidityPercentRh() {
+    if (this.#actualRh === null) return null;
+    if (this.#phase === "off") return this.#actualRh;
+    return this.#actualRh + this.#wander(this.#spec.humidityStabilityPercentRh);
+  }
+  state() {
+    return {
+      engaged: this.#engaged,
+      phase: this.#phase,
+      setpointTempDegC: this.#setpointTemp,
+      actualTempDegC: this.actualTemperatureDegC(),
+      setpointHumidityPercentRh: this.#setpointRh,
+      actualHumidityPercentRh: this.actualHumidityPercentRh(),
+      tempRampDegCPerMin: this.#spec.tempRampDegCPerMin,
+      tempStabilityDegC: this.#spec.tempStabilityDegC,
+      humidityControl: this.#spec.humidityControl
+    };
+  }
+  /** A slow bounded wander in ±amp: two incommensurate sines with a
+   *  seeded phase — deterministic per harness seed, and smooth enough
+   *  to read as chamber control, not sensor noise. */
+  #wander(amp) {
+    if (amp === 0) return 0;
+    const t = this.#noiseT;
+    const p = this.#rngPhase();
+    return amp * 0.6 * Math.sin(t / 47 + p) + amp * 0.4 * Math.sin(t / 113 + 2 * p);
+  }
+  #rngPhaseValue = null;
+  #rngPhase() {
+    this.#rngPhaseValue ??= this.#rng() * 2 * Math.PI;
+    return this.#rngPhaseValue;
+  }
+};
+
+// ../../../../../primmel/sst/packages/runtime/sst-runtime/src/physics/devices/indicating-instrument.ts
+var IndicatingInstrument = class {
+  #spec;
+  /** The readout-noise source (seeded; Box-Muller). */
+  #noise;
+  #readingKg = 0;
+  constructor(spec, normalNoise) {
+    if (spec.kgPerMVperV <= 0) throw new Error("[indicator] kgPerMVperV must be positive");
+    if (spec.scaleIntervalKg <= 0) throw new Error("[indicator] scaleIntervalKg must be positive");
+    this.#spec = { ...spec };
+    this.#noise = normalNoise;
+  }
+  /** Form the reading from the cell's bridge output (mV/V): conversion,
+   *  the calibration state (gain + offset), readout noise, and the
+   *  indicator's own display quantization. */
+  read(bridgeMVperV) {
+    const raw = bridgeMVperV * this.#spec.kgPerMVperV;
+    const withCalibration = raw * (1 + this.#spec.gainErrorFraction) + this.#spec.offsetKg;
+    const noisy = withCalibration + this.#noise() * this.#spec.noiseSigmaKg;
+    this.#readingKg = Math.round(noisy / this.#spec.scaleIntervalKg) * this.#spec.scaleIntervalKg;
+    return this.#readingKg;
+  }
+  state() {
+    return {
+      present: true,
+      kgPerMVperV: this.#spec.kgPerMVperV,
+      gainErrorFraction: this.#spec.gainErrorFraction,
+      offsetKg: this.#spec.offsetKg,
+      scaleIntervalKg: this.#spec.scaleIntervalKg,
+      readingKg: this.#readingKg
+    };
+  }
+};
+
 // ../../../../../primmel/sst/packages/runtime/sst-runtime/src/stages/composer.ts
 var ComposedInstrument = class {
   #mech;
@@ -7836,6 +7990,16 @@ var ComposedInstrument = class {
   // Null until configured (coefficients lad_* or configureLad()); while
   // engaged it OWNS #appliedLoadKg through its ramp.
   #lad = null;
+  // The bench's climatic chamber (R 60-3, 4.10.3/4.10.4): while engaged
+  // it OWNS the environment's temperature (and humidity, when the
+  // chamber has humidity control) through its ramp/soak/hold dynamics.
+  #chamber = null;
+  // The bench's indicating instrument (R 60-2, 2.7.2's second half):
+  // for analogue-passive stacks it forms the reading from the cell's
+  // bridge output — the served indication is the LAB instrument's
+  // reading, calibration state and all.
+  #indicator = null;
+  #stack;
   #rng;
   /** The instance's raw coefficients, kept for the LAD's lad_* defaults. */
   #ladCoefficients;
@@ -7851,12 +8015,19 @@ var ComposedInstrument = class {
     this.#warmUpTauS = config.coefficients["warm_up_tau_s"] ?? 60;
     this.#rng = mulberry32(seed + 7);
     this.#ladCoefficients = config.coefficients;
+    this.#stack = config.classification.stack;
     this.#fidelity = {
       servedOffsetKg: config.fidelity?.servedOffsetKg ?? 0,
       servedLagS: config.fidelity?.servedLagS ?? 0
     };
     if (typeof config.coefficients["lad_capacity_kg"] === "number") {
       this.configureLad({});
+    }
+    if (typeof config.coefficients["chamber_temp_ramp_degC_per_min"] === "number") {
+      this.configureChamber({});
+    }
+    if (this.#stack === "analog-passive" && typeof config.coefficients["indicator_gain_error_fraction"] === "number") {
+      this.configureIndicator({});
     }
     clock.onAdvance((dt) => this.tick(dt));
     if (config.physicsChain) {
@@ -7963,7 +8134,65 @@ var ComposedInstrument = class {
   ladState() {
     return this.#lad ? this.#lad.state() : null;
   }
+  // ── The climatic chamber (R 60-3, 4.10.3/4.10.4) ────────────────────
+  // The environmental equipment: ramps the climate at its rated rate,
+  // overshoots slightly on approach, holds with its temporal stability.
+  // While engaged it owns the environment's temperature (and humidity
+  // when humidity-controlled); the direct setEnvironment path
+  // (idealized, instantaneous) disengages it.
+  /** Create or reconfigure the chamber. Explicit spec fields win over
+   *  the instance's chamber_* coefficient defaults, which win over the
+   *  built-in defaults — the realistic 600 L chamber class (per the
+   *  IEC 60068-3-5 ratings of real chambers: 3 °C/min ramp, ±0.2 °C
+   *  temporal stability, 0.4 °C approach overshoot, humidity control at
+   *  5 %RH/min ±1.5 %RH). */
+  configureChamber(spec) {
+    const c = this.#ladCoefficients;
+    this.#chamber = new ClimaticChamber({
+      tempRampDegCPerMin: spec.tempRampDegCPerMin ?? c["chamber_temp_ramp_degC_per_min"] ?? 3,
+      tempStabilityDegC: spec.tempStabilityDegC ?? c["chamber_temp_stability_degC"] ?? 0.2,
+      tempOvershootDegC: spec.tempOvershootDegC ?? c["chamber_temp_overshoot_degC"] ?? 0.4,
+      humidityControl: spec.humidityControl ?? c["chamber_humidity_control"] !== 0,
+      humidityRampPercentRhPerMin: spec.humidityRampPercentRhPerMin ?? c["chamber_humidity_ramp_percent_rh_per_min"] ?? 5,
+      humidityStabilityPercentRh: spec.humidityStabilityPercentRh ?? c["chamber_humidity_stability_percent_rh"] ?? 1.5
+    }, this.#rng);
+  }
+  /** Drive the chamber toward the setpoints (temperature always;
+   *  humidity only when the chamber controls it and a value is given). */
+  chamberSet(tempDegC, humidityPercentRh) {
+    if (!this.#chamber) this.configureChamber({});
+    this.#chamber.set(tempDegC, humidityPercentRh);
+  }
+  /** Switch the chamber off (the climate drifts back to the lab ambient). */
+  chamberOff() {
+    this.#chamber?.off();
+  }
+  /** The chamber's state (null when the bench has none). */
+  chamberState() {
+    return this.#chamber ? this.#chamber.state() : null;
+  }
+  // ── The indicating instrument (R 60-2, 2.7.2) ───────────────────────
+  // For analogue-passive stacks the cell presents a bridge signal and
+  // the LAB's indicator forms the reading — with its own calibration
+  // state, scale interval and noise.
+  /** Create or reconfigure the bench indicator. */
+  configureIndicator(spec) {
+    const c = this.#ladCoefficients;
+    const kgPerMVperV = spec.kgPerMVperV ?? (c["capacity_kg"] ?? 500) / Math.max(c["sensitivity_mVperV"] ?? 2, 1e-3);
+    this.#indicator = new IndicatingInstrument({
+      kgPerMVperV,
+      gainErrorFraction: spec.gainErrorFraction ?? c["indicator_gain_error_fraction"] ?? 3e-5,
+      offsetKg: spec.offsetKg ?? c["indicator_offset_kg"] ?? 0,
+      scaleIntervalKg: spec.scaleIntervalKg ?? c["indicator_scale_interval_kg"] ?? c["scale_interval_kg"] ?? 0.05,
+      noiseSigmaKg: spec.noiseSigmaKg ?? c["indicator_noise_sigma_kg"] ?? 2e-3
+    }, normal(mulberry32(99)));
+  }
+  /** The bench indicator's state (null when the bench has none). */
+  indicatorState() {
+    return this.#indicator ? this.#indicator.state() : null;
+  }
   setEnvironment(e) {
+    if (e.temperatureDegC !== void 0 || e.humidityPercentRh !== void 0) this.#chamber?.off();
     this.#env = { ...this.#env, ...e };
   }
   setFidelity(knobs) {
@@ -8000,6 +8229,7 @@ var ComposedInstrument = class {
   reset() {
     this.#appliedLoadKg = 0;
     this.#lad?.disengage();
+    this.#chamber?.off();
     this.#env = { temperatureDegC: 20, humidityPercentRh: 50, pressureKPa: 101.325 };
     this.#lastIndication = { value: 0, unit: "kg", kind: "mass" };
     this.#servedAt = 0;
@@ -8016,21 +8246,38 @@ var ComposedInstrument = class {
         this.#appliedLoadKg = this.#lad.actualKg();
       }
     }
+    if (this.#chamber) {
+      const chState = this.#chamber.state();
+      if (chState.engaged || chState.phase !== "off") {
+        this.#chamber.advance(dtS);
+        this.#env = { ...this.#env, temperatureDegC: this.#chamber.actualTemperatureDegC() };
+        const rh = this.#chamber.actualHumidityPercentRh();
+        if (rh !== null) this.#env = { ...this.#env, humidityPercentRh: rh };
+      }
+    }
     let rawIndicationKg;
     if (this.#dataDriven) {
       const out = this.#dataDriven.tick(
         { applied_load_kg: this.#appliedLoadKg },
         { dtS, env: this.#env, nowS: this.#clock.now() }
       );
-      rawIndicationKg = out["indication_kg"] ?? 0;
+      if (this.#indicator && this.#stack === "analog-passive" && typeof out["bridge_mV_per_V"] === "number") {
+        rawIndicationKg = this.#indicator.read(out["bridge_mV_per_V"]);
+      } else {
+        rawIndicationKg = out["indication_kg"] ?? 0;
+      }
     } else {
       this.#mech.setLoad(this.#appliedLoadKg);
       this.#mech.advance(dtS);
       const strainFraction = this.#atCapacity > 0 ? this.#mech.strainMm / this.#atCapacity : 0;
       this.#trans.advance(dtS, this.#env);
       const bridgeMVperV = this.#trans.output(strainFraction, this.#env);
-      const condOut = this.#cond.process(bridgeMVperV, dtS, this.#env, this.#fixedKgPerMVperV);
-      rawIndicationKg = condOut.indicationKg;
+      if (this.#indicator && this.#stack === "analog-passive") {
+        rawIndicationKg = this.#indicator.read(bridgeMVperV);
+      } else {
+        const condOut = this.#cond.process(bridgeMVperV, dtS, this.#env, this.#fixedKgPerMVperV);
+        rawIndicationKg = condOut.indicationKg;
+      }
     }
     const served = rawIndicationKg + this.#fidelity.servedOffsetKg - this.#zeroOffsetKg;
     this.#lastIndication = { value: served, unit: "kg", kind: "mass" };
@@ -8075,7 +8322,11 @@ var ComposedInstrument = class {
       environment: this.#env,
       clockS: this.#clock.now(),
       // The bench's force machine (null when the instance declares none).
-      lad: this.ladState()
+      lad: this.ladState(),
+      // The bench's climatic chamber and indicating instrument (null
+      // likewise — the bench carries only what the instance declares).
+      chamber: this.chamberState(),
+      indicator: this.indicatorState()
     };
   }
 };
@@ -8118,6 +8369,18 @@ var handlers = {
   ladConfigureDevice: (ctx, a) => {
     ctx.instrument.configureLad(a);
   },
+  chamberSetClimate: (ctx, a) => {
+    ctx.instrument.chamberSet(a.temperatureDegC, a.humidityPercentRh);
+  },
+  chamberSwitchOff: (ctx) => {
+    ctx.instrument.chamberOff();
+  },
+  chamberConfigureDevice: (ctx, a) => {
+    ctx.instrument.configureChamber(a);
+  },
+  indicatorConfigureDevice: (ctx, a) => {
+    ctx.instrument.configureIndicator(a);
+  },
   setTwinFidelity: (ctx, a) => {
     ctx.instrument.setFidelity(a);
   },
@@ -8155,7 +8418,17 @@ function toSnakeCoefficients(c) {
     ladCapacityKg: "lad_capacity_kg",
     ladClassFraction: "lad_class_fraction",
     ladRepeatabilityFraction: "lad_repeatability_fraction",
-    ladDefaultRateKgPerS: "lad_default_rate_kg_per_s"
+    ladDefaultRateKgPerS: "lad_default_rate_kg_per_s",
+    chamberTempRampDegCPerMin: "chamber_temp_ramp_degC_per_min",
+    chamberTempStabilityDegC: "chamber_temp_stability_degC",
+    chamberTempOvershootDegC: "chamber_temp_overshoot_degC",
+    chamberHumidityControl: "chamber_humidity_control",
+    chamberHumidityRampPercentRhPerMin: "chamber_humidity_ramp_percent_rh_per_min",
+    chamberHumidityStabilityPercentRh: "chamber_humidity_stability_percent_rh",
+    indicatorGainErrorFraction: "indicator_gain_error_fraction",
+    indicatorOffsetKg: "indicator_offset_kg",
+    indicatorScaleIntervalKg: "indicator_scale_interval_kg",
+    indicatorNoiseSigmaKg: "indicator_noise_sigma_kg"
   };
   for (const [camel, snake] of Object.entries(map)) {
     if (typeof c[camel] === "number" && out[snake] == null) out[snake] = c[camel];

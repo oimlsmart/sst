@@ -11,6 +11,7 @@ import type { VirtualClock } from '@primmel/sst-runtime'
 import type { Qty } from '@primmel/sst-runtime'
 import type { Environment, FidelityKnobs, WorldContext } from '@primmel/sst-runtime'
 import type { LadSpec, LadState } from '@primmel/sst-runtime'
+import type { ChamberSpec, ChamberState, IndicatorSpec, IndicatorState } from '@primmel/sst-runtime'
 import type { SceneContext } from '@primmel/sst-runtime/scene/context'
 import type { GltfScene } from '@primmel/sst-runtime/scene/gltf'
 
@@ -32,6 +33,14 @@ export interface R60Instrument {
   ladApply(targetKg: number, rateKgPerS?: number): void
   ladRelease(rateKgPerS?: number): void
   ladState(): LadState | null
+  // The climatic chamber (R 60-3, 4.10.3/4.10.4) and the indicating
+  // instrument (R 60-2, 2.7.2's second half — analogue-passive stacks).
+  configureChamber(spec: Partial<ChamberSpec>): void
+  chamberSet(tempDegC: number, humidityPercentRh?: number): void
+  chamberOff(): void
+  chamberState(): ChamberState | null
+  configureIndicator(spec: Partial<IndicatorSpec>): void
+  indicatorState(): IndicatorState | null
   setFidelity(knobs: Partial<FidelityKnobs>): void
   resetFidelity(): void
   setThermalHysteresis(perDegC: number, tauS?: number): void
@@ -105,6 +114,19 @@ export interface R60Coefficients {
   ladClassFraction?: number
   ladRepeatabilityFraction?: number
   ladDefaultRateKgPerS?: number
+  // Optional bench climatic chamber defaults (R 60-3, 4.10.3/4.10.4)
+  chamberTempRampDegCPerMin?: number
+  chamberTempStabilityDegC?: number
+  chamberTempOvershootDegC?: number
+  chamberHumidityControl?: number
+  chamberHumidityRampPercentRhPerMin?: number
+  chamberHumidityStabilityPercentRh?: number
+  // Optional bench indicating instrument defaults (analogue-passive
+  // pairings — the LAB's indicator forms the reading, R 60-2, 2.7.2)
+  indicatorGainErrorFraction?: number
+  indicatorOffsetKg?: number
+  indicatorScaleIntervalKg?: number
+  indicatorNoiseSigmaKg?: number
 }
 
 /** The default export shape every R 60 instance's behavior.js must
@@ -121,6 +143,10 @@ export interface R60Behavior {
     ladApplyLoad:         (ctx: WorldContext<R60Instrument>, args: { loadKg: number; rateKgPerS?: number }) => void
     ladReleaseLoad:       (ctx: WorldContext<R60Instrument>, args: { rateKgPerS?: number }) => void
     ladConfigureDevice:   (ctx: WorldContext<R60Instrument>, args: Partial<LadSpec>) => void
+    chamberSetClimate:    (ctx: WorldContext<R60Instrument>, args: { temperatureDegC: number; humidityPercentRh?: number }) => void
+    chamberSwitchOff:     (ctx: WorldContext<R60Instrument>) => void
+    chamberConfigureDevice: (ctx: WorldContext<R60Instrument>, args: Partial<ChamberSpec>) => void
+    indicatorConfigureDevice: (ctx: WorldContext<R60Instrument>, args: Partial<IndicatorSpec>) => void
     setTwinFidelity:      (ctx: WorldContext<R60Instrument>, args: { servedOffsetKg?: number; servedLagS?: number }) => void
     resetTwinFidelity:    (ctx: WorldContext<R60Instrument>) => void
     setThermalHysteresis: (ctx: WorldContext<R60Instrument>, args: { perDegC: number; tauS?: number }) => void
