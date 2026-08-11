@@ -13,6 +13,11 @@ hud_cells:
     channel: world
     format: "{:.2f} kg"
     source: groundTruth.lad.actualKg
+  - key: chamberTempDegC
+    label: chamber
+    channel: world
+    format: "{:.1f} °C"
+    source: groundTruth.chamber.actualTempDegC
   - key: clock
     label: clock
     channel: world
@@ -61,7 +66,9 @@ console_grammar:
     remove:  { template: "remove load",      handler: removeMass }
     lad-apply:   { template: "lad apply <kg> [at <kg/s>]", handler: ladApplyLoad }
     lad-release: { template: "lad release [at <kg/s>]",    handler: ladReleaseLoad }
-    show:    { targets: [indication, ground-truth, state, environment, clock, scenarios, fidelity, lad] }
+    chamber-set: { template: "chamber set <degc> [rh <percent>]", handler: chamberSetClimate }
+    chamber-off: { template: "chamber off", handler: chamberSwitchOff }
+    show:    { targets: [indication, ground-truth, state, environment, clock, scenarios, fidelity, lad, chamber, indicator] }
 
 dial:
   # The paired analogue-passive indicator (spec §14) — optional per

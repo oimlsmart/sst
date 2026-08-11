@@ -60,10 +60,30 @@ fidelity:
   served_lag_s: 0
 
 # The bench's load application device (R 60-2, 2.7.2 — the force-generating
-# system the cell is tested WITH; never a free weight): a 10 kN-class
-# deadweight force standard machine, ISO 376 class 0.5 analog. Top-level
-# flat keys — the boot flattener carries top-level numerics as-is.
+# system the cell is tested WITH; never a free weight): a 10 kN deadweight
+# force standard machine — sized to the cell: it covers E_max = 500 kg
+# (≈5 kN) with headroom for the preload discipline (3× D_max, sequential).
+# The class is the machine's ISO 376 analog: class 00 deadweight primaries
+# hold ±0.005 % or better; this bench machine sits at comparator class
+# (±0.05 %) so the nominal-vs-realized lesson is VISIBLE at the cell's
+# 0.05 kg scale interval. Realistic classes: 0.005 % (deadweight primary),
+# 0.02 % (lever-amplified), 0.05 % (servo-hydraulic comparator).
+# Top-level flat keys — the boot flattener carries top-level numerics as-is.
 lad_capacity_kg: 1000               # 10 kN — covers the 500 kg cell + overload
 lad_class_fraction: 0.0005          # ±0.05 % systematic bound (class 0.5)
 lad_repeatability_fraction: 0.0002  # 0.02 % per-application repeatability
 lad_default_rate_kg_per_s: 25       # the shock-free ramp (R 60-2, 2.7.3.3)
+
+# The bench's climatic chamber (R 60-3, 4.10.4): a 600 L climatic chamber
+# (the cell, its fittings and the cabling feed-through fit inside; R 60
+# equipment is sized to the instrument's dimensions — a 500 kg column cell
+# gets a chamber, a 600 kN canister cell would need a climate ROOM and a
+# very different machine). Ratings per the IEC 60068-3-5 figures of the
+# real 600 L class: 3 °C/min heating/cooling, ±0.2 °C temporal stability,
+# ±0.5–2 °C spatial, 10–98 %RH ±1.5 %RH.
+chamber_temp_ramp_degC_per_min: 3
+chamber_temp_stability_degC: 0.2
+chamber_temp_overshoot_degC: 0.4
+chamber_humidity_control: 1
+chamber_humidity_ramp_percent_rh_per_min: 5
+chamber_humidity_stability_percent_rh: 1.5

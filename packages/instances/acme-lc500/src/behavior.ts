@@ -43,6 +43,10 @@ export const handlers: R60Behavior['handlers'] = {
   ladApplyLoad:         (ctx, a)   => { ctx.instrument.ladApply(a.loadKg, a.rateKgPerS) },
   ladReleaseLoad:       (ctx, a)   => { ctx.instrument.ladRelease(a.rateKgPerS) },
   ladConfigureDevice:   (ctx, a)   => { ctx.instrument.configureLad(a) },
+  chamberSetClimate:    (ctx, a)   => { ctx.instrument.chamberSet(a.temperatureDegC, a.humidityPercentRh) },
+  chamberSwitchOff:     (ctx)      => { ctx.instrument.chamberOff() },
+  chamberConfigureDevice: (ctx, a) => { ctx.instrument.configureChamber(a) },
+  indicatorConfigureDevice: (ctx, a) => { ctx.instrument.configureIndicator(a) },
   setTwinFidelity:      (ctx, a)   => { ctx.instrument.setFidelity(a) },
   resetTwinFidelity:    (ctx)      => { ctx.instrument.resetFidelity() },
   setThermalHysteresis: (ctx, a)   => { ctx.instrument.setThermalHysteresis(a.perDegC, a.tauS) },
@@ -77,6 +81,16 @@ function toSnakeCoefficients(c: Record<string, number>): Record<string, number> 
     ladClassFraction: 'lad_class_fraction',
     ladRepeatabilityFraction: 'lad_repeatability_fraction',
     ladDefaultRateKgPerS: 'lad_default_rate_kg_per_s',
+    chamberTempRampDegCPerMin: 'chamber_temp_ramp_degC_per_min',
+    chamberTempStabilityDegC: 'chamber_temp_stability_degC',
+    chamberTempOvershootDegC: 'chamber_temp_overshoot_degC',
+    chamberHumidityControl: 'chamber_humidity_control',
+    chamberHumidityRampPercentRhPerMin: 'chamber_humidity_ramp_percent_rh_per_min',
+    chamberHumidityStabilityPercentRh: 'chamber_humidity_stability_percent_rh',
+    indicatorGainErrorFraction: 'indicator_gain_error_fraction',
+    indicatorOffsetKg: 'indicator_offset_kg',
+    indicatorScaleIntervalKg: 'indicator_scale_interval_kg',
+    indicatorNoiseSigmaKg: 'indicator_noise_sigma_kg',
   }
   for (const [camel, snake] of Object.entries(map)) {
     if (typeof c[camel] === 'number' && out[snake] == null) out[snake] = c[camel]!
