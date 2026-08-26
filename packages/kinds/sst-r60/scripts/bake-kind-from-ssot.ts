@@ -1,21 +1,36 @@
-// bake-kind-from-ssot.ts — read the R 60 SSOT and regenerate the kind
-// package's data files (classification, mpe, parameters). The generated
-// files are committed; drift from the SSOT is caught by CI.
+// bake-kind-from-ssot.ts — regenerate this kind's classification.yaml
+// from the R 60 Recommendation model's classification dimensions
+// (TODO.model-content/05; the doctrine: smart/AGENTS.d/16 — the model is
+// the interface, on every surface).
+//
+// THE HOP (decided once, documented here): this script reads the smart
+// repo's GENERATED data tree (<smart>/data/r60/model/instrument.yaml),
+// one hop off the PRL packages. The tree is downstream-generated from
+// primmel-packages/oiml-r60 — the single source of truth — and proven
+// byte-clean against it by the smart repo's own drift guard
+// (`npm run test:ssot`), so the tree is a faithful projection of the
+// package and the same consumption path the app itself reads. (The
+// twin-contract bake, scripts/bake.ts, reads the product PRL package
+// directly through @primmel/primmel; the classification dimensions live
+// in the RECOMMENDATION package, and its generated tree is the
+// reviewable projection.)
 //
 // Usage:
-//   npx tsx scripts/bake-kind-from-ssot.ts /path/to/smart/data/r60
+//   npx tsx scripts/bake-kind-from-ssot.ts [smart-checkout-root]
+//   SMART_REPO=/path/to/smart npx tsx scripts/bake-kind-from-ssot.ts
 //
-// The script reads:
-//   - model/instrument.yaml      → classification axes
-//   - model/attributes.yaml      → characteristic parameters
-//   - specification/requirements/class-specific.yaml → MPE envelope
+// Writes (committed; CI's `kind-bake-freshness` leg re-bakes and diffs):
+//   classification.yaml — the closed-enum classification dimensions,
+//   with the auto-generated banner.
 //
-// And writes:
-//   - classification.yaml        (the closed-enum axes)
-//   - parameters.yaml            (formulas + typical values)
-//   - mpe.yaml                   (per-class step function)
+// Scope: the classification surface only. mpe.yaml / parameters.yaml
+// remain hand-authored (the MPE tier transform from
+// specification/requirements/class-specific.yaml is future work); the
+// pre-collapse stub writers (mpe.gen.yaml / parameters.gen.yaml) are
+// gone — they wrote uncommitted TODO stubs, never real outputs.
 
 import { readFile, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { parse } from 'yaml'
 import { dirname } from 'node:path'
@@ -24,83 +39,90 @@ import { fileURLToPath } from 'node:url'
 const HERE = dirname(fileURLToPath(import.meta.url))
 const OUT = join(HERE, '..')
 
-interface SsotAxis {
+// ── The current tree shape (data/r60/model/instrument.yaml) ─────────
+// classification_dimensions is a LIST (post-collapse) of dimensions:
+//   - id, scope, source: { doc, clause }, description: [{ spelling, value }],
+//     values: [{ id, name, description, ... }]
+interface Spelled { spelling?: string; value?: string }
+interface DimensionValue { id?: string }
+interface Dimension {
+  id?: string
   scope?: string
-  values?: string[]
-  r60_ref?: string
-  description?: string
+  source?: { doc?: string; clause?: string }
+  description?: Spelled[]
+  values?: DimensionValue[]
+}
+interface InstrumentTree { classification_dimensions?: Dimension[] }
+
+/** Emit a YAML scalar: plain when safe, double-quoted otherwise. */
+function scalar(s: string): string {
+  return /^[A-Za-z0-9][A-Za-z0-9 _.,()/-]*$/.test(s) ? s : JSON.stringify(s)
 }
 
-interface SsotModel {
-  axes?: Record<string, SsotAxis>
+function enumId(s: string): string {
+  return /^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(s) ? s : JSON.stringify(s)
 }
 
-async function readYaml(path: string): Promise<Record<string, unknown>> {
-  try {
-    return parse(await readFile(path, 'utf-8')) as Record<string, unknown>
-  } catch {
-    return {}
+async function bake(smartRoot: string): Promise<void> {
+  const instrumentPath = join(smartRoot, 'data', 'r60', 'model', 'instrument.yaml')
+  if (!existsSync(instrumentPath)) {
+    throw new Error(
+      `R 60 model tree not found at ${instrumentPath} — declare the smart checkout ` +
+      `(SMART_REPO, or pass its root as the first argument).`,
+    )
   }
-}
-
-async function bake(ssotRoot: string): Promise<void> {
-  const modelDir = join(ssotRoot, 'model')
-  const specDir = join(ssotRoot, 'specification', 'requirements')
-
-  // ── classification.yaml ──────────────────────────────────────────
-  const instrumentYaml = await readYaml(join(modelDir, 'instrument.yaml')) as { axes?: Record<string, SsotAxis> }
-  const axes = instrumentYaml.axes ?? {}
-  const classificationLines: string[] = ['# AUTO-GENERATED from smart/data/r60/ — do not edit; re-bake via scripts/bake-kind-from-ssot.ts', '']
-  classificationLines.push('axes:')
-  for (const [name, axis] of Object.entries(axes)) {
-    classificationLines.push(`  ${name}:`)
-    classificationLines.push(`    scope: ${axis.scope ?? 'family'}`)
-    if (axis.values) classificationLines.push(`    values: [${axis.values.join(', ')}]`)
-    if (axis.r60_ref) classificationLines.push(`    r60_ref: "${axis.r60_ref}"`)
-    if (axis.description) classificationLines.push(`    description: >`)
-    classificationLines.push(`      ${axis.description?.split('\n')[0] ?? ''}`)
-    classificationLines.push('')
+  const tree = parse(await readFile(instrumentPath, 'utf-8')) as InstrumentTree
+  const dims = tree.classification_dimensions
+  if (!Array.isArray(dims) || dims.length === 0) {
+    throw new Error(
+      `${instrumentPath} carries no classification_dimensions — the tree shape moved again; ` +
+      `re-point this bake (the pre-collapse 'axes' shape is gone).`,
+    )
   }
-  await writeFile(join(OUT, 'classification.gen.yaml'), classificationLines.join('\n'), 'utf-8')
 
-  // ── mpe.yaml ─────────────────────────────────────────────────────
-  // The SSOT carries per-class MPE tables in specification/requirements/
-  // class-specific.yaml. If present, transform to our mpe.yaml shape.
-  const classSpec = await readYaml(join(specDir, 'class-specific.yaml'))
-  const mpeLines: string[] = ['# AUTO-GENERATED from smart/data/r60/ — do not edit; re-bake via scripts/bake-kind-from-ssot.ts', '']
-  // The SSOT's shape may differ; we generate a canonical shape.
-  // If the SSOT is absent, we keep the hand-authored mpe.yaml.
-  const classes = (classSpec.classes ?? classSpec) as Record<string, unknown>
-  if (Object.keys(classes).length > 0) {
-    mpeLines.push('classes:')
-    for (const cls of Object.keys(classes)) {
-      mpeLines.push(`  ${cls}:`)
-      mpeLines.push(`    bands: []  # TODO: transform from SSOT shape`)
+  const lines: string[] = [
+    '# AUTO-GENERATED from the smart repo’s R 60 model — do not edit by hand.',
+    '# Source: data/r60/model/instrument.yaml · classification_dimensions',
+    '#   (the data tree is generated from primmel-packages/oiml-r60 — the single',
+    '#   source of truth — and proven byte-clean by the smart repo’s test:ssot).',
+    '# Re-bake: npx tsx packages/kinds/sst-r60/scripts/bake-kind-from-ssot.ts [smart-checkout]',
+    '# Freshness: the CI `kind-bake-freshness` leg re-bakes and diffs this file.',
+    '',
+    'classification_dimensions:',
+  ]
+  for (const dim of dims) {
+    if (!dim.id) throw new Error('classification dimension without an id — the tree shape moved')
+    lines.push(`  - id: ${enumId(dim.id)}`)
+    if (dim.scope) lines.push(`    scope: ${enumId(dim.scope)}`)
+    if (dim.source?.doc || dim.source?.clause) {
+      const doc = dim.source.doc ?? ''
+      const clause = dim.source.clause ?? ''
+      lines.push(`    source: { doc: ${JSON.stringify(doc)}, clause: ${JSON.stringify(clause)} }`)
     }
-  } else {
-    mpeLines.push('# SSOT not found at expected path; keeping hand-authored mpe.yaml')
+    const desc = dim.description?.[0]?.value
+    if (desc) lines.push(`    description: ${scalar(desc)}`)
+    const values = (dim.values ?? []).map((v) => {
+      if (!v.id) throw new Error(`dimension ${dim.id} carries a value without an id`)
+      return enumId(v.id)
+    })
+    lines.push(`    values: [${values.join(', ')}]`)
+    lines.push('')
   }
-  await writeFile(join(OUT, 'mpe.gen.yaml'), mpeLines.join('\n'), 'utf-8')
-
-  // ── parameters.yaml ──────────────────────────────────────────────
-  const attrsYaml = await readYaml(join(modelDir, 'attributes.yaml'))
-  const paramLines: string[] = ['# AUTO-GENERATED from smart/data/r60/ — do not edit; re-bake via scripts/bake-kind-from-ssot.ts', '']
-  paramLines.push('# Characteristic parameters derived from the R 60 SSOT model/attributes.yaml.')
-  paramLines.push(`# Source: ${ssotRoot}/model/attributes.yaml`)
-  paramLines.push(`# Attributes found: ${Object.keys(attrsYaml).length}`)
-  await writeFile(join(OUT, 'parameters.gen.yaml'), paramLines.join('\n'), 'utf-8')
-
-  console.log(`baked classification.gen.yaml, mpe.gen.yaml, parameters.gen.yaml from ${ssotRoot}`)
+  await writeFile(join(OUT, 'classification.yaml'), lines.join('\n'), 'utf-8')
+  console.log(`baked classification.yaml: ${dims.length} dimensions from ${instrumentPath}`)
 }
 
 // ── CLI ─────────────────────────────────────────────────────────────
 const args = process.argv.slice(2)
-const ssotRoot = args[0] ?? '/Users/mulgogi/src/oimlsmart/smart/data/r60'
-
 if (args[0] === '--help' || args[0] === '-h') {
-  console.log('Usage: bake-kind-from-ssot.ts [ssot-root]')
-  console.log(`Default SSOT: ${ssotRoot}`)
+  console.log('Usage: bake-kind-from-ssot.ts [smart-checkout-root]')
+  console.log('Falls back to the SMART_REPO env; one of the two is required.')
   process.exit(0)
 }
+const smartRoot = args[0] ?? process.env.SMART_REPO
+if (!smartRoot) {
+  console.error('no smart checkout declared — pass its root as the first argument or set SMART_REPO')
+  process.exit(2)
+}
 
-await bake(ssotRoot)
+await bake(smartRoot)
