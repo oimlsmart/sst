@@ -35,6 +35,31 @@ Packages only, no runtime code:
 - The dependency on the runtime is a sibling `file:` link
   (`package.json` → `@primmel/sst-runtime`); keep it resolving.
 
+## The SSOT guards (CI)
+
+The model is the interface on this surface too (smart/AGENTS.d/16):
+nothing here re-authors what the Recommendation models or the product
+packages already carry. Two CI legs enforce it
+(TODO.model-content/05), both honestly SKIPPED where the smart
+checkout is not declared (`SMART_REPO` unset — same doctrine as
+`bake-freshness`):
+
+- `kind-bake-freshness` — the R 60 kind's `classification.yaml` is
+  GENERATED from the smart repo's data tree
+  (`data/r60/model/instrument.yaml`'s `classification_dimensions`; the
+  hop off the PRL packages is documented in the script's header).
+  Re-bake: `SMART_REPO=<smart checkout> npx tsx
+  packages/kinds/sst-r60/scripts/bake-kind-from-ssot.ts`. The bannered
+  file is never hand-edited; the leg re-bakes and `git diff
+  --exit-code`s it.
+- `instance-parameters` — `npm run check:instance-parameters`
+  (`scripts/check-instance-parameters.ts`) cross-checks every
+  instance's typed `classification:` + `design_parameters:` against the
+  Primmel product package its manifest's `maps_to:` names
+  (`<smart>/primmel-packages/<id>`), loaded with the real PRL parser
+  (`@primmel/primmel`, resolved through the linked runtime). Every
+  parameter BOTH sides carry must agree; a disagreement fails loudly.
+
 ## Proving a change
 
 Boot the touched instance through the framework and drive it:
