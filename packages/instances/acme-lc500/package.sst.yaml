@@ -24,7 +24,7 @@ classification:
 design_parameters:
   e_max:  { value: 500,    unit: kg }
   e_min:  { value: 10,     unit: kg }
-  v_min:  { value: 0.0833, unit: kg }   # = (e_max - e_min) / y  with y = 6000
+  v_min:  { value: 0.02,   unit: kg }   # the product package's value (lc500.prl design_parameters: "0.02 kg"); the physics already calibrates against it (behavior.js). Guarded: npm run check:instance-parameters
   dr:     { value: 0.05,   unit: kg }
   t_min:  { value: -10,    unit: degC }
   t_max:  { value: 40,     unit: degC }

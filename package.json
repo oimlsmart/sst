@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "validate": "for p in packages/base/* packages/kinds/* packages/instances/*; do echo \"── $p\"; npx tsx node_modules/@primmel/sst-runtime/src/bin.ts validate \"$p\" || exit 1; done",
+    "check:instance-parameters": "npx tsx scripts/check-instance-parameters.ts",
     "start": "npm run start:lc500",
     "start:lc500": "npx tsx node_modules/@primmel/sst-runtime/src/bin.ts run packages/instances/acme-lc500 5290",
     "start:rs180": "npx tsx node_modules/@primmel/sst-runtime/src/bin.ts run packages/instances/acme-rs180 5291",

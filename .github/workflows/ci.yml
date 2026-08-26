@@ -117,3 +117,66 @@ jobs:
           git diff --exit-code packages/kinds/sst-r60/twin/r60.twin.json || { echo "baked contract is stale — re-bake and commit"; exit 1; }
         env:
           SIM_ACME_LC500: ${{ vars.SIM_ACME_LC500 }}
+
+  kind-bake-freshness:
+    # Guards the R 60 kind's committed classification.yaml (baked from the
+    # Recommendation model's classification_dimensions — TODO.model-content/05)
+    # against drift: re-bakes from the smart checkout's generated data tree
+    # and diffs. Runs only where the smart checkout is declared
+    # (SMART_REPO); skipped on public CI, same doctrine as bake-freshness.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: x/oimlsmart/sst-instruments }
+      # The library's npm ci resolves the declared file: dependency on the
+      # framework — the checkout must exist even though this leg only
+      # parses YAML.
+      - uses: actions/checkout@v4
+        with: { repository: primmel/sst, path: x/primmel/sst }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: x/oimlsmart/sst-instruments/package-lock.json }
+      - run: npm ci
+        working-directory: x/oimlsmart/sst-instruments
+      - name: re-bake the kind classification and diff (skipped without the smart checkout)
+        working-directory: x/oimlsmart/sst-instruments
+        run: |
+          if [ ! -d "$SMART_REPO/data/r60" ]; then
+            echo "smart checkout not present (SMART_REPO unset) — the kind-bake freshness check runs where the smart checkout lives"
+            exit 0
+          fi
+          npx tsx packages/kinds/sst-r60/scripts/bake-kind-from-ssot.ts "$SMART_REPO"
+          git diff --exit-code packages/kinds/sst-r60/classification.yaml || { echo "classification.yaml is stale — re-bake and commit"; exit 1; }
+        env:
+          SMART_REPO: ${{ vars.SMART_REPO }}
+
+  instance-parameters:
+    # The instance-parameter guard (TODO.model-content/05): every
+    # instance's typed classification + design_parameters cross-checked
+    # against the Primmel product package its manifest's maps_to: names
+    # (the smart checkout's primmel-packages/), parsed with the real PRL
+    # parser. Runs only where the smart checkout is declared (SMART_REPO);
+    # skipped on public CI, same doctrine as bake-freshness.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: x/oimlsmart/sst-instruments }
+      - uses: actions/checkout@v4
+        with: { repository: primmel/sst, path: x/primmel/sst }
+      - uses: actions/checkout@v4
+        with: { repository: primmel/primmel-ts, path: x/primmel/primmel-ts }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: x/primmel/sst/package-lock.json }
+      - run: npm ci
+        working-directory: x/primmel/sst
+      - run: npm ci
+        working-directory: x/oimlsmart/sst-instruments
+      - name: cross-check instance parameters against the product packages (skipped without the smart checkout)
+        working-directory: x/oimlsmart/sst-instruments
+        run: |
+          if [ ! -d "$SMART_REPO/primmel-packages" ]; then
+            echo "smart checkout not present (SMART_REPO unset) — the instance-parameter guard runs where the smart checkout lives"
+            exit 0
+          fi
+          npx tsx scripts/check-instance-parameters.ts "$SMART_REPO"
+        env:
+          SMART_REPO: ${{ vars.SMART_REPO }}
