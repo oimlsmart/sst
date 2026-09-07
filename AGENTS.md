@@ -32,6 +32,16 @@ Packages only, no runtime code:
 - **The twin interface is generated** from the product reference
   package's serve declarations; the startup conformance check fails
   the boot on any diff.
+- **The signed-serve posture is opt-in and inert by default**: an
+  instance manifest MAY declare a `signing:` block (the device identity
+  + a simulation-custody pair — the package IS the device; the
+  framework's specs/12 §3.9 is normative). The block activates only
+  when the boot opts in (`SST_SIGNED_SERVE=1` or a programmatic
+  `SessionOptions` declaration) — committing a block never changes a
+  default boot's bytes, and the smart live-sim CI legs consume these
+  packages unsigned. The attested `endpoint` / `registers` spellings
+  are the deployment's declared ids/aspects (the Primmel composition),
+  never invented per package.
 - The dependency on the runtime is a sibling `file:` link
   (`package.json` → `@primmel/sst-runtime`); keep it resolving.
 
