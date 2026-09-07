@@ -35,3 +35,17 @@ samples:
 provenance:
   certificate: "R144/2024-DE-12-117"
   first_issued: "2024-02-08"
+# The signed-serve posture (the framework's specs/12 §3.9; OIML SMART
+# TODO.v3/10): this package's device identity + SIMULATION-custody pair.
+# INERT unless the boot opts in (SST_SIGNED_SERVE=1, or a programmatic
+# SessionOptions declaration) — a committed block never changes the
+# default boot's bytes. The attested endpoint id is the deployment's
+# declared id for this twin's channel in the acme-cgm-system composite
+# (the Primmel composition: analyzer.endpoint = cgm_api). The private
+# half is a SIM key: the package IS the device; a real deployment
+# provisions its own pair, never from a committed artifact.
+signing:
+  endpoint: cgm_api
+  key_id: cgm200-unit-42-key-1
+  public_key_spki: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5_TYa33bqPnyaQnKpXe8w1kvj6qR3Q4gAkZLBBfQSbqf34pM73ZCcl4oKTF6R4cCweqf2baL-vGKwuSzb-z_0g"
+  private_key_pkcs8: "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg87wIWHriZAb7fVjU4bsAPxJy8AVNmgnlEwExI7t7pa2hRANCAATn9Nhrfduo-fJpCcqld7zDWS-PqpHdDiACRksEF9BJup_fikzvdkJyXigpMXpHhwLB6p_Ztov68YrC5LNv7P_S"

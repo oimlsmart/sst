@@ -51,6 +51,20 @@ certification software reads); `POST :<port>/world` is simulated reality
 suites, `list-kinds`) declare the position: `SST_LIBRARY_PATH` points at
 this repo's checkout.
 
+### The signed-serve posture (opt-in)
+
+A boot can serve **device-signed** values (the framework's specs/12
+§3.9; the OIML SMART platform's TODO.v3/10 signed-serve consumption):
+every served quantity carries a signature envelope (ES256 over the
+deep-sorted canonical JSON of `{endpoint, register, servedAt, value,
+unit?}`) and `servedAt` as canonical ISO. The `acme-cgm-200` and
+`acme-cgm-sampling-line` packages declare their device identity +
+simulation-custody pair in their manifests' `signing:` blocks — **inert
+by default**: the posture activates only when the boot opts in
+(`SST_SIGNED_SERVE=1 npm run start:cgm-system`, or a programmatic
+`SessionOptions.signing` / `.componentSigning`). A default boot is
+byte-identical with or without the blocks committed.
+
 `npm install` in this repo links the runtime through the declared
 `file:` dependency (`@primmel/sst-runtime` in `package.json`) — the
 framework checkout sits at the position the dependency names

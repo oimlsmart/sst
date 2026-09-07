@@ -30,3 +30,20 @@ samples:
 provenance:
   certificate: "R144/2024-DE-12-117/SAMPLE-LINE"
   first_issued: "2024-02-08"
+# The signed-serve posture (the framework's specs/12 §3.9; OIML SMART
+# TODO.v3/10): this package's device identity + SIMULATION-custody pair.
+# INERT unless the boot opts in (SST_SIGNED_SERVE=1, or a programmatic
+# SessionOptions declaration). The attested endpoint id is the
+# deployment's declared id for this twin's channel in the
+# acme-cgm-system composite (the Primmel composition:
+# sample_line.endpoint = sample_line_api). The registers map attests the
+# DECLARED aspect spelling where it differs from the internal serve
+# target: sample_flow attests the R 144 model's sample.test_context.flow
+# (smart/primmel-packages/acme-cgm-system/model/sample-line.prl).
+signing:
+  endpoint: sample_line_api
+  key_id: sample-line-7-key-1
+  public_key_spki: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHPxQvv4cmTuFAOSgy4OS9mlBOhMQgp5otPt9I5R64Nc8RSreSTkVxj2he_53W7pJu5eAWwMOjOakx5IGBEnYxw"
+  private_key_pkcs8: "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgHmsm3ra6MKQLB_f7EzcAQENSowqyY0i2XkAImbSOQ6GhRANCAAQc_FC-_hyZO4UA5KDLg5L2aUE6ExCCnmi0-30jlHrg1zxFKt5JORXGPaF7_ndbukm7l4BbAw6M5qTHkgYESdjH"
+  registers:
+    sample_flow: sample.test_context.flow
