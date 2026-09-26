@@ -1,34 +1,25 @@
 ---
-import { Base, MinisiteNav, DocsSidebar } from '@oimlsmart/site-shell'
+import { DocsSidebar } from '@oimlsmart/site-shell'
 import { getCollection } from 'astro:content'
-import '../../styles/app.css'
+import Shell from '../../layouts/Shell.astro'
 
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Story', href: '/story' },
-  { label: 'Docs', href: '/docs' },
-  { label: 'Demo', href: '/demo' },
-]
-const allDocs = await getCollection('docs')
-const chapters = allDocs.filter(d => d.id.startsWith('sst/') && true)
+const chapters = (await getCollection('docs'))
+  .filter(d => d.id.startsWith('sst/'))
   .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
-const overview = allDocs.find(d => d.id === 'oiml-rec/overview')
 ---
 
-<Base title="SST documentation" description="The SST for Measuring Instruments documentation.">
-  <MinisiteNav sections={NAV} base="/sst" />
+<Shell title="Documentation" description="The SMI Simulation documentation.">
   <div class="max-w-7xl mx-auto px-6 py-10 grid gap-10 lg:grid-cols-[16rem_1fr]">
-    <aside><DocsSidebar order={['sst']} labels={{ 'sst': 'SST Documentation' }} hrefBase="/sst/docs/" /></aside>
+    <aside><DocsSidebar order={['sst']} labels={{ 'sst': 'SMI Simulation' }} hrefBase="/sst/docs/" /></aside>
     <main class="docs-body">
-      <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">SMART Recommendations · Docs</p>
-      <h1 class="font-serif text-3xl font-semibold text-ink mb-6">The SST documentation</h1>
-      {overview && <p class="text-ink-soft mb-6">{overview.data.description ?? 'The authoring corpus: method, subjects, requirements, tests, forms, packaging, walkthroughs.'} Start with the overview, then the chapters in order.</p>}
+      <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">SMI Simulation · Docs</p>
+      <h1 class="font-serif text-3xl font-semibold text-ink mb-6">The SMI Simulation documentation</h1>
+      <p class="text-ink-soft mb-6">What a Simulated SMART Measuring Instrument Twin is, how to boot one, and how a test run drives it. Start with the overview, then the chapters in order.</p>
       <ul class="mt-4 space-y-3">
-        {overview && <li><a class="text-accent font-medium" href="/recs/docs/oiml-rec/overview">Overview — the corpus map</a></li>}
         {chapters.map(d => (
-          <li><a class="text-accent font-medium" href={`/recs/docs/${d.id}`}>{d.data.shortTitle ?? d.data.title ?? d.id.split('/').pop()}</a>{d.data.description ? <span class="text-ink-soft"> — {d.data.description}</span> : null}</li>
+          <li><a class="text-accent font-medium" href={`/sst/docs/${d.id}`}>{d.data.shortTitle ?? d.data.title ?? d.id.split('/').pop()}</a>{d.data.description ? <span class="text-ink-soft"> — {d.data.description}</span> : null}</li>
         ))}
       </ul>
     </main>
   </div>
-</Base>
+</Shell>
