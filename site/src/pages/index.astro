@@ -1,28 +1,21 @@
 ---
-import { Base, MinisiteNav, PageHero } from '@oimlsmart/site-shell'
-import '../styles/app.css'
-
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Story', href: '/story' },
-  { label: 'Docs', href: '/docs' },
-  { label: 'Demo', href: '/demo' },
-]
+import { PageHero } from '@oimlsmart/site-shell'
+import Shell from '../layouts/Shell.astro'
+import { SITE } from '../data/site-meta'
 ---
 
-<Base title="SST for Measuring Instruments" description="OIML SST — the Simulated SMART Twin: a faithful, scriptable simulation of a SMART Measuring Instrument.">
-  <MinisiteNav sections={NAV} base="/sst" />
+<Shell title={SITE.title} description={SITE.description}>
   <main class="max-w-4xl mx-auto px-6 py-14">
     <PageHero
       eyebrow="OIML SMART · Component 5"
-      title="SST for Measuring Instruments"
-      lede="The Simulated SMART Twin: a faithful, scriptable simulation of a SMART Measuring Instrument, so testers learn the workflow and developers integrate without hardware."
-      logo={{ name: 'sst', alt: 'The SST for Measuring Instruments logo.' }}
+      title="The SMI Simulation"
+      lede="Faithful, scriptable simulations of SMART Measuring Instruments — Simulated SMART Measuring Instrument Twins (SSTs) — so testers learn the workflow and developers integrate without hardware."
+      logo={{ name: 'sst', alt: 'The SMI Simulation logo.', base: `${SITE.url}/img/components` }}
     />
     <section class="mt-10 grid gap-6 md:grid-cols-2">
       <div class="border border-rule rounded-lg p-6 bg-paper-raised">
         <h2 class="font-serif text-lg font-semibold text-ink mb-2">The same twin surface</h2>
-        <p class="text-sm text-ink-soft leading-relaxed">The sim answers the identical GraphQL a physical SMART instrument answers: IS, HAS, DOES, with serve times and freshness rules. A client cannot tell the difference until it is told.</p>
+        <p class="text-sm text-ink-soft leading-relaxed">An SST answers the identical GraphQL a physical SMART instrument answers: IS, HAS, DOES, with serve times and freshness rules. A client cannot tell the difference until it is told.</p>
       </div>
       <div class="border border-rule rounded-lg p-6 bg-paper-raised">
         <h2 class="font-serif text-lg font-semibold text-ink mb-2">Realistic physics</h2>
@@ -37,6 +30,6 @@ const NAV = [
         <p class="text-sm text-ink-soft leading-relaxed">One command boots an instrument with every surface open: the twin endpoint, the world endpoint, the console, the bench. No platform checkout, no hardware, no lab.</p>
       </div>
     </section>
-    <p class="mt-10 text-sm"><a href="/sst/docs/" class="text-accent font-medium">Read the SST documentation →</a></p>
+    <p class="mt-10 text-sm"><a href="/sst/docs/" class="text-accent font-medium">Read the SMI Simulation documentation →</a></p>
   </main>
-</Base>
+</Shell>

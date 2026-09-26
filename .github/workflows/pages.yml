@@ -19,12 +19,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Checkout the shell package (the chrome SSOT)
-        uses: actions/checkout@v4
-        with:
-          repository: oimlsmart/site-shell
-          path: vendor/site-shell
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -32,6 +26,19 @@ jobs:
         working-directory: site
       - run: npm run build
         working-directory: site
+
+      # The shell-pin leg (TODO.ia/03): the dependency is an exact npm
+      # version and equals npm's latest published release, so a shell
+      # release lands here deliberately, never silently.
+      - name: The shell pin satisfies the published channel
+        working-directory: site
+        run: npm run check:shell-pin
+
+      # The nav completeness gate: every href in the injected nav model
+      # resolves to a real page in the built tree.
+      - name: Nav completeness gate
+        working-directory: site
+        run: npm run check:nav
 
       - name: Verify the page and the canonical logo asset
         run: |

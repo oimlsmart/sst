@@ -1,0 +1,35 @@
+---
+/**
+ * The SMI Simulation site's layout — the ONE injection point
+ * (TODO.ia/03 item 6): the house shell from the package
+ * (@oimlsmart/site-shell 0.2.0, machinery-only) fed the site's OWN
+ * injected config. The brand, nav model, and footer content come from
+ * src/data/ and thread through the shell's typed contract; the
+ * package invents nothing, so without them no header and no footer
+ * would render. The minisite's own sections ride the MinisiteNav.
+ *
+ * The noindex meta rides the head slot on every page: the standing
+ * owner directive is no indexing on our sites.
+ */
+import { Base as ShellBase, MinisiteNav } from '@oimlsmart/site-shell'
+import { BRAND } from '../data/brand'
+import { NAV_MODEL, MINISITE_SECTIONS } from '../data/nav-config'
+import { FOOTER } from '../data/footer'
+import { SITE } from '../data/site-meta'
+import '../styles/app.css'
+
+interface Props {
+  title: string
+  description?: string
+}
+const { title, description = SITE.description } = Astro.props
+// The home page's title IS the brand name; passing it through would
+// render "SMI Simulation | SMI Simulation" in the tab.
+const pageTitle = title === SITE.title ? '' : title
+---
+
+<ShellBase title={pageTitle} description={description} brand={BRAND} nav={NAV_MODEL} footer={FOOTER}>
+  <meta name="robots" content="noindex, nofollow" slot="head" />
+  <MinisiteNav sections={MINISITE_SECTIONS} base={SITE.base} />
+  <slot />
+</ShellBase>
