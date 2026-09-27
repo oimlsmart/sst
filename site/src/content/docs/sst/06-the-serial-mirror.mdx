@@ -1,0 +1,64 @@
+---
+title: 'The Sample Serial Mirror and Custody Identity'
+shortTitle: 'The Serial Mirror'
+description: 'Booting a sample mirrors its serial number into the twin identification, and the consumer’s custody proof depends on that serial being the sample’s own.'
+eyebrow: 'SMI Simulation Docs · 06'
+order: 6
+---
+
+> *In this page:* how the booted sample’s serial reaches the twin’s
+> identification block, why one boot is one sample, and the custody
+> discipline the platform’s Connect proof depends on.
+
+---
+
+## 1. The twin is the sampled unit
+
+An SST boots against one sample — the named starting condition with
+its own chain of custody — and the twin the session serves is that
+unit, not the type in general. The runtime makes the identity literal:
+at boot, the sample’s declared `serial_number` mirrors into the
+instrument model’s identification block before the schema is
+generated, so both faces of the twin channel serve it with no schema
+edit. The GraphQL query
+`{ instrument { identification { serial } } }` and the REST projection
+`GET /twin/instrument` answer the same value.
+
+The behavior is pinned by the runtime’s own test: a default boot of
+the ACME LC-500 answers `LC500-001` (the fresh sample), an explicit
+`aged-2024` boot answers `LC500-007`, and the REST projection carries
+the identical string, so the two channels cannot drift.
+
+## 2. One boot, one sample
+
+The library’s doctrine is one boot, one sample, one chain of custody.
+A physics variant is a boot-time sample, never a runtime switch: the
+ACME LC-500’s `creep-fail` boot serves `LC500-002`, and rebooting with
+that sample means the sim is now a different instrument. A presenter
+or an operator who leaves the previous boot in place while the record
+expects the next sample meets the mismatch described below, which is
+the custody machinery working, not a fault.
+
+## 3. The custody-identity discipline
+
+The platform’s Connect proof compares the twin’s served serial against
+the sample’s custody identity, verbatim. The direction of declaration
+matters: the platform’s sample record moves to the serial the twin
+serves, never the reverse. The operator declares the twin’s own serial
+on the sample record — `LC500-001` for the fresh boot — and Connect
+proves that the instrument on the wire is the sample that was shipped.
+
+A generated serial breaks the proof. If the sample’s receipt is
+stamped with a serial the platform invented, the twin cannot serve it,
+and Connect refuses with the blocker named: a serial mismatch reads as
+“the twin serves … but the sample declares …”, which is a custody
+failure, not a retry. The refusal moves nothing — the landed run stays
+untouched and every field remains enterable by hand — because a
+binding that does not name this sample’s twin must never silently
+stand in for it.
+
+The same discipline is what makes the failure-branch demonstrations
+honest: each rehearsal sample (`creep-fail`, `temp-fail`,
+`drift-fail`, `lying-twin`, `stale-twin`) serves its own serial, and
+the platform leg that exercises it declares that serial on its own
+sample record.

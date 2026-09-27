@@ -57,3 +57,14 @@ a physical SMART instrument:
 
 The binding is deliberately identical for a simulated and a physical
 endpoint; the operator is told which they are driving.
+
+The shipped binding carries three fields — the endpoint profile, the
+base URL, and optionally a device key id — and the platform’s run view
+walks a five-verb arc against it (Connect, Calibrate, Start Test, Take
+Reading, Confirm Reading), covered in
+[the platform run arc](/sst/docs/sst/07-the-platform-run-arc/). The
+identity half of Connect rests on two twin-side behaviors this library
+provides: the booted sample’s serial mirrors into the twin
+identification ([the serial mirror](/sst/docs/sst/06-the-serial-mirror/)),
+and a binding that names a device key requires the
+[signed-serve posture](/sst/docs/sst/05-signed-serve/).

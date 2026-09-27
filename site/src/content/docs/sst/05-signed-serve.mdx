@@ -1,0 +1,134 @@
+---
+title: 'The Signed-Serve Posture'
+shortTitle: 'Signed Serve'
+description: 'The opt-in signed serve: what SST_SIGNED_SERVE=1 activates, what the manifest block declares, and when a deployment wants the posture.'
+eyebrow: 'SMI Simulation Docs · 05'
+order: 5
+---
+
+> *In this page:* why a consumer asks a twin to sign its serves, how
+> the posture is activated, what the instance package declares, and the
+> wall-clock preparation a signed boot needs.
+
+---
+
+## 1. The problem the posture answers
+
+A twin serve is a claim on a wire. When certification software records
+a served value as evidence, it needs to know that the bytes genuinely
+came from the twin it bound, and that they arrived unmodified. The
+default serve proves neither: any process on the port could answer.
+The signed-serve posture answers this by attaching a device signature
+to every served quantity, so the consumer can verify origin and
+integrity against a named key.
+
+The signature has a deliberate boundary, and the framework’s
+specification states it as the epistemic wall: the signature proves
+whose value this is and that the bytes are the twin’s own, and it
+never proves that the value is physically true. A lying twin with a
+valid key still lies validly; the judgment of a served value against
+the driven reality is a separate act, and it is the consumer’s.
+
+## 2. Activation
+
+Signing is a deployment act, never a default. An unsigned boot is
+byte-identical to the surface the earlier pages describe, and the
+posture activates in exactly two ways:
+
+- **The environment flag.** `SST_SIGNED_SERVE=1` on the boot (the same
+  idiom as `SIM_WORLD_TOKEN`) activates a `signing:` block the instance
+  manifest declares. A committed block alone never changes the served
+  bytes.
+- **The programmatic declaration.** `SessionOptions.signing` (a single
+  instance) or `SessionOptions.componentSigning` (a composite session,
+  per component id) carries the device identity; passing the
+  declaration is the opt-in.
+
+For the ACME LC-500 from the library checkout, the signed boot is
+`SST_SIGNED_SERVE=1 npm start`.
+
+## 3. What the manifest block declares
+
+An instance package carries the block, as `packages/instances/
+acme-lc500/package.sst.yaml` does:
+
+```yaml
+signing:
+  endpoint: loadcell_api
+  key_id: lc500-unit-1-key-1
+  public_key_spki: "MFkwEw…"
+  private_key_pkcs8: "MIGHAg…"
+```
+
+The `endpoint` is the deployment’s declared identifier for this twin’s
+channel — the same identifier the consumer’s binding declares — and an
+optional `registers` map overrides the internal serve-target spelling
+where the declared aspect differs from it. The key pair is held in
+simulation custody: the package is the device, and the committed
+private half exists so that demonstrations and tests can verify. A
+real deployment provisions its own pair programmatically, never from a
+committed artifact.
+
+## 4. The wire shape
+
+Under the posture every served quantity carries its serve time as
+canonical ISO-8601 and a `signature` envelope:
+
+```json
+{
+  "algorithm": "ECDSA-P256-SHA256",
+  "key_id": "lc500-unit-1-key-1",
+  "endpoint": "loadcell_api",
+  "register": "indication",
+  "public_key_spki": "MFkwEw…",
+  "signature": "…base64url(r‖s)…"
+}
+```
+
+The signed bytes are the deep-sorted canonical JSON of exactly the
+endpoint, the register, the serve time as served, the value, and the
+unit when served, signed with ECDSA P-256 over SHA-256, with the
+signature base64url-encoded. The verifier reconstructs the coverage
+from the landed serve itself, so no second copy of the timestamp
+travels. Two kinds of serve stay unsigned by design: state and
+environmental-context serves carry no envelope, because a scalar state
+selection has nothing to bind, and the `/twin/stream` frames keep the
+legacy face. Only quantity serves sign.
+
+## 5. When a deployment wants the posture
+
+The OIML-CS SMART platform’s twin binding declares a device key id
+alongside the endpoint profile and the base URL. When the binding
+names a key, the platform’s Connect act requires the signed serve: it
+verifies each envelope against the public key embedded in it and
+records `verified_against: embedded_public_key`. The record says
+exactly that and nothing more, because no device registry exists yet;
+the posture is a pre-certification one, and the embedded key is a
+self-description, not a registry binding. An unsigned serve against a
+key-declared binding is a named refusal at Connect, not a retry.
+
+A demonstration that never declares a device key needs no signed boot,
+and the platform’s continuous-integration legs consume these packages
+unsigned.
+
+## 6. The wall-clock preparation
+
+The SST’s clock boots virtual and manual-stepped, anchored at the
+epoch of the simulation’s own zero. Under the signed posture the
+serve stamps are canonical ISO times derived from that clock, and a
+consumer that judges freshness against its own wall clock — the
+platform does — will flag every armed read stale by the full distance
+between the two clocks. The runtime names the remedy in its own
+design: `setClockMode(mode: "wall")` on the world channel rebases the
+virtual clock to the epoch of the real one, so the serve stamps
+compare against the client’s wall clock:
+
+```
+mutation { setClockMode(mode: "wall") { clock } }
+```
+
+The act belongs to the bench preparation, before Connect, on every
+signed boot. Leaving wall mode freezes the epoch back into the virtual
+timeline, which is the correct posture for the unsigned rehearsal
+samples whose freshness is judged against the drive’s own reference
+clock.
