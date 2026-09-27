@@ -49,3 +49,17 @@ samples:
 provenance:
   certificate: "R60/2021-DE-24-071"
   first_issued: "2021-04-15"
+
+# The signed-serve posture (framework specs/12 §3.9): the device
+# identity + a simulation-custody pair — the package IS the device.
+# INERT unless the boot opts in (SST_SIGNED_SERVE=1, or a programmatic
+# SessionOptions declaration) — a committed block never changes the
+# default boot's bytes. The attested endpoint id is the deployment's
+# declared id for this twin's channel (the smart platform's spawn
+# payload binds loadcell_api). The private half is a SIM key: a real
+# deployment provisions its own pair, never from a committed artifact.
+signing:
+  endpoint: loadcell_api
+  key_id: lc500-unit-1-key-1
+  public_key_spki: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIA-fwMnJf5Gzx982wsZSWiuBaek08PWDGG78vaUPIWrph9VEIacU5mDpg8dr85nnmEGw3Kx5cN6R7gDtIZKwcA"
+  private_key_pkcs8: "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgWJe9iNYrIfq02xwBYpLziAOpimPqn2-DCRmsrCXottehRANCAAQgD5_Aycl_kbPH3zbCxlJaK4Fp6TTw9YMYbvy9pQ8haumH1UQhpxTmYOmDx2vzmeeYQbDcrHlw3pHuAO0hkrBw"
