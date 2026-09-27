@@ -2,11 +2,17 @@
 sample_name: creep-fail
 serial_number: LC500-002
 kind_scenario: creep-fail
-description: Creep coefficient/τ beyond MPE — fails the 30-minute creep test.
+description: >
+  Creep beyond MPE with a slow drift tail — fails the 30-minute creep test.
+  The fast primary component saturates within minutes; the slow tail drifts
+  the indication past the 20–30-minute band limit (0.15 × |MPE|) that the
+  R 60-1 §5.5.1 evaluation judges.
 custody:
   - { at: "2024-03-10", event: "manufactured", location: "ACME Darmstadt" }
   - { at: "2024-04-22", event: "type-test",    location: "PTB Braunschweig", note: "Creep test failed at minute 28." }
 overrides:
   creep_coefficient: 0.004
   creep_tau_s: 120
+  creep_slow_coefficient: 0.002
+  creep_slow_tau_s: 2400
 fidelity: {}

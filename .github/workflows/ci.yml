@@ -175,3 +175,30 @@ jobs:
           npx tsx scripts/check-instance-parameters.ts "$SMART_REPO"
         env:
           SMART_REPO: ${{ vars.SMART_REPO }}
+
+  creep-band:
+    # The creep-band guard (oimlsmart/sst#17): boots the acme-lc500
+    # fresh / creep-fail / creep-fail-001 samples under the framework,
+    # drives the R 60-2 dwell at 500 kg, and asserts the R 60-1 §5.5.1
+    # 20–30-minute band signature — the failing legs drift past
+    # 0.15 × |MPE| inside the band; the passing leg settles and holds.
+    # The physics rides the instance's bundled behavior.js (the package
+    # is self-contained), so this job runs against the framework at v2;
+    # primmel/sst remains the bundle's source of truth.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: x/oimlsmart/sst-instruments }
+      - uses: actions/checkout@v4
+        with: { repository: primmel/sst, path: x/primmel/sst }
+      - uses: actions/checkout@v4
+        with: { repository: primmel/primmel-ts, path: x/primmel/primmel-ts }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: x/oimlsmart/sst-instruments/package-lock.json }
+      - run: npm ci
+        working-directory: x/primmel/sst
+      - run: npm ci
+        working-directory: x/oimlsmart/sst-instruments
+      - name: assert the creep band signature
+        working-directory: x/oimlsmart/sst-instruments
+        run: npm run check:creep-band
