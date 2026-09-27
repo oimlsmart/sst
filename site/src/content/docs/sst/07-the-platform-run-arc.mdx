@@ -1,0 +1,96 @@
+---
+title: 'The Platform’s Twin Run Arc'
+shortTitle: 'The Platform Run Arc'
+description: 'How the OIML-CS SMART platform’s run view drives an SST: Connect, Calibrate, Start Test, Take Reading, Confirm Reading — and what the twin sees of it.'
+eyebrow: 'SMI Simulation Docs · 07'
+order: 7
+---
+
+> *In this page:* the five verbs the platform’s run view walks against
+> a twin-bound sample, what lands as evidence at each verb, and the
+> bench preparation the bench needs before the first verb.
+
+---
+
+## 1. The consumer the library ships against
+
+The OIML-CS SMART platform is the SST’s reference consumer. When a
+test-run sample carries a twin binding — the Recommendation’s declared
+endpoint profile (`loadcell_api`), the twin’s base URL, and optionally
+a device key id — the run view renders a twin panel above the step
+wizard and walks five verbs in a fixed order. A sample without a
+binding renders the page unchanged and runs the manual way; the panel
+is strictly additive, and the two kinds of run land in the same test
+report alike. The platform’s own narration of the arc, with the R 60-2
+clause anchors each step renders, is `DEMO_FLOWS/03-tl-work.md` in the
+platform repository, and its hosted demonstration is the guided demo
+on the platform’s demo instance.
+
+## 2. The five verbs
+
+1. **Connect SMI.** The platform reads the twin’s served
+   identification and proves the instrument on the wire is the sample
+   under test: the served serial must equal the sample’s declared
+   serial, verbatim (the serial mirror makes this possible). When the
+   binding declares a device key, Connect also verifies the signed
+   serve against the envelope’s embedded public key. Every failure is
+   a named blocker — serial mismatch, unreachable twin, unsigned serve
+   — and on any blocker the run stays manual. A successful connect
+   lands as signed evidence on the run.
+2. **Calibrate SMI.** The panel walks the test’s declared preparation
+   program: each step drives the world channel with the model-authored
+   operation, holds the declared dwell, reads the indication back on
+   the twin channel, and judges the read-back against the drive target
+   inside the model’s error band. A failing verification blocks the
+   stimulus and names the failed step.
+3. **Start Test on SMI.** The stimulus program executes: for the
+   R 60 creep test, the constant maximum test load at each declared
+   temperature plateau, with the timed readings the Recommendation’s
+   method names. The panel shows each drive as it executes and the
+   served indication with its serve stamp.
+4. **Take Reading.** Every reading is an armed read: the point’s
+   declared freshness bound limits the serve’s age, a serve inside its
+   bound records fresh with its age, and a stale serve is flagged on
+   the record — never silently read, never discarded.
+5. **Confirm Reading.** The served value prefills the reading input
+   and the operator’s confirmation is the attestation. The record
+   carries both halves: the served value is the twin’s claim, the
+   operator’s record is the attestation, and the arc never lets one
+   substitute for the other.
+
+The run’s completion stays the platform’s own judgment: the arc’s
+evidence is not a state injection, and a run the admissibility gate
+does not admit rests in progress, never invalidated, never injected.
+
+## 3. The bench’s own preparation
+
+The arc’s drives are the model’s own, but they meet a real bench, and
+the bench needs three world-channel acts before Connect, each the
+world’s declared capability:
+
+```
+mutation { setClockMode(mode: "wall") { clock } }
+mutation { advanceTime(seconds: 3600) { clock } }
+mutation { ladConfigure(capacityKg: 2500) { clock } }
+```
+
+The first anchors the clock to the wall, which the signed posture’s
+freshness judgment requires (the signed-serve page explains why). The
+second runs the cell past its warm-up hour. The third sizes the load
+machine for the instrument under test: the library’s default machine
+is the 10 kN unit its coefficients declare for the 500 kg training
+cell, and a showtime envelope beyond it — the platform demonstration’s
+2 090 kg maximum test load — is honestly refused. The preparation
+reruns on every boot.
+
+## 4. Where the demonstration runs
+
+The twin serves cross-origin headers for local origins, but it does
+not answer the private-network preflight a public page needs to reach
+`http://localhost`, so the interactive arc runs the platform’s local
+application instance with the SST on the same machine. The hosted demo
+instances present the same flow through a fast-forward beat that walks
+the identical derivation server-side and refuses with the blocker
+named when no twin answers. Without any twin at all, the platform
+degrades to the manual path, which is a complete demonstration in
+itself.

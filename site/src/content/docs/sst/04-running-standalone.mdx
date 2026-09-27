@@ -29,6 +29,15 @@ The instrument boots from its package (the baked twin contract, the
 coefficients, the samples) and answers on the port. No platform
 checkout, no database, no hardware.
 
+From the instrument library checkout the same boot rides the npm
+scripts: `npm start` boots the ACME LC-500’s fresh sample on port
+5290, `npm start -- creep-fail` boots a named sample instead (one
+boot, one sample, one chain of custody), and
+`SST_SIGNED_SERVE=1 npm start` adds the signed-serve posture the
+[signed-serve page](/sst/docs/sst/05-signed-serve/) describes. The
+booted sample’s serial mirrors into the twin identification, so each
+sample boot serves its own serial.
+
 ## 2. The surfaces on the port
 
 - `/twin` — the SMART twin surface (GraphQL; GraphiQL in a browser).

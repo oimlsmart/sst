@@ -1,0 +1,55 @@
+---
+title: 'Known Limitations'
+shortTitle: 'Known Limitations'
+description: 'The limitations the shipped runtime carries today: the GraphQL layer masks bench refusals, and what to read instead until the fix lands.'
+eyebrow: 'SMI Simulation Docs · 08'
+order: 8
+---
+
+> *In this page:* the one limitation an integrator meets in practice —
+> a bench refusal that reaches the caller as an un-named error — its
+> symptom, and the workaround.
+
+---
+
+## 1. The masked refusal
+
+The bench is honest at its own layer: the load application device
+refuses a preload beyond its declared capacity, because a laboratory
+must pick a machine that covers the envelope it drives. The GraphQL
+layer above it is not yet honest: the refusal reaches the caller as a
+generic “Unexpected error.”, which masks the bench’s named verdict.
+The caller cannot distinguish “the bench cannot” from “the transport
+broke” — the difference between reconfiguring the machine and
+debugging the wire. The gap is filed as the framework’s issue
+`primmel/sst#14` and stays open as of this writing.
+
+The symptom in the platform’s run arc is specific: with the default
+10 kN load machine in place, the Calibrate step’s preload — the
+demonstration’s 2 090 kg maximum test load — is refused, and the twin
+panel shows only “Unexpected error.” at the preparation step that
+issued it.
+
+## 2. The workaround
+
+The refusal is produced and recorded at the bench layer even while the
+GraphQL surface masks it, so the cause is readable in two places: the
+bench shell at the session’s root (`/`), which renders the machine and
+its declared capacity, and the runtime’s own log on the booting
+process.
+
+The remedy is the desk’s real discipline, not a workaround in the
+sense of a shortcut: size the machine for the envelope before the arc,
+through the world channel’s own declaration. For the 2.2 tonne
+demonstration model on the ACME LC-500:
+
+```
+mutation { ladConfigure(capacityKg: 2500) { clock } }
+```
+
+This is the act the platform’s runbook names in the bench preparation
+(alongside the wall-mode clock and the warm-up advance), and it is
+correct practice in its own right — the masked error is only how an
+operator who skipped it finds out. When the framework issue lands, the
+named refusal will reach the GraphQL error surface and this page will
+narrow accordingly.
