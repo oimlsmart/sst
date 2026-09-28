@@ -25,7 +25,7 @@ edit. The GraphQL query
 `GET /twin/instrument` answer the same value.
 
 The behavior is pinned by the runtime’s own test: a default boot of
-the ACME LC-500 answers `LC500-001` (the fresh sample), an explicit
+the Steelyard LC-500 answers `LC500-001` (the fresh sample), an explicit
 `aged-2024` boot answers `LC500-007`, and the REST projection carries
 the identical string, so the two channels cannot drift.
 
@@ -33,7 +33,7 @@ the identical string, so the two channels cannot drift.
 
 The library’s doctrine is one boot, one sample, one chain of custody.
 A physics variant is a boot-time sample, never a runtime switch: the
-ACME LC-500’s `creep-fail` boot serves `LC500-002`, and rebooting with
+the Steelyard LC-500’s `creep-fail` boot serves `LC500-002`, and rebooting with
 that sample means the sim is now a different instrument. A presenter
 or an operator who leaves the previous boot in place while the record
 expects the next sample meets the mismatch described below, which is

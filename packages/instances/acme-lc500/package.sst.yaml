@@ -1,14 +1,14 @@
 sst_version: "1.0"
 tier: primmel-instance
 id: acme-lc500
-title: "ACME LC-500 class C6 load cell"
+title: "Steelyard LC-500 class C6 load cell"
 kind: primmel-sst-r60                    # references the R 60 kind package
 version: "2024.1"
 maps_to: acme-lc500                      # the upstream Primmel product reference package
 
 manufacturer:
   id: mfr-acme
-  name: ACME Instruments
+  name: Steelyard Instruments Ltd.
   country: US
   contact: sim-support@acme.invalid
 

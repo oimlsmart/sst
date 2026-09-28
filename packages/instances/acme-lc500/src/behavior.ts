@@ -1,4 +1,4 @@
-// ACME LC-500 instance package — behavior source.
+// Steelyard LC-500 instance package — behavior source.
 //
 // Implements the R 60 kind's R60Behavior interface via the runtime's
 // data-driven ComposedInstrument (physics-chain.yaml + coefficients).
