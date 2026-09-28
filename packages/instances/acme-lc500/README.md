@@ -11,6 +11,7 @@ coefficients.yaml       physics coefficients (sim-owned)
 samples/
   fresh.yaml
   creep-fail.yaml
+  creep-fail-001.yaml
   temp-fail.yaml
   drift-fail.yaml
   lying-twin.yaml
@@ -37,14 +38,28 @@ Each sample references one of the kind's damage scenarios
 
 | Sample | Scenario | Notes |
 |---|---|---|
-| `fresh` | fresh | baseline |
-| `creep-fail` | creep-fail | 30-min creep test fails |
+| `fresh` | fresh | baseline (serial LC500-001) |
+| `creep-fail` | creep-fail | 30-min creep test fails — the slow tail drifts the 20–30 min band past 0.15 × \|MPE\| (serial LC500-002) |
+| `creep-fail-001` | creep-fail | the creep-fail physics stamped LC500-001 — the platform failure-branch demo's failing unit |
 | `temp-fail` | temp-fail | temperature tests fail |
 | `drift-fail` | drift-fail | span-stability fails |
 | `lying-twin` | lying-twin | honest physics, dishonest twin |
 | `stale-twin` | stale-twin | freshness violation |
 | `aged-2024` | aged | 5 years in service |
 | `dropped-2023` | dropped | mechanical damage from handling |
+
+## The served serial is a boot-time sample choice
+
+The twin IS the sampled unit: the booted sample's `serial_number`
+mirrors into the twin identification at boot. There is no runtime serial
+switch — stamping a serial means choosing the sample that declares it.
+Two samples deliberately share serial **LC500-001**: `fresh` (unit 001
+passing) and `creep-fail-001` (unit 001 in the world where its creep
+fails). The platform's failure-branch demo boots the latter
+(`npm start -- creep-fail-001`) so the failing twin serves the serial
+its provisioned chain declares; the custody-refusal beat boots
+`creep-fail` (LC500-002) so the served serial mismatches the platform's
+declaration. One boot, one sample, one chain of custody.
 
 ## Status
 

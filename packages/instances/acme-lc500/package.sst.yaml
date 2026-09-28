@@ -38,6 +38,7 @@ coefficients: coefficients.yaml
 behavior: behavior.js                     # the bundled behavior implementing R60Behavior
 samples:
   - samples/fresh.yaml
+  - samples/creep-fail-001.yaml
   - samples/creep-fail.yaml
   - samples/temp-fail.yaml
   - samples/drift-fail.yaml

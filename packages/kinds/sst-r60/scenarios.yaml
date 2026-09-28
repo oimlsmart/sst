@@ -8,10 +8,16 @@ fresh:
   overrides: {}
 
 creep-fail:
-  description: Creep coefficient/τ beyond MPE — fails the 30-minute creep test.
+  description: >
+    Creep beyond MPE with a slow drift tail — fails the 30-minute creep test.
+    The fast primary component (τ = 120 s) saturates within minutes; the slow
+    tail (τ = 2400 s) keeps the indication walking through the R 60-1 §5.5.1
+    20–30-minute band the evaluation judges (limit 0.15 × |MPE|).
   overrides:
     creepCoefficient: 0.004
     creepTauS: 120
+    creepSlowCoefficient: 0.002
+    creepSlowTauS: 2400
 
 temp-fail:
   description: Excessive temperature coefficients on zero and span.

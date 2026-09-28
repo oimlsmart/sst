@@ -7368,7 +7368,9 @@ var MechanicalStage = class {
   #elastic = 0;
   // instantaneous elastic strain (branch-adjusted)
   #creep = 0;
-  // creep state (approaches creepCoefficient × elastic)
+  // primary creep state (approaches creepCoefficient × elastic)
+  #creepSlow = 0;
+  // slow creep state (approaches creepSlowCoefficient × elastic)
   #branch = "idle";
   #lastLoad = 0;
   constructor(profile, _rng) {
@@ -7376,11 +7378,11 @@ var MechanicalStage = class {
   }
   get strainMm() {
     const h = this.#branch === "unloading" ? this.#profile.hysteresisClass : 0;
-    return this.#elastic * (1 - h) + this.#creep;
+    return this.#elastic * (1 - h) + this.#creep + this.#creepSlow;
   }
   /** The creep component alone (mm) — the ground-truth read-back. */
   get creepMm() {
-    return this.#creep;
+    return this.#creep + this.#creepSlow;
   }
   /** The applied load as set (ground truth — never the indication). */
   get appliedLoadKg() {
@@ -7395,10 +7397,17 @@ var MechanicalStage = class {
   advance(dtS) {
     const target = this.#elastic * this.#profile.creepCoefficient;
     this.#creep += (target - this.#creep) * (1 - Math.exp(-dtS / this.#profile.creepTauS));
+    const slowTauS = this.#profile.creepSlowTauS ?? 0;
+    const slowCoefficient = this.#profile.creepSlowCoefficient ?? 0;
+    if (slowTauS > 0 && slowCoefficient !== 0) {
+      const slowTarget = this.#elastic * slowCoefficient;
+      this.#creepSlow += (slowTarget - this.#creepSlow) * (1 - Math.exp(-dtS / slowTauS));
+    }
   }
   reset() {
     this.#elastic = 0;
     this.#creep = 0;
+    this.#creepSlow = 0;
     this.#lastLoad = 0;
     this.#branch = "idle";
   }
@@ -7616,7 +7625,9 @@ function makeR60Mechanical(profileKey) {
       const profile = {
         ...base,
         creepCoefficient: coeff(c, "creep_coefficient", base.creepCoefficient),
-        creepTauS: coeff(c, "creep_tau_s", base.creepTauS)
+        creepTauS: coeff(c, "creep_tau_s", base.creepTauS),
+        creepSlowCoefficient: coeff(c, "creep_slow_coefficient", base.creepSlowCoefficient ?? 0),
+        creepSlowTauS: coeff(c, "creep_slow_tau_s", base.creepSlowTauS ?? 0)
       };
       const stage = new MechanicalStage(profile, mulberry32(seed));
       const atCapacity = (c["capacity_kg"] ?? 500) * profile.complianceKgPerMm;

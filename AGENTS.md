@@ -70,6 +70,19 @@ checkout is not declared (`SMART_REPO` unset — same doctrine as
   (`@primmel/primmel`, resolved through the linked runtime). Every
   parameter BOTH sides carry must agree; a disagreement fails loudly.
 
+The physics guards run everywhere (no smart checkout needed):
+
+- `creep-band` — `npm run check:creep-band`
+  (`scripts/check-creep-band.ts`, oimlsmart/sst#17) boots the acme-lc500
+  `fresh` / `creep-fail` / `creep-fail-001` samples through the linked
+  runtime and drives the R 60-2 dwell at 500 kg: the failing legs must
+  drift past 0.15 × |MPE| inside the 20–30-minute band (R 60-1 §5.5.1 —
+  the window the evaluation judges), the passing leg must settle and
+  hold, and each leg's served serial must match its sample. The physics
+  rides the instance's bundled `behavior.js`, so the leg is
+  self-contained; a bundle built from a runtime that predates the
+  slow-creep component fails it loudly (re-bundle).
+
 ## Proving a change
 
 Boot the touched instance through the framework and drive it:
@@ -83,3 +96,10 @@ npx tsx packages/runtime/sst-runtime/src/bin.ts run \
 `/twin` answers the legal view; `/world` drives the physics; the bench
 renders at `/`. The framework's suite
 (`packages/runtime/sst-runtime`, 179 tests) must stay green.
+
+When the physics itself changes in the framework (a new stage, a new
+coefficient key), the touched instance's `behavior.js` must be
+RE-BUNDLED — the bundle inlines the runtime's physics, so the new law
+travels with the package only after a re-bundle (esbuild, no externals,
+the createRequire banner; a clean re-bundle diffs exactly the physics
+change, nothing else).
