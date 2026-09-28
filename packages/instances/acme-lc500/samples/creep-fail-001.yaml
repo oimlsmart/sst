@@ -1,4 +1,4 @@
-# ACME LC-500 — creep-fail-001 sample. The creep-fail physics stamped
+# Steelyard LC-500 — creep-fail-001 sample. The creep-fail physics stamped
 # LC500-001: unit 001 in the world where its creep fails.
 #
 # Why this variant exists: the smart platform's failure-branch demo
@@ -21,7 +21,7 @@ description: >
   failure-branch demo's failing unit on the demo serial. Fails the
   30-minute creep test; the 20–30-minute band drifts past 0.15 × |MPE|.
 custody:
-  - { at: "2024-01-15", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2024-01-15", event: "manufactured", location: "Steelyard Mildendo" }
   - { at: "2024-02-01", event: "type-test",    location: "PTB Braunschweig", note: "Creep test failed at minute 28." }
 overrides:
   creep_coefficient: 0.004

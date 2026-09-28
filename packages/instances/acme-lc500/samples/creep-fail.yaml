@@ -1,4 +1,4 @@
-# ACME LC-500 — creep-fail sample. Same physical cell, exaggerated creep.
+# Steelyard LC-500 — creep-fail sample. Same physical cell, exaggerated creep.
 sample_name: creep-fail
 serial_number: LC500-002
 kind_scenario: creep-fail
@@ -8,7 +8,7 @@ description: >
   the indication past the 20–30-minute band limit (0.15 × |MPE|) that the
   R 60-1 §5.5.1 evaluation judges.
 custody:
-  - { at: "2024-03-10", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2024-03-10", event: "manufactured", location: "Steelyard Mildendo" }
   - { at: "2024-04-22", event: "type-test",    location: "PTB Braunschweig", note: "Creep test failed at minute 28." }
 overrides:
   creep_coefficient: 0.004

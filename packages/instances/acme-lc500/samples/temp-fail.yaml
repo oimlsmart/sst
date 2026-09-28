@@ -1,10 +1,10 @@
-# ACME LC-500 — temp-fail sample. Excessive temperature coefficients.
+# Steelyard LC-500 — temp-fail sample. Excessive temperature coefficients.
 sample_name: temp-fail
 serial_number: LC500-003
 kind_scenario: temp-fail
 description: Excessive temperature coefficients on zero and span.
 custody:
-  - { at: "2024-03-10", event: "manufactured", location: "ACME Darmstadt" }
+  - { at: "2024-03-10", event: "manufactured", location: "Steelyard Mildendo" }
 overrides:
   tc_zero_per_degC: 0.001
   tc_span_per_degC: 0.002
