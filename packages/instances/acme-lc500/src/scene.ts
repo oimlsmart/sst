@@ -1,4 +1,4 @@
-// ACME LC-500 — 3D interactivity binding.
+// Steelyard LC-500 — 3D interactivity binding.
 //
 // This module is the second half of the instance package (the first
 // being behavior.ts). It declares how the LC-500's glTF scene responds

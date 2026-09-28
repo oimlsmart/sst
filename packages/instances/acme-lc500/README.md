@@ -1,6 +1,6 @@
 # ACME LC-500 instance package — `acme-lc500`
 
-A Primmel SST instance package for the **ACME LC-500 class C6 load cell**,
+A Primmel SST instance package for the **Steelyard LC-500 class C6 load cell**,
 referencing the [`primmel-sst-r60`](../sst-r60/) kind package.
 
 ## Layout
