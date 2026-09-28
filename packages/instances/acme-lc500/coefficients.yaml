@@ -1,4 +1,4 @@
-# ACME LC-500 physics coefficients — sim-owned, not in the R 60 SSOT.
+# Steelyard LC-500 physics coefficients — sim-owned, not in the R 60 SSOT.
 # These are the values the instance's behavior.js feeds to the
 # r60/mechanical-*, r60/transduction-strain-gauge, and r60/conditioning-digital
 # stages (see the kind's physics-chain.yaml).

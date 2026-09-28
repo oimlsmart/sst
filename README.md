@@ -32,7 +32,7 @@ Boot an instance with the npm scripts (the runtime CLI resolves the
 library from the instance's own tree — no checkout layout assumed):
 
 ```bash
-npm start                 # the ACME LC-500 load cell on :5290
+npm start                 # the Steelyard LC-500 load cell on :5290
 npm start -- creep-fail   # a physics variant is a boot-time sample
 npm start -- --console    # the IOS-style console (enable, lad apply 400 at 50, show lad)
 

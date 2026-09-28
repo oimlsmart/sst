@@ -1,4 +1,4 @@
-# Placeholder for the ACME LC-500 3D model.
+# Placeholder for the Steelyard LC-500 3D model.
 #
 # This file is a stub. The real artifact will be a glTF 2.0 binary (.glb)
 # produced from a CAD/Blender export of the LC-500 load cell. Phase 5 of
@@ -12,5 +12,5 @@
 #   - a node whose name contains "base"   (the platform — static)
 #
 # Format: glTF 2.0 binary container (.glb)
-# Source: ACME CAD (TBD)
+# Source: Steelyard CAD (TBD)
 # Pipeline: Blender → glTF export → .glb
